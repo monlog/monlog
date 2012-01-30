@@ -3,8 +3,8 @@ from tastypie.api import Api
 from log.api import LogResource, UserResource
 
 # Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
 
 v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
@@ -14,7 +14,8 @@ urlpatterns = patterns(
     '',
 #    (r'^log/', include('log.urls')),
     (r'^api/', include(v1_api.urls)),
-
+  #  (r'^admin/', include('admin.site.urls')),
+    
 
 
     # Examples:
@@ -25,5 +26,5 @@ urlpatterns = patterns(
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 )
