@@ -1,10 +1,16 @@
 from django.conf.urls.defaults import patterns, include, url
-
+from log.api import LogResource
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
+    (r'^Log/', include('log.urls')),
+    (r'^api/', include(entry_resource.urls)),
+
+
+
     # Examples:
     # url(r'^$', 'monlog.views.home', name='home'),
     # url(r'^monlog/', include('monlog.foo.urls')),
