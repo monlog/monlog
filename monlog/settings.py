@@ -140,8 +140,7 @@ except ImportError:
 
     DATABASES = {
         'default': {
-            #'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-            'ENGINE': 'mysql',
+            'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
             'NAME': 'monlog',                      # Or path to database file if using sqlite3.
             'USER': 'monlog',                      # Not used with sqlite3.
             'PASSWORD': 'monlog123',                  # Not used with sqlite3.
