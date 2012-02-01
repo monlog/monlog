@@ -6,4 +6,4 @@ from log.models import LogMessage
 class LogResource(ModelResource):
     class Meta:
         queryset = LogMessage.objects.all()
-        resource_name = "Log"
+        resource_name = "log"

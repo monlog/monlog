@@ -4,10 +4,12 @@ from log.api import LogResource
 # from django.contrib import admin
 # admin.autodiscover()
 
+log_resource = LogResource()
+
 urlpatterns = patterns(
     '',
-    (r'^Log/', include('log.urls')),
-    (r'^api/', include(entry_resource.urls)),
+#    (r'^log/', include('log.urls')),
+    (r'^api/', include(log_resource.urls)),
 
 
 
