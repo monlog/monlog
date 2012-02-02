@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL
 from tastypie.authorization import DjangoAuthorization
+from tastypie.authentication import ApiKeyAuthentication
 from log.models import LogMessage
 
 class UserResource(ModelResource):
@@ -21,4 +22,6 @@ class LogResource(ModelResource):
         allowed_methods = ['post']
         queryset = LogMessage.objects.all()
         resource_name = "log"
+        authentication = ApiKeyAuthentication()
         authorization = DjangoAuthorization()
+
