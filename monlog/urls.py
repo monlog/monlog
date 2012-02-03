@@ -6,14 +6,12 @@ from log.api import LogResource #, UserResource
 from django.contrib import admin
 admin.autodiscover()
 
-v1_api = Api(api_name='v1')
-#v1_api.register(UserResource())
-v1_api.register(LogResource())
+log_resource = LogResource()
 
 urlpatterns = patterns(
     '',
 #    (r'^log/', include('log.urls')),
-    (r'^api/', include(v1_api.urls)),
+    (r'^api/', include(log_resource.urls)),
   #  (r'^admin/', include('admin.site.urls')),
     
 
