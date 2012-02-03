@@ -12,6 +12,7 @@ v1_api.register(LogResource())
 
 urlpatterns = patterns('',
     (r'^api/', include(v1_api.urls)),
+    url(r'^$', 'log.views.index'),
 
     # Examples:
     # url(r'^$', 'monlog.views.home', name='home'),
