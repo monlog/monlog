@@ -6,24 +6,14 @@ from log.api import LogResource
 from django.contrib import admin
 admin.autodiscover()
 
-<<<<<<< .merge_file_ZUtTqh
 log_resource = LogResource()
 
 urlpatterns = patterns(
     '',
 #    (r'^log/', include('log.urls')),
     (r'^api/', include(log_resource.urls)),
-  #  (r'^admin/', include('admin.site.urls')),
+#    (r'^admin/', include('admin.site.urls')),
     
-
-=======
-v1_api = Api(api_name='v1')
-v1_api.register(LogResource())
-
-urlpatterns = patterns('',
-    (r'^api/', include(v1_api.urls)),
->>>>>>> .merge_file_RpyKFh
-
     # Examples:
     # url(r'^$', 'monlog.views.home', name='home'),
     # url(r'^monlog/', include('monlog.foo.urls')),
