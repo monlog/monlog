@@ -13,6 +13,7 @@ v1_api.register(LogResource())
 urlpatterns = patterns('',
     (r'^api/', include(v1_api.urls)),
     url(r'^$', 'log.views.index'),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', { 'template_name': 'login.html' }),
 
     # Examples:
     # url(r'^$', 'monlog.views.home', name='home'),
