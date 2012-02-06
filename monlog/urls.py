@@ -10,7 +10,6 @@ log_resource = LogResource()
 
 urlpatterns = patterns(
     '',
-#    (r'^log/', include('log.urls')),
     (r'^api/', include(log_resource.urls)),
 #    (r'^admin/', include('admin.site.urls')),
     

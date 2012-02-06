@@ -2,7 +2,7 @@
 
 from django.contrib.auth.models import User
 from tastypie import fields
-from tastypie.resources import ModelResource, ALL
+from tastypie.resources import ModelResource
 from tastypie.authorization import DjangoAuthorization
 from tastypie.authentication import ApiKeyAuthentication
 from log.models import LogMessage
