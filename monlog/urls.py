@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 from tastypie.api import Api
 from log.api import LogResource
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -12,6 +13,8 @@ v1_api.register(LogResource())
 
 urlpatterns = patterns('',
     (r'^api/', include(v1_api.urls)),
+    url(r'^$', 'log.views.index'),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', { 'template_name': 'login.html' }),
 
 =======
 log_resource = LogResource()
@@ -32,3 +35,5 @@ urlpatterns = patterns(
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 )
+
+urlpatterns += staticfiles_urlpatterns()
