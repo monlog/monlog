@@ -16,6 +16,6 @@ class LogResource(ModelResource):
         authorization = DjangoAuthorization()
 
     def hydrate(self, bundle):
-        bundle.obj.user = bundle.request.user
+        bundle.obj.application = bundle.request.user
         return bundle
 

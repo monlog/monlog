@@ -37,7 +37,6 @@ class RestTest(TestCase):
         request = HttpRequest()
 
         testapp = User.objects.get(username='testapp')
-#        create_api_key(User, instance=testapp, created=True)
 
         request.GET['username'] = 'testapp'
         request.GET['api_key'] = testapp.api_key.key
@@ -66,16 +65,14 @@ class RestTest(TestCase):
         auth = ApiKeyAuthentication()
 
         testapp = User.objects.get(username='testapp')
-#        create_api_key(User, instance=testapp, created=True)
 
-        data = {"date" : "2012-02-05T10:10:10",
-                "long_desc" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vel dui mi, non ornare felis. Proin non urna libero. Ut nec enim elit. Integer iaculis, nisi ac sollicitudin tristique, augue justo adipiscing urna, ac venenatis quam eros sit amet nunc. Duis ultricies, erat at fringilla sollicitudin, libero eros adipiscing odio, ut vulputate velit sapien at nibh. Nullam imperdiet, felis eu egestas fringilla, est augue sodales nisl, non vehicula felis nisi sed ligula. Suspendisse potenti.Nullam at adipiscing neque. Morbi ornare, tortor non porttitor tincidunt, elit quam accumsan lectus, ut fringilla odio purus sed erat. Maecenas lacinia sagittis dignissim. In hac habitasse platea dictumst. Vestibulum cursus enim a neque malesuada vel mattis augue lacinia. Donec semper, lectus ut ornare porta, justo mauris vestibulum leo, et vehicula magna metus at magna. Nulla vel elit velit, vitae facilisis mauris. Fusce adipiscing tristique ligula, in ornare odio auctor eget. Vestibulum nec ante non turpis lobortis scelerisque.Aenean aliquet metus non quam egestas at sagittis felis eleifend. Quisque fringilla, leo sed lacinia hendrerit, eros lorem fringilla justo, in ultricies augue augue sed mauris. Donec eleifend massa vel ipsum convallis porttitor. Suspendisse sit amet ante neque, ac hendrerit nunc. Aenean bibendum, eros et laoreet commodo, nunc diam ornare velit, et bibendum dui ligula eu libero. Donec in lacus vitae mauris semper sollicitudin. Nullam pulvinar urna nec tellus facilisis dignissim. Praesent arcu leo, cursus et blandit vitae, luctus ac arcu. Quisque laoreet ipsum sit amet nulla accumsan sed mattis risus laoreet. Aliquam sed tincidunt diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Vivamus mattis mauris vitae mauris facilisis ac lobortis leo aliquam. Quisque interdum, quam sollicitudin vulputate pharetra, turpis metus venenatis justo, vitae tempus turpis tellus in velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed eget sapien et nisi dictum fringilla bibendum vitae quam.Sed luctus adipiscing lacus, in congue arcu fermentum vel. Aenean nisl orci, sagittis at facilisis vel, dictum vel dui. Cras venenatis erat in dui interdum molestie. Vestibulum auctor fringilla sapien, et egestas dui iaculis a. Ut sem quam, molestie sit amet suscipit ut, pharetra egestas felis. Ut pharetra elementum suscipit. Donec a ligula at orci dignissim dignissim. Sed sollicitudin ultrices velit. Nulla facilisi. Quisque in eros quam, ultrices fringilla nunc.Sed eu feugiat quam. Cras tortor leo, convallis nec elementum et, tincidunt venenatis purus. Aliquam erat volutpat. Ut eros nulla, fringilla et lobortis quis, faucibus et justo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce tempus nisl at purus malesuada porttitor. Sed eu ligula sapien, ac rutrum metus.",
-                "short_desc" : "This is a short description",
-                "user" : 2
-                }
+        data = {"severity": 0,
+                "server_ip" : "192.168.0.1",
+                "application": "1" ,
+                "datetime" : "2012-02-05T10:10:10",
+                "long_desc" : "data",
+                "short_desc" : "This is a short description"}
 
-
-        print self.api_uri + testapp.api_key.key
-        resp = self.client.post(self.api_uri + testapp.api_key.key, data)
-        self.assertEqual(resp.status_code, 200)
+        resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
+        self.assertEqual(resp.status_code, 201) #201=CREATED
         
