@@ -37,34 +37,6 @@
     .dot {
         background-color: @color;
     }
-/*
-    &.btn {
-      #gradient > .vertical-three-colors(lighten(@color, 25%), lighten(@color, 10%), 25%, @color);
-      color: #fff;
-      text-shadow: 0;
-      font-size: 10px;
-      font-weight: bold;
-      text-transform: uppercase;
-      text-shadow: 0 0px 0px rgba(0,0,0,.75);
-      border-bottom: 2px solid @color !important;
-      border-bottom-color: @color !important;
-    }
-    &.btn:hover {
-      #gradient > .vertical-three-colors(lighten(@color, 35%), lighten(@color, 15%), 25%, @color);
-      background-position: 0 0;
-    }
-    &.btn.active, &.btn:active {
-      #gradient > .vertical-three-colors(@color, @color, 25%, lighten(@color, 10%));
-      @shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
-      .box-shadow(@shadow);
-      background-color: darken(@color, 10%);
-      background-color: darken(@color, 15%) e("\9");
-      color: rgba(255,255,255,.8);
-    }
-    &.btn.disabled, &.btn[disabled] {
-      background-color: darken(@color, 10%);
-    }
-    */
 }
 .sev-debug {
     .label { background-color: @debug }
@@ -105,7 +77,7 @@ body {
 
 .filters {
     overflow: hidden;
-    
+
     .control-group {
         float: left;
         margin-right: 20px;
@@ -123,42 +95,5 @@ body {
         margin-left: 1em;
         font-size: 11px;
         color: #777;
-    }
-
-    .btn {
-//      #gradient > .vertical-three-colors(@red, @red, 25%, darken(@red, 10%)); // Don't use .gradientbar() here since it does a three-color gradient
-//      border: 1px solid #ccc;
-//      border-bottom-color: #bbb;
-//      .border-radius(4px);
-//      @shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
-//      .box-shadow(@shadow);
-    }
-
-    // Hover state
-    .btn:hover {
-//      background-color: darken(@white, 10%);
-//      background-position: 0 -15px;
-
-      // transition is only when going to hover, otherwise the background
-      // behind the gradient (there for IE<=9 fallback) gets mismatched
-      .transition(background-position .1s linear);
-    }
-
-    // Active state
-    .btn.active,
-    .btn:active {
- //     @shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
- //     .box-shadow(@shadow);
- //     background-color: darken(@white, 10%);
- //     background-color: darken(@white, 15%) e("\9");
- //     color: rgba(0,0,0,.5);
-    }
-
-    // Disabled state
-    .btn.disabled,
-    .btn[disabled] {
-//      background-color: darken(@white, 10%);
-//      .opacity(65);
-//      .box-shadow(none);
     }
 }
