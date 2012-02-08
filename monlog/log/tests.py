@@ -75,15 +75,26 @@ class RestTest(TestCase):
         # Missing datetime
         data = {"severity": 0}
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
-        self.assertNotEqual(resp.status_code, 201)
+        self.assertEqual(resp.status_code, 400)
         
-        # Datetime malformed. 
+        # Datetime malformed, missing lots of stuff
         data = {"severity": 0,
-                "datetime" : "2",
-                "long_desc" : "data",
-                "short_desc" : "This is a short description"}
+                "datetime" : "2"}
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
-        self.assertNotEqual(resp.status_code, 201)
+        self.assertEqual(resp.status_code, 400)
+
+        # Datetime malformed, month > 12
+        data = {"severity": 0,
+                "datetime" : "2000-13-01 10:10:10"}
+        resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
+
+        # Datetime malformed, day > 31
+        data = {"severity": 0,
+                "datetime" : "2000-01-56 10:10:10"}
+        resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
+
 
         # Severity out of scope
         data = {"severity": 15,
@@ -91,7 +102,7 @@ class RestTest(TestCase):
                 "long_desc" : "data",
                 "short_desc" : "This is a short description"}
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
-        self.assertNotEqual(resp.status_code, 201) # Internal server error
+        self.assertEqual(resp.status_code, 400) # Internal server error
 
         # long_desc or short_desc is possible to be without
         data = {"severity": 0,
