@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>List</h1>
+<form class="well filters form-search">
+    <input type="checkbox" name="severity" value="emergency">
+    <input type="checkbox" name="severity" value="alert">
+    <input type="checkbox" name="severity" value="critical">
+    <input type="checkbox" name="severity" value="error">
+    <input type="checkbox" name="severity" value="warning">
+    <input type="checkbox" name="severity" value="notify">
+    <input type="checkbox" name="severity" value="info">
+    <input type="checkbox" name="severity" value="debug">
+        <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
+          <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
+            <a href='#' class="btn sev-emergency" data-value="emergency"><span class="dot">&nbsp;</span>Emergency</a>
+            <a href='#' class="btn sev-alert" data-value="alert"><span class="dot">&nbsp;</span>Alert</a>
+            <a href='#' class="btn sev-critical" data-value="critical"><span class="dot">&nbsp;</span>Critical</a>
+            <a href='#' class="btn sev-error" data-value="error"><span class="dot">&nbsp;</span>Error</a>
+            <a href='#' class="btn sev-warning" data-value="warning"><span class="dot">&nbsp;</span>Warning</a>
+            <a href='#' class="btn sev-notify" data-value="notify"><span class="dot">&nbsp;</span>Notify</a>
+            <a href='#' class="btn sev-info" data-value="info"><span class="dot">&nbsp;</span>Info</a>
+            <a href='#' class="btn sev-debug" data-value="debug"><span class="dot">&nbsp;</span>Debug</a>
+          </div>
+          <input type="text" class="search-query" placeholder="Search...">
+          <div id="advanced" class="collapse">
+              <hr />
+              <div class="control-group">
+                  <label class="control-label" for="selectApplication">Applications</label>
+                  <div class="controls">
+                      <select multiple="multiple" id="selectApplication" size="5">
+                          <option value="0">MyCoolCMS</option>
+                          <option value="0">Bankhemligheter</option>
+                          <option value="0">Monlog</option>
+                          <option value="0">Mail</option>
+                          <option value="0">Webreg</option>
+                          <option value="0">MyCoolCMS</option>
+                          <option value="0">Bankhemligheter</option>
+                          <option value="0">Monlog</option>
+                          <option value="0">Mail</option>
+                          <option value="0">Webreg</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="control-group">
+                  <label class="control-label" for="selectServer">Servers</label>
+                  <div class="controls">
+                      <select multiple="multiple" id="selectServer" size="5">
+                          <option value="0">MyCoolCMS</option>
+                          <option value="0">Bankhemligheter</option>
+                          <option value="0">Monlog</option>
+                          <option value="0">Mail</option>
+                          <option value="0">Webreg</option>
+                          <option value="0">MyCoolCMS</option>
+                          <option value="0">Bankhemligheter</option>
+                          <option value="0">Monlog</option>
+                          <option value="0">Mail</option>
+                          <option value="0">Webreg</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="control-group">
+                  <label class="control-label" for="selectTime">Start of time range</label>
+                  <div class="controls">
+                      <input type="date" value="2012-02-01" name="start">
+                  </div>
+                  <label class="control-label" for="selectTime">End of time range (optional)</label>
+                  <div class="controls">
+                      <input type="date" value="2012-02-01" name="end">
+                  </div>
+              </div>
+              <div class="well2">
+                  <div class="control-group">
+                      <label class="control-label">Save this search as a label</label>
+                      <div class="controls">
+                          <input type="text" class="" placeholder="Enter a label name">
+                          <button class="btn btn-primary">Save</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Severity</th>
+                <th>Time</th>
+                <th>Application</th>
+                <th>Server</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for msg in filterset %}
+            <tr class="sev-{{ msg.severity}}">
+                <td><span class="label">{{ msg.severity }}</span></td>
+                <td><span class="">{{ msg.time }}</span></td>
+                <td><span class="">{{ msg.application }}</span></td>
+                <td><span class="">{{ msg.server }}</span></td>
+                <td><span class="">{{ msg.short_desc }}</span></td>
+            </tr>
+            {% endfor %}
+            <tr class="sev-warning">
+                <td><span class="label">WARNING</span></td>
+                <td><span class="">13:37:00</span></td>
+                <td><span class="">Test</span></td>
+                <td><span class="">server1</span></td>
+                <td><span class="">Something went slightly wrong</span></td>
+            </tr>
+            <tr class="sev-notify">
+                <td><span class="label">notify</span></td>
+                <td><span class="">13:35:32</span></td>
+                <td><span class="">Test</span></td>
+                <td><span class="">server2</span></td>
+                <td><span class="">Trying to update database...</span></td>
+            </tr>
+            <tr class="sev-info">
+                <td><span class="label">INFO</span></td>
+                <td><span class="">13:35:32</span></td>
+                <td><span class="">Test</span></td>
+                <td><span class="">server2</span></td>
+                <td><span class="">Trying to update database...</span></td>
+            </tr>
+            <tr class="sev-debug">
+                <td><span class="label">debug</span></td>
+                <td><span class="">13:35:32</span></td>
+                <td><span class="">Test</span></td>
+                <td><span class="">server2</span></td>
+                <td><span class="">Trying to update database...</span></td>
+            </tr>
+            <tr class="sev-critical">
+                <td><span class="label">critical</span></td>
+                <td><span class="">13:37:00</span></td>
+                <td><span class="">Test</span></td>
+                <td><span class="">server1</span></td>
+                <td><span class="">Something went slightly wrong</span></td>
+            </tr>
+            <tr class="sev-error">
+                <td><span class="label">ERROR</span></td>
+                <td><span class="">13:36:00</span></td>
+                <td><span class="">Test</span></td>
+                <td><span class="">server1</span></td>
+                <td><span class="">Something went terribly wrong</span></td>
+            </tr>
+            <tr class="sev-warning">
+                <td><span class="label">WARNING</span></td>
+                <td><span class="">13:37:00</span></td>
+                <td><span class="">Test</span></td>
+                <td><span class="">server1</span></td>
+                <td><span class="">Something went slightly wrong</span></td>
+            </tr>
+            <tr class="sev-notify">
+                <td><span class="label">notify</span></td>
+                <td><span class="">13:35:32</span></td>
+                <td><span class="">Test</span></td>
+                <td><span class="">server2</span></td>
+                <td><span class="">Trying to update database...</span></td>
+            </tr>
+            <tr class="sev-info">
+                <td><span class="label">INFO</span></td>
+                <td><span class="">13:35:32</span></td>
+                <td><span class="">Test</span></td>
+                <td><span class="">server2</span></td>
+                <td><span class="">Trying to update database...</span></td>
+            </tr>
+            <tr class="sev-alert">
+                <td><span class="label">alert</span></td>
+                <td><span class="">13:37:00</span></td>
+                <td><span class="">Test</span></td>
+                <td><span class="">server1</span></td>
+                <td><span class="">Something went very wrong</span></td>
+            </tr>
+            <tr class="sev-debug">
+                <td><span class="label">debug</span></td>
+                <td><span class="">13:35:32</span></td>
+                <td><span class="">Test</span></td>
+                <td><span class="">server2</span></td>
+                <td><span class="">Trying to update database...</span></td>
+            </tr>
+        </tbody>
+    </table>
+<script type="text/javascript" language="javascript">
+    $("#advanced").on('show', function(){
+            $("#toggle-advanced").addClass("active");
+            $("#toggle-advanced").html("&#9650");
+    });
+    $("#advanced").on('hide', function(){
+        $("#toggle-advanced").removeClass("active");
+        $("#toggle-advanced").html("&#9660");
+        });
+// $("form.filters input[name='severity']").hide();
+var toggleSeverity = function(button) {
+    console.log("toggling severity");
+    var checkbox = $("form.filters input[value='" + button.dataset['value'] + "']");
+    checkbox.prop("checked", ! checkbox.prop("checked"));
+};
+$("#severity-buttons a").bind('click', function(event){
+        toggleSeverity(this);
+});
+$("#severity-buttons a span").bind('click', function(event){
+    console.log("click handler span");
+//    toggleSeverity($(event.target)[0].parentNode);
+});
+</script>
+{% endblock %}
