@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>List</h1>
 <form class="well filters form-search">
     <input type="checkbox" name="severity" value="emergency">
     <input type="checkbox" name="severity" value="alert">
@@ -91,91 +90,14 @@
         </thead>
         <tbody>
             {% for msg in filterset %}
-            <tr class="sev-{{ msg.severity}}">
-                <td><span class="label">{{ msg.severity }}</span></td>
-                <td><span class="">{{ msg.time }}</span></td>
+            <tr class="sev-{{ msg.pretty_severity|lower }}">
+                <td><span class="label">{{ msg.pretty_severity }}</span></td>
+                <td><span class="">{{ msg.datetime|date:"Y-m-d H:m:s" }}</span></td>
                 <td><span class="">{{ msg.application }}</span></td>
-                <td><span class="">{{ msg.server }}</span></td>
+                <td><span class="">{{ msg.server_ip }}</span></td>
                 <td><span class="">{{ msg.short_desc }}</span></td>
             </tr>
             {% endfor %}
-            <tr class="sev-warning">
-                <td><span class="label">WARNING</span></td>
-                <td><span class="">13:37:00</span></td>
-                <td><span class="">Test</span></td>
-                <td><span class="">server1</span></td>
-                <td><span class="">Something went slightly wrong</span></td>
-            </tr>
-            <tr class="sev-notify">
-                <td><span class="label">notify</span></td>
-                <td><span class="">13:35:32</span></td>
-                <td><span class="">Test</span></td>
-                <td><span class="">server2</span></td>
-                <td><span class="">Trying to update database...</span></td>
-            </tr>
-            <tr class="sev-info">
-                <td><span class="label">INFO</span></td>
-                <td><span class="">13:35:32</span></td>
-                <td><span class="">Test</span></td>
-                <td><span class="">server2</span></td>
-                <td><span class="">Trying to update database...</span></td>
-            </tr>
-            <tr class="sev-debug">
-                <td><span class="label">debug</span></td>
-                <td><span class="">13:35:32</span></td>
-                <td><span class="">Test</span></td>
-                <td><span class="">server2</span></td>
-                <td><span class="">Trying to update database...</span></td>
-            </tr>
-            <tr class="sev-critical">
-                <td><span class="label">critical</span></td>
-                <td><span class="">13:37:00</span></td>
-                <td><span class="">Test</span></td>
-                <td><span class="">server1</span></td>
-                <td><span class="">Something went slightly wrong</span></td>
-            </tr>
-            <tr class="sev-error">
-                <td><span class="label">ERROR</span></td>
-                <td><span class="">13:36:00</span></td>
-                <td><span class="">Test</span></td>
-                <td><span class="">server1</span></td>
-                <td><span class="">Something went terribly wrong</span></td>
-            </tr>
-            <tr class="sev-warning">
-                <td><span class="label">WARNING</span></td>
-                <td><span class="">13:37:00</span></td>
-                <td><span class="">Test</span></td>
-                <td><span class="">server1</span></td>
-                <td><span class="">Something went slightly wrong</span></td>
-            </tr>
-            <tr class="sev-notify">
-                <td><span class="label">notify</span></td>
-                <td><span class="">13:35:32</span></td>
-                <td><span class="">Test</span></td>
-                <td><span class="">server2</span></td>
-                <td><span class="">Trying to update database...</span></td>
-            </tr>
-            <tr class="sev-info">
-                <td><span class="label">INFO</span></td>
-                <td><span class="">13:35:32</span></td>
-                <td><span class="">Test</span></td>
-                <td><span class="">server2</span></td>
-                <td><span class="">Trying to update database...</span></td>
-            </tr>
-            <tr class="sev-alert">
-                <td><span class="label">alert</span></td>
-                <td><span class="">13:37:00</span></td>
-                <td><span class="">Test</span></td>
-                <td><span class="">server1</span></td>
-                <td><span class="">Something went very wrong</span></td>
-            </tr>
-            <tr class="sev-debug">
-                <td><span class="label">debug</span></td>
-                <td><span class="">13:35:32</span></td>
-                <td><span class="">Test</span></td>
-                <td><span class="">server2</span></td>
-                <td><span class="">Trying to update database...</span></td>
-            </tr>
         </tbody>
     </table>
 <script type="text/javascript" language="javascript">
@@ -187,18 +109,15 @@
         $("#toggle-advanced").removeClass("active");
         $("#toggle-advanced").html("&#9660");
         });
-// $("form.filters input[name='severity']").hide();
-var toggleSeverity = function(button) {
-    console.log("toggling severity");
-    var checkbox = $("form.filters input[value='" + button.dataset['value'] + "']");
-    checkbox.prop("checked", ! checkbox.prop("checked"));
-};
-$("#severity-buttons a").bind('click', function(event){
+    $(window).load(function() {
+        $("form.filters input[name='severity']").hide();
+    });
+    var toggleSeverity = function(button) {
+        var checkbox = $("form.filters input[value='" + button.dataset['value'] + "']");
+        checkbox.prop("checked", ! checkbox.prop("checked"));
+    };
+    $("#severity-buttons a").bind('click', function(event){
         toggleSeverity(this);
-});
-$("#severity-buttons a span").bind('click', function(event){
-    console.log("click handler span");
-//    toggleSeverity($(event.target)[0].parentNode);
-});
+    });
 </script>
 {% endblock %}
