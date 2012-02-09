@@ -33,3 +33,6 @@ class LogMessage(models.Model):
     def sanitize_timestamp(self):
         # Implement this.
         pass
+
+    class Meta:
+        ordering = ('-datetime',)

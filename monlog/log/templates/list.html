@@ -92,7 +92,7 @@
             {% for msg in filterset %}
             <tr class="sev-{{ msg.pretty_severity|lower }}">
                 <td><span class="label">{{ msg.pretty_severity }}</span></td>
-                <td><span class="">{{ msg.datetime|date:"Y-m-d H:m:s" }}</span></td>
+                <td><span class="">{{ msg.datetime|date:"Y-m-d H:i:s" }}</span></td>
                 <td><span class="">{{ msg.application }}</span></td>
                 <td><span class="">{{ msg.server_ip }}</span></td>
                 <td><span class="">{{ msg.short_desc }}</span></td>
