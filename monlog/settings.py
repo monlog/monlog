@@ -81,9 +81,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tastypie',
-    # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     'log',
+    'django_filters',
+    'django_extensions',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -139,7 +140,7 @@ except ImportError:
     # in apps' "static/" subdirectories and in STATICFILES_DIRS.
     # Example: "/home/media/media.lawrence.com/static/"
     STATIC_ROOT = ''
-    
+
     TEMPLATE_DIRS = (
         # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
         # Always use forward slashes, even on Windows.

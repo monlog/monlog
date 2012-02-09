@@ -10,7 +10,7 @@ admin.autodiscover()
 log_resource = LogResource()
 
 urlpatterns = patterns('',
-    url(r'^$', 'log.views.index'),
+    url(r'^$', 'log.views.list'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', { 'template_name': 'login.html' }),
     (r'^api/', include(log_resource.urls)),
     # Examples:

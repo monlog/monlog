@@ -2,7 +2,12 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
+from models import LogMessage
+from filters import LogMessageFilterSet
 
 @login_required
-def index(request):
-    return render_to_response('index.html', context_instance=RequestContext(request))
+def list(request):
+    context = RequestContext(request)
+    queryset = LogMessage.objects.all()
+    context['filterset'] = LogMessageFilterSet(request.GET or None, queryset=queryset)
+    return render_to_response('list.html', context)
