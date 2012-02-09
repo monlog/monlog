@@ -25,6 +25,9 @@ class RestTest(TestCase):
     
 
     def setUp(self):
+        """
+        Creates an api key for test user(from fixture) and sets permission to add logmessages
+        """
         super(RestTest, self).setUp()
         ApiKey.objects.all().delete()        
         create_api_key(User, instance=User.objects.get(username='testapp'), created=True)
@@ -33,6 +36,9 @@ class RestTest(TestCase):
     
 
     def test_auth(self):
+        """
+        Tests user authentication using APIKEY and username
+        """
         auth = ApiKeyAuthentication()
         request = HttpRequest()
 
@@ -46,33 +52,70 @@ class RestTest(TestCase):
 
     def test_get_from_rest(self):
         """
-        Testing if we can get from the rest api. This should not be possible.
+        Testing if we can use GET-method from the rest api. This should not be possible.
         """
         response = self.client.get("/api/log/")
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 405) #Method not allowed
 
 
     def test_unauth_post(self):
         """
         Tests if we can post without api key and user.
         """
-        data = {}
+        data = {"severity": 0 , "datetime" : "2012-10-10T10:10:10" } #wellformed data
         resp = self.client.post("/api/log/", data)
-        self.assertEqual(resp.status_code, 401)
-        
-
-    def test_success_post(self):
-        auth = ApiKeyAuthentication()
-
+        self.assertEqual(resp.status_code, 401) #Unauthorized
+            
+    def test_post(self):
+        """
+        Tests various types of content we're trying to submit. 
+        """
         testapp = User.objects.get(username='testapp')
 
+        # Missing datetime
+        data = {"severity": 0}
+        resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
+        
+        # Datetime malformed, missing lots of stuff
         data = {"severity": 0,
-                "server_ip" : "192.168.0.1",
-                "application": "1" ,
+                "datetime" : "2"}
+        resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
+
+        # Datetime malformed, month > 12
+        data = {"severity": 0,
+                "datetime" : "2000-13-01 10:10:10"}
+        resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
+
+        # Datetime malformed, day > 31
+        data = {"severity": 0,
+                "datetime" : "2000-01-56 10:10:10"}
+        resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
+
+
+        # Severity out of scope
+        data = {"severity": 15,
                 "datetime" : "2012-02-05T10:10:10",
                 "long_desc" : "data",
+                "short_desc" : "This is a short description"}
+        resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
+        self.assertEqual(resp.status_code, 400) # Internal server error
+
+        # long_desc or short_desc is possible to be without
+        data = {"severity": 0,
+                "datetime" : "2012-02-05T10:10:10"} 
+        resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
+        self.assertEqual(resp.status_code, 201) # CREATED
+
+        # Successful post and wellformed post
+        data = {"severity": 0,
+                "datetime" : "2012-02-05T10:10:10",
+                "long_desc" : "This is a long description",
                 "short_desc" : "This is a short description"}
 
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
         self.assertEqual(resp.status_code, 201) #201=CREATED
-        
+
