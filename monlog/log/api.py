@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import DjangoAuthorization
-from log.authentication import LogAuthentication
+from log.authentication import MonlogAuthentication
 from tastypie.validation import Validation
 from log.models import LogMessage
 import re
@@ -56,7 +56,7 @@ class LogResource(ModelResource):
         allowed_methods = ['post']
         queryset = LogMessage.objects.all()
         resource_name = "log"
-        authentication = LogAuthentication()
+        authentication = MonlogAuthentication()
         authorization = DjangoAuthorization()
         validation = LogValidation()
 

@@ -5,7 +5,7 @@ from tastypie.http import HttpUnauthorized
 from tastypie.authentication import Authentication
 
 
-class LogAuthentication(Authentication):
+class MonlogAuthentication(Authentication):
     """
     Handles API key auth, in which a user provides an API key.
 
