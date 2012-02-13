@@ -5,11 +5,22 @@ from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import DjangoAuthorization
 from log.authentication import MonlogAuthentication
+from log.authentication import CookieAuthentication
 from log.models import LogMessage
 from log.validation import LogValidation
-import re
-from datetime import datetime
 
+class LogCollectionResource(ModelResource):
+    """
+    Allows a user to get log messages through GET requests. 
+
+    User must be logged in and provide Djangos authentication cookie to be authenticated.
+    """
+    class Meta:
+        allowed_methods = ['get']
+        queryset = LogMessage.objects.all()
+        resource_name = "logmessages"
+        authentication = CookieAuthentication()
+        authorization = DjangoAuthorization()
 
 class LogResource(ModelResource):
     class Meta:

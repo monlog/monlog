@@ -2,11 +2,14 @@ from django.contrib.auth.models import User
 from tastypie.models import ApiKey
 from tastypie.http import HttpUnauthorized
 from tastypie.authentication import Authentication
-from tastypie.authentication import BasicAuthentication
 
-class CookieAuthentication(BasicAuthentication):
-    def __init__(self, *args, **kwargs):
-        super(CookieAuthentication, self).__init__(*args, **kwargs)
+class CookieAuthentication(Authentication):
+    """
+    Handles auth from Session cookie provided by the user. 
+    """ 
+
+    def _unauthorized(self):
+        return HttpUnauthorized()
  
     def is_authenticated(self, request, **kwargs):
         from django.contrib.sessions.models import Session
@@ -16,7 +19,7 @@ class CookieAuthentication(BasicAuthentication):
                 user = User.objects.get(id=s.get_decoded()['_auth_user_id'])
                 request.user = user
                 return True
-        return super(CookieAuthentication, self).is_authenticated(request, **kwargs)
+        return self._unauthorized()
 
 
 class MonlogAuthentication(Authentication):
