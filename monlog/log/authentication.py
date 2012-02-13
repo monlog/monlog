@@ -1,9 +1,7 @@
-
 from django.contrib.auth.models import User
 from tastypie.models import ApiKey
 from tastypie.http import HttpUnauthorized
 from tastypie.authentication import Authentication
-
 
 class MonlogAuthentication(Authentication):
     """
