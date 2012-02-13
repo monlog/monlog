@@ -2,7 +2,7 @@
 
 from django.contrib.auth.models import User
 from tastypie import fields
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, ALL
 from tastypie.authorization import DjangoAuthorization
 from log.authentication import MonlogAuthentication
 from log.authentication import CookieAuthentication
@@ -21,6 +21,18 @@ class LogCollectionResource(ModelResource):
         resource_name = "logmessages"
         authentication = CookieAuthentication()
         authorization = DjangoAuthorization()
+        filtering = {
+            "severity" : ALL,
+            "datetime" : ALL,
+            "server_ip" : ALL,
+            "application" : ALL,
+        }
+        ordering = {
+            "severity" : ALL,
+            "datetime" : ALL,
+            "server_ip" : ALL,
+            "application" : ALL,
+        }
 
 class LogResource(ModelResource):
     class Meta:
