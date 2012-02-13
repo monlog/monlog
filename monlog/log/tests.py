@@ -21,8 +21,6 @@ class RestTest(TestCase):
 
     username = "testapp"
     api_uri = "/api/log/?api_key="
-    api_key = ""
-    
 
     def setUp(self):
         """
@@ -33,7 +31,6 @@ class RestTest(TestCase):
         create_api_key(User, instance=User.objects.get(username=self.username), created=True)
         add_logmessage = Permission.objects.get(codename='add_logmessage')
         User.objects.get(username=self.username).user_permissions.add(add_logmessage)
-    
 
     def test_auth(self):
         """
@@ -42,9 +39,7 @@ class RestTest(TestCase):
         auth = MonlogAuthentication()
         request = HttpRequest()
 
-        testapp = User.objects.get(username=self.username)
-
-        request.GET['username'] = self.username
+        testapp = User.objects.get(username=self.username) #API key created in setUp()
         request.GET['api_key'] = testapp.api_key.key
         
         self.assertEqual(auth.is_authenticated(request), True)
@@ -102,7 +97,7 @@ class RestTest(TestCase):
                 "long_desc" : "data",
                 "short_desc" : "This is a short description"}
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
-        self.assertEqual(resp.status_code, 400) # Internal server error
+        self.assertEqual(resp.status_code, 400)
 
         # long_desc or short_desc is possible to be without
         data = {"severity": 0,
