@@ -9,7 +9,7 @@ from django.conf import settings
 from tastypie.api import Api
 from django.contrib.auth.models import User, Permission
 from tastypie.authorization import DjangoAuthorization
-from tastypie.authentication import ApiKeyAuthentication
+from log.authentication import MonlogAuthentication
 from tastypie.models import create_api_key, ApiKey
 from log.models import LogMessage
 import simplejson as json
@@ -20,9 +20,7 @@ class RestTest(TestCase):
     fixtures = ['auth.json']
 
     username = "testapp"
-    api_uri = "/api/log/?username=" + username + "&api_key="
-    api_key = ""
-    
+    api_uri = "/api/log/?api_key="
 
     def setUp(self):
         """
@@ -30,21 +28,18 @@ class RestTest(TestCase):
         """
         super(RestTest, self).setUp()
         ApiKey.objects.all().delete()        
-        create_api_key(User, instance=User.objects.get(username='testapp'), created=True)
+        create_api_key(User, instance=User.objects.get(username=self.username), created=True)
         add_logmessage = Permission.objects.get(codename='add_logmessage')
-        User.objects.get(username='testapp').user_permissions.add(add_logmessage)
-    
+        User.objects.get(username=self.username).user_permissions.add(add_logmessage)
 
     def test_auth(self):
         """
         Tests user authentication using APIKEY and username
         """
-        auth = ApiKeyAuthentication()
+        auth = MonlogAuthentication()
         request = HttpRequest()
 
-        testapp = User.objects.get(username='testapp')
-
-        request.GET['username'] = 'testapp'
+        testapp = User.objects.get(username=self.username) #API key created in setUp()
         request.GET['api_key'] = testapp.api_key.key
         
         self.assertEqual(auth.is_authenticated(request), True)
@@ -70,7 +65,7 @@ class RestTest(TestCase):
         """
         Tests various types of content we're trying to submit. 
         """
-        testapp = User.objects.get(username='testapp')
+        testapp = User.objects.get(username=self.username)
 
         # Missing datetime
         data = {"severity": 0}
@@ -102,7 +97,7 @@ class RestTest(TestCase):
                 "long_desc" : "data",
                 "short_desc" : "This is a short description"}
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
-        self.assertEqual(resp.status_code, 400) # Internal server error
+        self.assertEqual(resp.status_code, 400)
 
         # long_desc or short_desc is possible to be without
         data = {"severity": 0,
