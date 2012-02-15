@@ -3,6 +3,8 @@ from log.models import LogMessage
 from django.contrib.auth.models import User
 import datetime
 import simplejson as json
+import re
+from datetime import datetime
 
 class LogValidation(Validation):
     def log_malformed_data(self, data, errors):
@@ -41,7 +43,7 @@ class LogValidation(Validation):
             data = {}
 
         errors = {}
-
+        
         # Validate datetime
         if 'datetime' not in data:
             errors['datetime'] = 'Datetime not included in request.'
