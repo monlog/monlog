@@ -1,5 +1,7 @@
-function requestLogmessages() {
-    $.get("http://localhost:8000/api/logmessages/",{ "format" : "json" },
+var requestLogmessages = function() {
+    var formData = $('.filters').serialize();
+
+    $.getJSON("/api/logmessages/?" + formData,
         function(data,textStatus,jqXHR) {
             console.log(data);
         }
@@ -7,9 +9,7 @@ function requestLogmessages() {
 }
 
 $(window).load(function() {
-    $(".filters input, select").change(function() {
-        // Do something when input changes
-        console.log($(".filters").serialize());
-    });
+    $('.filters input, select').change(requestLogmessages);
+    $('.filters .search-query').keypress(requestLogmessages);
     requestLogmessages();
 });
