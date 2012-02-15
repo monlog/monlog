@@ -1,23 +1,3 @@
-function collectValuesFromCheckboxes(name) {
-    var selected = [];
-    $('input:checkbox[name=' + name + ']:checked').each(
-        function(index) {
-            selected.push($(this).val());
-        }
-    );
-    return selected;
-}
-
-function collectValuesFromSelectList(id) {
-    var selected = [];
-    $(id + ' :selected').each(
-        function(index) {
-            selected.push($(this).text());
-        }
-    );
-    return selected;
-}
-
 function requestLogmessages() {
     $.get("http://localhost:8000/api/logmessages/",{ "format" : "json" },
         function(data,textStatus,jqXHR) {
@@ -29,6 +9,7 @@ function requestLogmessages() {
 $(window).load(function() {
     $(".filters input, select").change(function() {
         // Do something when input changes
+        console.log($(".filters").serialize());
     });
     requestLogmessages();
 });
