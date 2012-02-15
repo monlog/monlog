@@ -15,12 +15,15 @@ from log.models import LogMessage
 import simplejson as json
 from django.test import TestCase
 from django.http import HttpRequest
+from tastypie.authentication import Authentication
 
 class RestTest(TestCase):
     fixtures = ['auth.json']
 
     username = "testapp"
     api_uri = "/api/log/?api_key="
+
+    logmessages_uri = "/api/logmessages/"
 
     def setUp(self):
         """
@@ -32,6 +35,16 @@ class RestTest(TestCase):
         add_logmessage = Permission.objects.get(codename='add_logmessage')
         User.objects.get(username=self.username).user_permissions.add(add_logmessage)
 
+    def test_filter(self):
+        """
+        Tests so filtering is applied correctly.
+        """
+        auth = Authentication() #Authentication does not need to be tested.
+        request = HttpRequest()  
+        
+        response = self.client.get(self.logmessages_uri + "?severity=1")
+        print response
+
     def test_auth(self):
         """
         Tests user authentication using APIKEY and username
@@ -40,7 +53,7 @@ class RestTest(TestCase):
         request = HttpRequest()
 
         testapp = User.objects.get(username=self.username) #API key created in setUp()
-        request.GET['api_key'] = testapp.api_key.key
+        request.GET['api_key'] = testapp.api_key.key 
         
         self.assertEqual(auth.is_authenticated(request), True)
                 
