@@ -20,7 +20,7 @@ class LogValidation(Validation):
         desc.update(get_dict)       
         desc = json.dumps(desc)
         current_date = datetime.datetime.now()
-        monlog_user = User.objects.get(pk=1)
+        monlog_user = User.objects.get(Username="monlog")
         severity = 4;
         server_ip = "127.0.0.1"
 
