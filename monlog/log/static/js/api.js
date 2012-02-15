@@ -1,11 +1,21 @@
-function collectFormSeverities() {
-    var selectedSeverities = [];
-    $('input:checkbox[name=severity]:checked').each(
+function collectValuesFromCheckboxes(name) {
+    var selected = [];
+    $('input:checkbox[name=' + name + ']:checked').each(
         function(index) {
-            selectedSeverities.push($(this).val());
+            selected.push($(this).val());
         }
     );
-    return selectedSeverities;
+    return selected;
+}
+
+function collectValuesFromSelectList(id) {
+    var selected = [];
+    $(id + ' :selected').each(
+        function(index) {
+            selected.push($(this).text());
+        }
+    );
+    return selected;
 }
 
 function requestLogmessages() {
@@ -19,8 +29,6 @@ function requestLogmessages() {
 $(window).load(function() {
     $(".filters input, select").change(function() {
         // Do something when input changes
-        collectFormSeverities();
     });
     requestLogmessages();
-    collectFormSeverities();
 });
