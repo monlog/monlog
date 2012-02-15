@@ -18,7 +18,7 @@ class LogValidation(Validation):
         severity = 4
         server_ip = "127.0.0.1"
 
-        short_desc = "Malformed data! %s" % ", ".join(errors)
+        short_desc = "Malformed data! %s" % ", ".join(errors.values())
 
         log = LogMessage(datetime=current_date,
                 long_desc=desc,
