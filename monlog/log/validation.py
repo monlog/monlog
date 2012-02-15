@@ -1,10 +1,9 @@
 from tastypie.validation import Validation
 from log.models import LogMessage
 from django.contrib.auth.models import User
-import datetime
+from datetime import datetime
 import simplejson as json
 import re
-from datetime import datetime
 
 class LogValidation(Validation):
     def log_malformed_data(self, data, errors):
@@ -13,7 +12,7 @@ class LogValidation(Validation):
         by adding an extra log to the system by monlog, notifying the user about
         the problem.
         """
-        current_date = datetime.datetime.now()
+        current_date = datetime.now()
         desc = json.dumps(data)
         monlog_user = User.objects.get(pk=1)
         severity = 4
