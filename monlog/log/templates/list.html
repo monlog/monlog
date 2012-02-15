@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 <form class="well filters form-search">
+    <input type="hidden" name="ordering" value="">
+
     <input type="checkbox" name="severity" value="emergency">
     <input type="checkbox" name="severity" value="alert">
     <input type="checkbox" name="severity" value="critical">
@@ -81,10 +83,10 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Severity</th>
-                <th>Time</th>
-                <th>Application</th>
-                <th>Server</th>
+                <th id="severity" class="sortable sorted-desc">Severity</th>
+                <th id="datetime" class="sortable sorted-desc sorted-active">Time</th>
+                <th id="application" class="sortable sorted-desc">Application</th>
+                <th id="server" class="sortable sorted-desc">Server</th>
                 <th>Message</th>
             </tr>
         </thead>
@@ -101,23 +103,36 @@
         </tbody>
     </table>
 <script type="text/javascript" language="javascript">
-    $("#advanced").on('show', function(){
-            $("#toggle-advanced").addClass("active");
-            $("#toggle-advanced").html("&#9650");
+$("#advanced").on('show', function(){
+        $("#toggle-advanced").addClass("active");
+        $("#toggle-advanced").html("&#9650");
+});
+$("#advanced").on('hide', function(){
+    $("#toggle-advanced").removeClass("active");
+    $("#toggle-advanced").html("&#9660");
     });
-    $("#advanced").on('hide', function(){
-        $("#toggle-advanced").removeClass("active");
-        $("#toggle-advanced").html("&#9660");
-        });
-    $(window).load(function() {
-        $("form.filters input[name='severity']").hide();
-    });
-    var toggleSeverity = function(button) {
-        var checkbox = $("form.filters input[value='" + button.dataset['value'] + "']");
-        checkbox.prop("checked", ! checkbox.prop("checked"));
-    };
-    $("#severity-buttons a").bind('click', function(event){
-        toggleSeverity(this);
-    });
+$(window).load(function() {
+    $("form.filters input[name='severity']").hide();
+});
+var toggleSeverity = function(button) {
+    var checkbox = $("form.filters input[value='" + button.dataset['value'] + "']");
+    checkbox.prop("checked", ! checkbox.prop("checked"));
+};
+$("#severity-buttons a").bind('click', function(event){
+    toggleSeverity(this);
+});
+$("th.sortable").append('<i class="icon-sortable"></i>');
+$("th.sortable").bind('click', function(event){
+    if ($(this).hasClass('sorted-active')) {
+        // already sorted on this column, so user wants to switch direction of sort
+        $(this).toggleClass('sorted-desc').toggleClass('sorted-asc');
+    } else {
+        $("th.sortable").removeClass('sorted-active');
+        $(this).toggleClass('sorted-active');
+    }
+
+    var ordering_param = this.id + "__" + ($(this).hasClass('sorted-desc') ? 'desc' : 'asc');
+    $('form.filters input[name="ordering"]').attr('value', ordering_param);
+});
 </script>
 {% endblock %}
