@@ -24,7 +24,6 @@ class LogValidation(Validation):
         severity = 4;
         current_date = datetime.now()
         desc = json.dumps(data)
-        monlog_user = User.objects.get(pk=1)
         severity = 4
         server_ip = "127.0.0.1"
 
