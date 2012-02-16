@@ -1,9 +1,34 @@
-
 from tastypie.validation import Validation
-import re
+from log.models import LogMessage
+from django.contrib.auth.models import User
 from datetime import datetime
+import simplejson as json
+import re
 
 class LogValidation(Validation):
+    def log_malformed_data(self, data, errors):
+        """
+        If data provided by client is corrupt or malformed, we handle it here
+        by adding an extra log to the system by monlog, notifying the user about
+        the problem.
+        """
+        current_date = datetime.now()
+        desc = json.dumps(data)
+        monlog_user = User.objects.get(pk=1)
+        severity = 4
+        server_ip = "127.0.0.1"
+
+        short_desc = "Malformed data! %s" % ", ".join(errors.values())
+
+        log = LogMessage(datetime=current_date,
+                long_desc=desc,
+                short_desc=short_desc,
+                application=monlog_user,
+                server_ip=server_ip,
+                severity=severity)
+
+        log.save()
+
     def is_valid(self, bundle, request=None):
         """
         Performs a check on ``bundle.data``to ensure it is valid.
@@ -41,7 +66,9 @@ class LogValidation(Validation):
         else:
             if data['severity'] < 0 or data['severity'] > 7:
                 errors['severity'] = "Not supported severity level."
-     
+        if len(errors) > 0:
+            self.log_malformed_data(data, errors)
+        
         return errors
     
 
