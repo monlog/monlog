@@ -1,9 +1,9 @@
-
 from tastypie.validation import Validation
 from log.models import LogMessage
 from django.contrib.auth.models import User
-import datetime
+from datetime import datetime
 import simplejson as json
+import re
 
 class LogValidation(Validation):
     def log_malformed_data(self, data, errors, bundle):
@@ -22,19 +22,23 @@ class LogValidation(Validation):
         current_date = datetime.datetime.now()
         monlog_user = User.objects.get(Username="monlog")
         severity = 4;
+        current_date = datetime.now()
+        desc = json.dumps(data)
+        monlog_user = User.objects.get(pk=1)
+        severity = 4
         server_ip = "127.0.0.1"
 
-        if 'datetime' in errors:
-            # We found malformed datetime
-            log = LogMessage(datetime = current_date, long_desc = desc, short_desc = "Monlog: Discovered malformed datetime in log message.", application = monlog_user, server_ip = server_ip, severity = severity)
-            log.save()
-            
-        elif 'severity' in errors:
-            # We found incorrect severity
-            log = LogMessage(datetime = current_date, long_desc = desc, short_desc = "Monlog: Discovered incorrect severity in log message.", application = monlog_user, server_ip = server_ip, severity = severity)
-            log.save()
-        
-    
+        short_desc = "Malformed data! %s" % ", ".join(errors.values())
+
+        log = LogMessage(datetime=current_date,
+                long_desc=desc,
+                short_desc=short_desc,
+                application=monlog_user,
+                server_ip=server_ip,
+                severity=severity)
+
+        log.save()
+
     def is_valid(self, bundle, request=None):
         """
         Performs a check on ``bundle.data``to ensure it is valid.
@@ -48,7 +52,7 @@ class LogValidation(Validation):
             data = {}
 
         errors = {}
-
+        
         # Validate datetime
         if 'datetime' not in data:
             errors['datetime'] = 'Datetime not included in request.'
