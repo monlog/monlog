@@ -1,6 +1,7 @@
 
 from tastypie.validation import Validation
-
+import re
+from datetime import datetime
 
 class LogValidation(Validation):
     def is_valid(self, bundle, request=None):
@@ -16,7 +17,7 @@ class LogValidation(Validation):
             data = {}
 
         errors = {}
-
+        
         # Validate datetime
         if 'datetime' not in data:
             errors['datetime'] = 'Datetime not included in request.'
