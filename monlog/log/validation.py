@@ -12,6 +12,7 @@ class LogValidation(Validation):
         by adding an extra log to the system by monlog, notifying the user about
         the problem.
         """
+        return # TEMP, THIS FUNCTION IS UPDATED IN BRANCH MONLOG_LOG, BUT IS CURRENTLY CAUSING ME A LOT OF PROBLEMS! /TREW
         current_date = datetime.now()
         desc = json.dumps(data)
         monlog_user = User.objects.get(pk=1)

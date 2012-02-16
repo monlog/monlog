@@ -39,11 +39,13 @@ class RestTest(TestCase):
         """
         Tests so filtering is applied correctly.
         """
-        auth = Authentication() #Authentication does not need to be tested.
         request = HttpRequest()  
+        User.objects.create_user("fakeuser", "fake@faker.com", "fakepass")
+        user = self.client.login(username="fakeuser", password="fakepass")
         
-        response = self.client.get(self.logmessages_uri + "?severity=1")
-        print response
+        response = self.client.get(self.logmessages_uri + "?severity=0&severity=1&format=json")
+        print dir(response)
+        print json.loads(response.content)['objects'][0]['severity']
 
     def test_auth(self):
         """
@@ -83,6 +85,8 @@ class RestTest(TestCase):
         # Missing datetime
         data = {"severity": 0}
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
+        print self.api_uri + testapp.api_key.key
+        print resp
         self.assertEqual(resp.status_code, 400)
         
         # Datetime malformed, missing lots of stuff
