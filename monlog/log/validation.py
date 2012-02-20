@@ -6,16 +6,21 @@ import simplejson as json
 import re
 
 class LogValidation(Validation):
-    def log_malformed_data(self, data, errors):
+    def log_malformed_data(self, data, errors, bundle):
         """
         If data provided by client is corrupt or malformed, we handle it here
         by adding an extra log to the system by monlog, notifying the user about
         the problem.
         """
-        return # TEMP, THIS FUNCTION IS UPDATED IN BRANCH MONLOG_LOG, BUT IS CURRENTLY CAUSING ME A LOT OF PROBLEMS! /TREW
+        client_ip = bundle.request.META["REMOTE_ADDR"]
+        client_ip = {"client_ip" : client_ip}
+        get_dict = bundle.request.GET
+        desc = data        
+        desc.update(client_ip)
+        desc.update(get_dict)       
+        desc = json.dumps(desc)
         current_date = datetime.now()
-        desc = json.dumps(data)
-        monlog_user = User.objects.get(pk=1)
+        monlog_user = User.objects.get(username="monlog")
         severity = 4
         server_ip = "127.0.0.1"
 
@@ -67,8 +72,10 @@ class LogValidation(Validation):
         else:
             if data['severity'] < 0 or data['severity'] > 7:
                 errors['severity'] = "Not supported severity level."
+
+        # this function posts as monlog on errors.
         if len(errors) > 0:
-            self.log_malformed_data(data, errors)
+            self.log_malformed_data(data, errors, bundle)
         
         return errors
     

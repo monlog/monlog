@@ -12,10 +12,19 @@ from tastypie.authorization import DjangoAuthorization
 from log.authentication import MonlogAuthentication
 from tastypie.models import create_api_key, ApiKey
 from log.models import LogMessage
+from log.validation import LogValidation
 import simplejson as json
 from django.test import TestCase
 from django.http import HttpRequest
 from tastypie.authentication import Authentication
+
+class ValidationTest(TestCase):
+    def test_monlog_user(self):
+        """ Testing if the monlog user is pk=1 """
+        monlog_user = User.objects.get(pk=1)
+        self.assertEqual(monlog_user.username, "monlog")
+
+        
 
 class RestTest(TestCase):
     fixtures = ['auth.json']
