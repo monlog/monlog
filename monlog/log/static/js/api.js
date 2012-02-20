@@ -1,4 +1,4 @@
-var requestLogmessages = function() {
+var requestLogMessages = function() {
     var formData = $.map($('.filters').serializeArray(), function(n) {
         if (n.value == "") {
             return null;
@@ -14,8 +14,12 @@ var requestLogmessages = function() {
     );
 }
 
-$(window).load(function() {
-    $('.filters input, .filters select').change(requestLogmessages);
-    $('.filters .search-query').keypress(requestLogmessages);
-    requestLogmessages();
+$(document).ready(function() {
+    $('.filters input, .filters select').change(requestLogMessages);
+    $('.filters .search-query').keypress(requestLogMessages);
+    $('form.filters').submit(function(event){
+        requestLogMessages();
+        event.preventDefault();
+    });
+    requestLogMessages();
 });
