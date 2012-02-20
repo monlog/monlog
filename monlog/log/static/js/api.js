@@ -7,6 +7,7 @@ var requestLogmessages = function() {
     });
     
     var url = "/api/logmessages/?" + $.param(formData);
+    console.log(url);
     $.getJSON(url,
         function(data,textStatus,jqXHR) {
             console.log(data);

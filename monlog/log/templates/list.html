@@ -3,7 +3,7 @@
 <form class="well filters form-search">
     <input type="hidden" name="order_by" value="-datetime">
         {% for id,name in severity_choices %}
-        <input type="checkbox" name="severity" value="{{ id }}">
+        <input type="checkbox" name="severity__in" value="{{ id }}">
         {% endfor %}
         <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
           <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
@@ -17,7 +17,7 @@
               <div class="control-group">
                   <label class="control-label" for="selectApplication">Applications</label>
                   <div class="controls">
-                      <select multiple="multiple" name="applications" id="selectApplication" size="5">
+                      <select multiple="multiple" name="applications__in" id="selectApplication" size="5">
                           <option value="0">MyCoolCMS</option>
                           <option value="0">Bankhemligheter</option>
                           <option value="0">Monlog</option>
@@ -34,7 +34,7 @@
               <div class="control-group">
                   <label class="control-label" for="selectServer">Servers</label>
                   <div class="controls">
-                      <select multiple="multiple" name="server" id="selectServer" size="5">
+                      <select multiple="multiple" name="server_ip__in" id="selectServer" size="5">
                           <option value="0">MyCoolCMS</option>
                           <option value="0">Bankhemligheter</option>
                           <option value="0">Monlog</option>
@@ -102,7 +102,7 @@
         $("#toggle-advanced").html("&#9660");
         });
     $(document).ready(function() {
-        $("form.filters input[name='severity']").hide();
+        $("form.filters input[name='severity__in']").hide();
     });
     var toggleSeverity = function(button) {
         var checkbox = $("form.filters input[value='" + button.dataset['value'] + "']");
