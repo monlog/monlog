@@ -19,9 +19,12 @@ class LogValidation(Validation):
         desc.update(client_ip)
         desc.update(get_dict)       
         desc = json.dumps(desc)
-        current_date = datetime.datetime.now()
-        monlog_user = User.objects.get(Username="monlog")
+        current_date = datetime.now()
+        monlog_user = User.objects.get(username="monlog")
         severity = 4;
+
+        #return # TEMP, THIS FUNCTION IS UPDATED IN BRANCH MONLOG_LOG, BUT IS CURRENTLY CAUSING ME A LOT OF PROBLEMS! /TREW
+
         current_date = datetime.now()
         desc = json.dumps(data)
         severity = 4
