@@ -1,7 +1,13 @@
 var requestLogmessages = function() {
-    var formData = $('.filters').serialize();
-
-    $.getJSON("/api/logmessages/?" + formData,
+    var formData = $.map($('.filters').serializeArray(), function(n) {
+        if (n.value == "") {
+            return null;
+        }
+        return n;
+    });
+    
+    var url = "/api/logmessages/?" + $.param(formData);
+    $.getJSON(url,
         function(data,textStatus,jqXHR) {
             console.log(data);
         }
@@ -9,7 +15,7 @@ var requestLogmessages = function() {
 }
 
 $(window).load(function() {
-    $('.filters input, select').change(requestLogmessages);
+    $('.filters input, .filters select').change(requestLogmessages);
     $('.filters .search-query').keypress(requestLogmessages);
     requestLogmessages();
 });
