@@ -14,10 +14,12 @@ def list(request):
 
 @login_required
 def save_label(request):
+    """
+    Used when a user saves a new label. 
+    """
     context = RequestContext(request)
-    context["name"] = request.POST["name"]
-    label = Label(name=request.POST['name'], 
-                  query_string=request.POST['query_string'] )
+    context['name'] = request.POST.get('name')
+    label = Label(label_name=request.POST.get('name'), query_string=request.POST.get('query_string') )
     label.save()
     return render_to_response('label_saved.html', context)
     
