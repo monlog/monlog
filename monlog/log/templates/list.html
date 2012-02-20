@@ -17,12 +17,12 @@
 <form class="well filters form-search">
     <input type="hidden" name="order_by" value="-datetime">
         {% for id, name in severity_choices %}
-            <input type="checkbox" name="severity__in" value="{{ id }}">
+            <input type="checkbox" checked="checked" name="severity__in" value="{{ id }}">
         {% endfor %}
         <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
           <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
             {% for id, name in severity_choices %}
-                <a href='#' class="btn sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
+                <a href='#' class="btn active sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
             {% endfor %}
           </div>
           <input type="text" name="search" class="search-query" placeholder="Search...">
