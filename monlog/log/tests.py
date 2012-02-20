@@ -44,15 +44,6 @@ class RestTest(TestCase):
         add_logmessage = Permission.objects.get(codename='add_logmessage')
         User.objects.get(username=self.username).user_permissions.add(add_logmessage)
 
-    def test_filter(self):
-        """
-        Tests so filtering is applied correctly.
-        """
-        auth = Authentication() #Authentication does not need to be tested.
-        request = HttpRequest()  
-        
-        response = self.client.get(self.logmessages_uri + "?severity=1")
-        print response
 
     def test_auth(self):
         """
@@ -92,6 +83,8 @@ class RestTest(TestCase):
         # Missing datetime
         data = {"severity": 0}
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
+        print self.api_uri + testapp.api_key.key
+        print resp
         self.assertEqual(resp.status_code, 400)
         
         # Datetime malformed, missing lots of stuff

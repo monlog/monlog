@@ -22,10 +22,6 @@ class LogValidation(Validation):
         current_date = datetime.now()
         monlog_user = User.objects.get(username="monlog")
         severity = 4
-
-        current_date = datetime.now()
-        desc = json.dumps(data)
-        severity = 4
         server_ip = "127.0.0.1"
 
         short_desc = "Malformed data! %s" % ", ".join(errors.values())

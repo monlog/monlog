@@ -11,6 +11,10 @@
 @alert: #C43C35;
 @emergency: #C43C35;
 
+// from bootstrap
+.icon-chevron-up         { background-position: -288px -120px; }
+.icon-chevron-down       { background-position: -313px -119px; } // 1px off
+
 .dot {
     display: block;
     width: 7px;
@@ -95,5 +99,48 @@ body {
         margin-left: 1em;
         font-size: 11px;
         color: #777;
+    }
+}
+
+.sortable {
+    cursor: pointer;
+
+    .icon-sortable {
+        float: right;
+        opacity: 0;
+    }
+
+    &:hover {
+        .icon-sortable {
+            opacity: 0.2;
+        }
+    }
+
+    &.sorted-active {
+        background-color: #eee;
+
+        .icon-sortable {
+            opacity: 1.0;
+        }
+        &.sorted-desc {
+            .icon-sortable {
+                .icon-chevron-down;
+            }
+        }
+        &.sorted-asc {
+            .icon-sortable {
+                .icon-chevron-up;
+            }
+        }
+    }
+    &.sorted-desc {
+        .icon-sortable {
+            .icon-chevron-down;
+        }
+    }
+    &.sorted-asc {
+        .icon-sortable {
+            .icon-chevron-up;
+        }
     }
 }

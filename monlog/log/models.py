@@ -5,14 +5,14 @@ from tastypie.models import create_api_key
 models.signals.post_save.connect(create_api_key, sender=User)
 
 SEVERITY_CHOICES = (
-                    (0, 'Debug'),
-                    (1, 'Info'),
-                    (2, 'Notify'),
-                    (3, 'Warning'),
-                    (4, 'Error'),
-                    (5, 'Critical'),
-                    (6, 'Alert'),
-                    (7, 'Emergency')
+                    (0, 'debug'),
+                    (1, 'info'),
+                    (2, 'notify'),
+                    (3, 'warning'),
+                    (4, 'error'),
+                    (5, 'critical'),
+                    (6, 'alert'),
+                    (7, 'emergency')
                    )
 
 class LogMessage(models.Model):
