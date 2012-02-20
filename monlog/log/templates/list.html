@@ -1,26 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <form class="well filters form-search">
-    <input type="hidden" name="ordering" value="">
-
-    <input type="checkbox" name="severity" value="emergency">
-    <input type="checkbox" name="severity" value="alert">
-    <input type="checkbox" name="severity" value="critical">
-    <input type="checkbox" name="severity" value="error">
-    <input type="checkbox" name="severity" value="warning">
-    <input type="checkbox" name="severity" value="notify">
-    <input type="checkbox" name="severity" value="info">
-    <input type="checkbox" name="severity" value="debug">
+    <input type="hidden" name="order_by" value="-datetime">
+        {% for id,name in severity_choices %}
+        <input type="checkbox" name="severity" value="{{ id }}">
+        {% endfor %}
         <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
           <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
-            <a href='#' class="btn sev-emergency" data-value="emergency"><span class="dot">&nbsp;</span>Emergency</a>
-            <a href='#' class="btn sev-alert" data-value="alert"><span class="dot">&nbsp;</span>Alert</a>
-            <a href='#' class="btn sev-critical" data-value="critical"><span class="dot">&nbsp;</span>Critical</a>
-            <a href='#' class="btn sev-error" data-value="error"><span class="dot">&nbsp;</span>Error</a>
-            <a href='#' class="btn sev-warning" data-value="warning"><span class="dot">&nbsp;</span>Warning</a>
-            <a href='#' class="btn sev-notify" data-value="notify"><span class="dot">&nbsp;</span>Notify</a>
-            <a href='#' class="btn sev-info" data-value="info"><span class="dot">&nbsp;</span>Info</a>
-            <a href='#' class="btn sev-debug" data-value="debug"><span class="dot">&nbsp;</span>Debug</a>
+            {% for id,name in severity_choices %}
+            <a href='#' class="btn sev-{{ name|lower }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name }}</a>
+            {% endfor %}
           </div>
           <input type="text" name="search" class="search-query" placeholder="Search...">
           <div id="advanced" class="collapse">
@@ -62,11 +51,11 @@
               <div class="control-group">
                   <label class="control-label" for="selectTime">Start of time range</label>
                   <div class="controls">
-                      <input type="date" value="2012-02-01" name="datetime__gte">
+                      <input type="date" name="datetime__gte">
                   </div>
                   <label class="control-label" for="selectTime">End of time range (optional)</label>
                   <div class="controls">
-                      <input type="date" value="2012-02-01" name="datetime__lte">
+                      <input type="date" name="datetime__lte">
                   </div>
               </div>
               <div class="well2">
@@ -112,7 +101,7 @@
         $("#toggle-advanced").removeClass("active");
         $("#toggle-advanced").html("&#9660");
         });
-    $(window).load(function() {
+    $(document).ready(function() {
         $("form.filters input[name='severity']").hide();
     });
     var toggleSeverity = function(button) {
@@ -133,8 +122,9 @@
             $(this).toggleClass('sorted-active');
         }
 
-        var ordering_param = this.id + "__" + ($(this).hasClass('sorted-desc') ? 'desc' : 'asc');
-        $('form.filters input[name="ordering"]').attr('value', ordering_param);
+        var ordering_param = ($(this).hasClass('sorted-desc') ? '-' : '') + this.id;
+        $('form.filters input[name="order_by"]').attr('value', ordering_param);
+        $('form.filters input[name="order_by"]').change();
     });
 </script>
 {% endblock %}
