@@ -29,6 +29,18 @@ class LogCollectionResource(ModelResource):
 
     User must be logged in and provide Djangos authentication cookie to be authenticated.
     """
+    def build_filters(self, filters=None):
+        if filters is None:
+            filters = {}
+        
+        orm = super(LogCollectionResource, self).build_filters(filters)
+
+        #if user doesn't specify severity level, no log messages will be returned.
+        if "severity__in" not in filters: #
+            orm['severity__in'] = ""
+
+        return orm
+
     application = fields.ForeignKey(ApplicationResource, 'application', full=True)
     class Meta:
 
