@@ -35,17 +35,6 @@ class RestTest(TestCase):
         add_logmessage = Permission.objects.get(codename='add_logmessage')
         User.objects.get(username=self.username).user_permissions.add(add_logmessage)
 
-    def test_filter(self):
-        """
-        Tests so filtering is applied correctly.
-        """
-        request = HttpRequest()  
-        User.objects.create_user("fakeuser", "fake@faker.com", "fakepass")
-        user = self.client.login(username="fakeuser", password="fakepass")
-        
-        response = self.client.get(self.logmessages_uri + "?severity=0&severity=1&format=json")
-        print dir(response)
-        print json.loads(response.content)['objects'][0]['severity']
 
     def test_auth(self):
         """

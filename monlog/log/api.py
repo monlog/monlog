@@ -9,48 +9,46 @@ from log.authentication import CookieAuthentication
 from log.models import LogMessage
 from log.validation import LogValidation
 
+
+class ApplicationResource(ModelResource):
+    """
+    Used by LogCollectionResource to enable filtering on applications. 
+    This resource is not available in the REST Api.
+    """
+    class Meta:
+        allowed_methods=[]
+        queryset = User.objects.all()
+        fields= ['id','username']
+        resource_name = "application"
+        ordering = ['username']
+
+
 class LogCollectionResource(ModelResource):
     """
     Allows a user to get log messages through GET requests. 
 
     User must be logged in and provide Djangos authentication cookie to be authenticated.
     """
-    def build_filters(self, filters=None):
-        """
-        Currently, the purpose of this function is to enable use of multiple matches in a single field, i.e.
-        /api/logmessages/?severity=0&severity=1
-        """
-        
-        if filters is None:
-            filters = {}
-
-        orm_filters = super(LogCollectionResource, self).build_filters(filters)
-
-        if "severity" in filters:
-            del orm_filters["severity__exact"] #remove old filter
-            orm_filters["severity__in"] = filters.getlist("severity")
-
-        return orm_filters   
-
-
+    application = fields.ForeignKey(ApplicationResource, 'application', full=True)
     class Meta:
+
         allowed_methods = ['get']
         queryset = LogMessage.objects.all()
         resource_name = "logmessages"
         authentication = CookieAuthentication()
         authorization = DjangoAuthorization()
         filtering = {
-            "severity" : ALL,
-            "datetime" : ALL,
-            "server_ip" : ALL,
-            "application" : ALL,
+            "severity" : ['in'],
+            "datetime" : ['gte','lte'],
+            "server_ip" : ['in'],
+            "application" : ['in']
         } 
-        ordering = {
-            "severity" : ALL,
-            "datetime" : ALL,
-            "server_ip" : ALL,
-            "application" : ALL,
-        }
+        ordering = ["severity",
+                    "datetime",
+                    "server_ip",
+                    "application"]
+
+
 
 class LogResource(ModelResource):
     class Meta:
