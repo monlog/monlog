@@ -31,17 +31,10 @@
               <div class="control-group">
                   <label class="control-label" for="selectApplication">Applications</label>
                   <div class="controls">
-                      <select multiple="multiple" name="applications__in" id="selectApplication" size="5">
-                          <option value="0">MyCoolCMS</option>
-                          <option value="0">Bankhemligheter</option>
-                          <option value="0">Monlog</option>
-                          <option value="0">Mail</option>
-                          <option value="0">Webreg</option>
-                          <option value="0">MyCoolCMS</option>
-                          <option value="0">Bankhemligheter</option>
-                          <option value="0">Monlog</option>
-                          <option value="0">Mail</option>
-                          <option value="0">Webreg</option>
+                      <select multiple="multiple" name="application__in" id="selectApplication" size="5">
+                          {% for app in application_choices %}
+                              <option value="{{ app.id }}">{{ app }}</option>
+                          {% endfor %}
                       </select>
                   </div>
               </div>
@@ -49,16 +42,9 @@
                   <label class="control-label" for="selectServer">Servers</label>
                   <div class="controls">
                       <select multiple="multiple" name="server_ip__in" id="selectServer" size="5">
-                          <option value="0">MyCoolCMS</option>
-                          <option value="0">Bankhemligheter</option>
-                          <option value="0">Monlog</option>
-                          <option value="0">Mail</option>
-                          <option value="0">Webreg</option>
-                          <option value="0">MyCoolCMS</option>
-                          <option value="0">Bankhemligheter</option>
-                          <option value="0">Monlog</option>
-                          <option value="0">Mail</option>
-                          <option value="0">Webreg</option>
+                          {% for server in server_choices %}
+                              <option value="{{ server.server_ip }}">{{ server.server_ip }}</option>
+                          {% endfor %}
                       </select>
                   </div>
               </div>
