@@ -40,6 +40,13 @@ class LogCollectionResource(ModelResource):
     def build_filters(self, filters=None):
         if filters is None:
             filters = {}
+        else:
+            filters = filters.copy()
+
+        if 'datetime__gte' in filters:
+            filters['datetime__gte'] = filters['datetime__gte'].replace("T", " ")
+        if 'datetime__lte' in filters:
+            filters['datetime__lte'] = filters['datetime__lte'].replace("T", " ")
 
         orm = super(LogCollectionResource, self).build_filters(filters)
 
