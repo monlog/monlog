@@ -6,8 +6,22 @@ from tastypie.resources import ModelResource, ALL
 from tastypie.authorization import DjangoAuthorization
 from log.authentication import MonlogAuthentication
 from log.authentication import CookieAuthentication
-from log.models import LogMessage
+from log.models import LogMessage, SEVERITY_CHOICES
 from log.validation import LogValidation
+
+
+class ApplicationResource(ModelResource):
+    """
+    Used by LogCollectionResource to enable filtering on applications. 
+    This resource is not available in the REST Api.
+    """
+    class Meta:
+        allowed_methods=[]
+        queryset = User.objects.all()
+        fields= ['id','username']
+        resource_name = "application"
+        ordering = ['username']
+
 
 class LogCollectionResource(ModelResource):
     """
@@ -15,6 +29,26 @@ class LogCollectionResource(ModelResource):
 
     User must be logged in and provide Djangos authentication cookie to be authenticated.
     """
+    application = fields.ForeignKey(ApplicationResource, 'application', full=True)
+
+    def dehydrate(self, bundle):
+        if 'severity' in bundle.data:
+            # translate numeric severity to text
+            bundle.data['severity'] = SEVERITY_CHOICES[bundle.data['severity']][1]
+        return bundle
+
+    def build_filters(self, filters=None):
+        if filters is None:
+            filters = {}
+
+        orm = super(LogCollectionResource, self).build_filters(filters)
+
+        # if user doesn't specify severity level, no log messages will be returned.
+        if "severity__in" not in filters:
+            orm['severity__in'] = ""
+
+        return orm
+
     class Meta:
         allowed_methods = ['get']
         queryset = LogMessage.objects.all()
@@ -22,17 +56,15 @@ class LogCollectionResource(ModelResource):
         authentication = CookieAuthentication()
         authorization = DjangoAuthorization()
         filtering = {
-            "severity" : ALL,
-            "datetime" : ALL,
-            "server_ip" : ALL,
-            "application" : ALL,
+            "severity" : ['in'],
+            "datetime" : ['gte','lte'],
+            "server_ip" : ['in'],
+            "application" : ['in']
         }
-        ordering = {
-            "severity" : ALL,
-            "datetime" : ALL,
-            "server_ip" : ALL,
-            "application" : ALL,
-        }
+        ordering = ["severity",
+                    "datetime",
+                    "server_ip",
+                    "application"]
 
 class LogResource(ModelResource):
     class Meta:

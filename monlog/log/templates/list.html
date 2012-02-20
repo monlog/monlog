@@ -1,70 +1,61 @@
 {% extends "base.html" %}
+{% load verbatim %}
 {% block content %}
+{% verbatim %}
+    <script id="log_messages" type="text/html">
+    {{#objects}}
+        <tr class="sev-{{ severity }}">
+            <td><span class="label">{{ severity }}</span></td>
+            <td><span class="">{{ datetime }}</span></td>
+            <td><span class="">{{ application.username }}</span></td>
+            <td><span class="">{{ server_ip }}</span></td>
+            <td><span class="">{{ short_desc }}</span></td>
+        </tr>
+    {{/objects}}
+    </script>
+{% endverbatim %}
 <form class="well filters form-search">
-    <input type="checkbox" name="severity" value="emergency">
-    <input type="checkbox" name="severity" value="alert">
-    <input type="checkbox" name="severity" value="critical">
-    <input type="checkbox" name="severity" value="error">
-    <input type="checkbox" name="severity" value="warning">
-    <input type="checkbox" name="severity" value="notify">
-    <input type="checkbox" name="severity" value="info">
-    <input type="checkbox" name="severity" value="debug">
+    <input type="hidden" name="order_by" value="-datetime">
+        {% for id, name in severity_choices %}
+            <input type="checkbox" checked="checked" name="severity__in" value="{{ id }}">
+        {% endfor %}
         <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
           <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
-            <a href='#' class="btn sev-emergency" data-value="emergency"><span class="dot">&nbsp;</span>Emergency</a>
-            <a href='#' class="btn sev-alert" data-value="alert"><span class="dot">&nbsp;</span>Alert</a>
-            <a href='#' class="btn sev-critical" data-value="critical"><span class="dot">&nbsp;</span>Critical</a>
-            <a href='#' class="btn sev-error" data-value="error"><span class="dot">&nbsp;</span>Error</a>
-            <a href='#' class="btn sev-warning" data-value="warning"><span class="dot">&nbsp;</span>Warning</a>
-            <a href='#' class="btn sev-notify" data-value="notify"><span class="dot">&nbsp;</span>Notify</a>
-            <a href='#' class="btn sev-info" data-value="info"><span class="dot">&nbsp;</span>Info</a>
-            <a href='#' class="btn sev-debug" data-value="debug"><span class="dot">&nbsp;</span>Debug</a>
+            {% for id, name in severity_choices %}
+                <a href='#' class="btn active sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
+            {% endfor %}
           </div>
-          <input type="text" class="search-query" placeholder="Search...">
+          <input type="text" name="search" class="search-query" placeholder="Search...">
           <div id="advanced" class="collapse">
               <hr />
               <div class="control-group">
                   <label class="control-label" for="selectApplication">Applications</label>
                   <div class="controls">
-                      <select multiple="multiple" id="selectApplication" size="5">
-                          <option value="0">MyCoolCMS</option>
-                          <option value="0">Bankhemligheter</option>
-                          <option value="0">Monlog</option>
-                          <option value="0">Mail</option>
-                          <option value="0">Webreg</option>
-                          <option value="0">MyCoolCMS</option>
-                          <option value="0">Bankhemligheter</option>
-                          <option value="0">Monlog</option>
-                          <option value="0">Mail</option>
-                          <option value="0">Webreg</option>
+                      <select multiple="multiple" name="application__in" id="selectApplication" size="5">
+                          {% for app in application_choices %}
+                              <option value="{{ app.id }}">{{ app }}</option>
+                          {% endfor %}
                       </select>
                   </div>
               </div>
               <div class="control-group">
                   <label class="control-label" for="selectServer">Servers</label>
                   <div class="controls">
-                      <select multiple="multiple" id="selectServer" size="5">
-                          <option value="0">MyCoolCMS</option>
-                          <option value="0">Bankhemligheter</option>
-                          <option value="0">Monlog</option>
-                          <option value="0">Mail</option>
-                          <option value="0">Webreg</option>
-                          <option value="0">MyCoolCMS</option>
-                          <option value="0">Bankhemligheter</option>
-                          <option value="0">Monlog</option>
-                          <option value="0">Mail</option>
-                          <option value="0">Webreg</option>
+                      <select multiple="multiple" name="server_ip__in" id="selectServer" size="5">
+                          {% for server in server_choices %}
+                              <option value="{{ server.server_ip }}">{{ server.server_ip }}</option>
+                          {% endfor %}
                       </select>
                   </div>
               </div>
               <div class="control-group">
                   <label class="control-label" for="selectTime">Start of time range</label>
                   <div class="controls">
-                      <input type="date" value="2012-02-01" name="start">
+                      <input type="date" name="datetime__gte">
                   </div>
                   <label class="control-label" for="selectTime">End of time range (optional)</label>
                   <div class="controls">
-                      <input type="date" value="2012-02-01" name="end">
+                      <input type="date" name="datetime__lte">
                   </div>
               </div>
               <div class="well2">
@@ -81,25 +72,18 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Severity</th>
-                <th>Time</th>
-                <th>Application</th>
-                <th>Server</th>
+                <th id="severity" class="sortable sorted-desc">Severity</th>
+                <th id="datetime" class="sortable sorted-desc sorted-active">Time</th>
+                <th id="application__username" class="sortable sorted-desc">Application</th>
+                <th id="server_ip" class="sortable sorted-desc">Server</th>
                 <th>Message</th>
             </tr>
         </thead>
         <tbody>
-            {% for msg in filterset %}
-            <tr class="sev-{{ msg.pretty_severity|lower }}">
-                <td><span class="label">{{ msg.pretty_severity }}</span></td>
-                <td><span class="">{{ msg.datetime|date:"Y-m-d H:i:s" }}</span></td>
-                <td><span class="">{{ msg.application }}</span></td>
-                <td><span class="">{{ msg.server_ip }}</span></td>
-                <td><span class="">{{ msg.short_desc }}</span></td>
-            </tr>
-            {% endfor %}
+            <!-- no log messages loaded -->
         </tbody>
     </table>
+<script src="{{ STATIC_URL }}js/api.js" type="text/javascript"></script>
 <script type="text/javascript" language="javascript">
     $("#advanced").on('show', function(){
             $("#toggle-advanced").addClass("active");
@@ -109,15 +93,30 @@
         $("#toggle-advanced").removeClass("active");
         $("#toggle-advanced").html("&#9660");
         });
-    $(window).load(function() {
-        $("form.filters input[name='severity']").hide();
+    $(document).ready(function() {
+        $("form.filters input[name='severity__in']").hide();
     });
     var toggleSeverity = function(button) {
         var checkbox = $("form.filters input[value='" + button.dataset['value'] + "']");
         checkbox.prop("checked", ! checkbox.prop("checked"));
+        checkbox.change();
     };
     $("#severity-buttons a").bind('click', function(event){
         toggleSeverity(this);
+    });
+    $("th.sortable").append('<i class="icon-sortable"></i>');
+    $("th.sortable").bind('click', function(event){
+        if ($(this).hasClass('sorted-active')) {
+            // already sorted on this column, so user wants to switch direction of sort
+            $(this).toggleClass('sorted-desc').toggleClass('sorted-asc');
+        } else {
+            $("th.sortable").removeClass('sorted-active');
+            $(this).toggleClass('sorted-active');
+        }
+
+        var ordering_param = ($(this).hasClass('sorted-desc') ? '-' : '') + this.id;
+        $('form.filters input[name="order_by"]').attr('value', ordering_param);
+        $('form.filters input[name="order_by"]').change();
     });
 </script>
 {% endblock %}
