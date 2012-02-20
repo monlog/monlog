@@ -1,14 +1,28 @@
 {% extends "base.html" %}
+{% load verbatim %}
 {% block content %}
+{% verbatim %}
+    <script id="log_messages" type="text/html">
+    {{#objects}}
+        <tr class="sev-{{ severity }}">
+            <td><span class="label">{{ severity }}</span></td>
+            <td><span class="">{{ datetime }}</span></td>
+            <td><span class="">{{ application.username }}</span></td>
+            <td><span class="">{{ server_ip }}</span></td>
+            <td><span class="">{{ short_desc }}</span></td>
+        </tr>
+    {{/objects}}
+    </script>
+{% endverbatim %}
 <form class="well filters form-search">
     <input type="hidden" name="order_by" value="-datetime">
-        {% for id,name in severity_choices %}
-        <input type="checkbox" name="severity__in" value="{{ id }}">
+        {% for id, name in severity_choices %}
+            <input type="checkbox" name="severity__in" value="{{ id }}">
         {% endfor %}
         <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
           <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
-            {% for id,name in severity_choices %}
-            <a href='#' class="btn sev-{{ name|lower }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name }}</a>
+            {% for id, name in severity_choices %}
+                <a href='#' class="btn sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
             {% endfor %}
           </div>
           <input type="text" name="search" class="search-query" placeholder="Search...">
@@ -80,15 +94,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for msg in filterset %}
-            <tr class="sev-{{ msg.pretty_severity|lower }}">
-                <td><span class="label">{{ msg.pretty_severity }}</span></td>
-                <td><span class="">{{ msg.datetime|date:"Y-m-d H:i:s" }}</span></td>
-                <td><span class="">{{ msg.application }}</span></td>
-                <td><span class="">{{ msg.server_ip }}</span></td>
-                <td><span class="">{{ msg.short_desc }}</span></td>
-            </tr>
-            {% endfor %}
+            <!-- no log messages loaded -->
         </tbody>
     </table>
 <script src="{{ STATIC_URL }}js/api.js" type="text/javascript"></script>
