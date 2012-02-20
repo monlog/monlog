@@ -14,8 +14,10 @@ def list(request):
 
 @login_required
 def save_label(request):
+    context = RequestContext(request)
+    context["name"] = request.POST["name"]
     label = Label(name=request.POST['name'], 
                   query_string=request.POST['query_string'] )
     label.save()
-    return render_to_response('label_saved.html')
+    return render_to_response('label_saved.html', context)
     

@@ -40,6 +40,7 @@ class LogMessage(models.Model):
 class Label(models.Model):
     """ Model of a search filter that may be saved """
     query_string = models.TextField()
+    label_name = models.CharField(max_length=20)
     def __unicode__(self):
         return self.query_string
 
