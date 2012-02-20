@@ -1,7 +1,12 @@
 var requestLogmessages = function() {
-    var formData = $('.filters').serialize();
-    var url = "/api/logmessages/?" + formData;
-    console.log(url);
+    var formData = $.map($('.filters').serializeArray(), function(n) {
+        if (n.value == "") {
+            return null;
+        }
+        return n;
+    });
+    
+    var url = "/api/logmessages/?" + $.param(formData);
     $.getJSON(url,
         function(data,textStatus,jqXHR) {
             console.log(data);
