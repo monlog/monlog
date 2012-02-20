@@ -13,6 +13,9 @@
         </tr>
     {{/objects}}
     </script>
+    <script id="refresh_notice_template" type="text/html">
+        <a href="#">Click here to display {{ count }} new message(s).</a>
+    </script>
 {% endverbatim %}
 <form class="well filters form-search">
     <input type="hidden" name="order_by" value="-datetime">
@@ -68,7 +71,8 @@
                   </div>
               </div>
           </div>
-    </form>
+      </form>
+    <div id="refresh_notice" class="well"></div>
     <table class="table">
         <thead>
             <tr>
