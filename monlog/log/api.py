@@ -66,7 +66,8 @@ class LogCollectionResource(ModelResource):
             "severity" : ['in'],
             "datetime" : ['gte','lte'],
             "server_ip" : ['in'],
-            "application" : ['in']
+            "application" : ['in'],
+            "add_datetime" : ['gte', 'lte']
         }
         ordering = ["severity",
                     "datetime",
