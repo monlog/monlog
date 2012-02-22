@@ -37,6 +37,8 @@ var requestLogMessages = function(update) {
         if (typeof lastDisplayedDatetime !== 'undefined') {
             formData.push({ 'name': 'add_datetime__gte', 'value': lastDisplayedDatetime });
         }
+    } else {
+        $("#loading_indicator").fadeIn(300);
     }
 
     var url = "/api/logmessages/?" + $.param(formData);
@@ -44,6 +46,7 @@ var requestLogMessages = function(update) {
         function(data,textStatus,jqXHR) {
             if (update) {
                 displayLogMessages(data, true);
+                $("#loading_indicator").fadeOut(300);
             } else {
                 pendingData = data;
                 var count = data['objects'].length;
@@ -68,7 +71,9 @@ var refreshClickHandler = function(event) {
 $(document).ready(function() {
     var updateHandler = function() { requestLogMessages(true); };
     $('.filters input, .filters select').change(updateHandler);
-    $('.filters .search-query').keypress(updateHandler);
+    // disable until we have full text search
+    // needs a timeout so it doesn't trigger a search for every key press right away
+    // $('.filters .search-query').keypress(updateHandler);
     $('form.filters').submit(function(event){
         requestLogMessages(true);
         event.preventDefault();
