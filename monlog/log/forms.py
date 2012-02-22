@@ -1,9 +1,12 @@
 from log.models import LogMessage
 from django.db import models
 from django import forms
-from django.forms.widgets import CheckboxSelectMultiple,SelectMultiple
+from django.forms.widgets import CheckboxSelectMultiple,SelectMultiple, DateTimeInput
 from log.models import SEVERITY_CHOICES
 from django.contrib.auth.models import User
+
+class LogDateTime(DateTimeInput):
+    input_type = 'datetime'
 
 class LogQueryForm(forms.Form):
     user_values = [(x['id'],x['username']) for x in User.objects.all().values()] 
@@ -15,3 +18,5 @@ class LogQueryForm(forms.Form):
     severity__in = forms.MultipleChoiceField(required=False, widget=CheckboxSelectMultiple(attrs={'checked':'checked'}), choices=SEVERITY_CHOICES)
     application__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=user_values)
     server_ip__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=server_values)
+    datetime__gte = forms.DateTimeField(required=False, widget=LogDateTime)
+    datetime__lte = forms.DateTimeField(required=False, widget=LogDateTime)
