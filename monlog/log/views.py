@@ -12,6 +12,4 @@ def list(request):
     queryset = LogMessage.objects.all()
     lqf = LogQueryForm()
     context['lqf'] = lqf
-    context['application_choices'] = User.objects.all()
-    context['server_choices'] = LogMessage.objects.all().order_by('server_ip').values('server_ip').distinct()
     return render_to_response('list.html', context)
