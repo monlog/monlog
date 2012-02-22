@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 
 class LogDateTime(DateTimeInput):
     input_type = 'datetime'
+    
 
 class LogQueryForm(forms.Form):
     user_values = [(x['id'],x['username']) for x in User.objects.all().values()] 
