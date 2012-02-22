@@ -1,5 +1,7 @@
 # Django settings for monlog project.
 
+API_LIMIT_PER_PAGE = 0
+
 FIXTURE_DIRS = ('./log/fixtures',)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
