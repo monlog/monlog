@@ -35,11 +35,7 @@
               <div class="control-group">
                   <label class="control-label" for="selectApplication">Applications</label>
                   <div class="controls">
-                      <select multiple="multiple" name="application__in" id="selectApplication" size="5">
-                          {% for app in application_choices %}
-                              <option value="{{ app.id }}">{{ app }}</option>
-                          {% endfor %}
-                      </select>
+                      {{lqf.application__in}}
                   </div>
               </div>
               <div class="control-group">
