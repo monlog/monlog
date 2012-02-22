@@ -45,10 +45,12 @@ class LogCollectionResource(ModelResource):
 
         if 'datetime__gte' in filters:
             filters['datetime__gte'] = filters['datetime__gte'].replace("T", " ")
-            filters['datetime__gte'] = filters['datetime__gte'].replace("Z", "")
         if 'datetime__lte' in filters:
             filters['datetime__lte'] = filters['datetime__lte'].replace("T", " ")
-            filters['datetime__lte'] = filters['datetime__lte'].replace("Z", "")
+        if 'add_datetime__gte' in filters:
+            filters['add_datetime__gte'] = filters['add_datetime__gte'].replace("T", " ")
+        if 'add_datetime__lte' in filters:
+            filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("T", " ")
 
         orm = super(LogCollectionResource, self).build_filters(filters)
 

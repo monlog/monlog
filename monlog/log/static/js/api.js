@@ -8,13 +8,22 @@ var refreshTimeout = 5000;
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference:Global_Objects:Date#Example:_ISO_8601_formatted_dates
 function ISODateString(d){
   function pad(n){return n<10 ? '0'+n : n}
-  return d.getUTCFullYear()+'-'
-      + pad(d.getUTCMonth()+1)+'-'
-      + pad(d.getUTCDate())+'T'
-      + pad(d.getUTCHours())+':'
-      + pad(d.getUTCMinutes())+':'
-      + pad(d.getUTCSeconds())+'Z'
+  return d.getFullYear()+'-'
+      + pad(d.getMonth()+1)+'-'
+      + pad(d.getDate())+'T'
+      + pad(d.getHours())+':'
+      + pad(d.getMinutes())+':'
+      + pad(d.getSeconds())
 }
+
+var displayLogMessages = function(data, replace) {
+    var count = data['objects'].length;
+    if (count > 0) {
+        $(".content .table tbody").html(ich.log_messages(data));
+    }
+    lastDisplayedDatetime = ISODateString(new Date());
+    $('#refresh_notice').hide();
+};
 
 var requestLogMessages = function(update) {
     var formData = $.map($('.filters').serializeArray(), function(n) {
@@ -26,7 +35,7 @@ var requestLogMessages = function(update) {
 
     if (! update) { // this is a refresh request, so we should only match new log messages
         if (typeof lastDisplayedDatetime !== 'undefined') {
-            formData.push({ 'name': 'datetime__gte', 'value': lastDisplayedDatetime });
+            formData.push({ 'name': 'add_datetime__gte', 'value': lastDisplayedDatetime });
         }
     }
 
@@ -34,9 +43,7 @@ var requestLogMessages = function(update) {
     $.getJSON(url,
         function(data,textStatus,jqXHR) {
             if (update) {
-                $(".content .table tbody").html(ich.log_messages(data));
-                lastDisplayedDatetime = ISODateString(new Date());
-                $('#refresh_notice').hide();
+                displayLogMessages(data, true);
             } else {
                 pendingData = data;
                 var count = data['objects'].length;
@@ -51,7 +58,12 @@ var requestLogMessages = function(update) {
             }
         }
     );
-}
+};
+
+var refreshClickHandler = function(event) {
+    requestLogMessages(true);
+    $('#refresh_notice').hide();
+};
 
 $(document).ready(function() {
     var updateHandler = function() { requestLogMessages(true); };
@@ -61,6 +73,7 @@ $(document).ready(function() {
         requestLogMessages(true);
         event.preventDefault();
     });
+    $('#refresh_notice').bind('click', refreshClickHandler);
     requestLogMessages(true);
     window.setTimeout(function() { requestLogMessages(false); }, refreshTimeout);
 });
