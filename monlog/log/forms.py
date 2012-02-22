@@ -7,8 +7,11 @@ from django.contrib.auth.models import User
 
 class LogQueryForm(forms.Form):
     user_values = [(x['id'],x['username']) for x in User.objects.all().values()] 
+    servers = LogMessage.objects.all().order_by('server_ip').values('server_ip').distinct()
+    server_values = [(x['server_ip'],x['server_ip']) for x in servers] 
 
     search = forms.CharField(max_length=100,
                      widget=forms.TextInput(attrs={'class':'search-query', 'placeholder':"Search..."}))
     severity__in = forms.MultipleChoiceField(required=False, widget=CheckboxSelectMultiple(attrs={'checked':'checked'}), choices=SEVERITY_CHOICES)
     application__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=user_values)
+    server_ip__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=server_values)

@@ -41,11 +41,7 @@
               <div class="control-group">
                   <label class="control-label" for="selectServer">Servers</label>
                   <div class="controls">
-                      <select multiple="multiple" name="server_ip__in" id="selectServer" size="5">
-                          {% for server in server_choices %}
-                              <option value="{{ server.server_ip }}">{{ server.server_ip }}</option>
-                          {% endfor %}
-                      </select>
+                      {{ lqf.server_ip__in }}
                   </div>
               </div>
               <div class="control-group">
