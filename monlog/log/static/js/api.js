@@ -4,6 +4,18 @@ var lastDisplayedDatetime;
 var maxObjects = 20;
 var refreshTimeout = 5000;
 
+// ISO 8601 date format function from:
+// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference:Global_Objects:Date#Example:_ISO_8601_formatted_dates
+function ISODateString(d){
+  function pad(n){return n<10 ? '0'+n : n}
+  return d.getUTCFullYear()+'-'
+      + pad(d.getUTCMonth()+1)+'-'
+      + pad(d.getUTCDate())+'T'
+      + pad(d.getUTCHours())+':'
+      + pad(d.getUTCMinutes())+':'
+      + pad(d.getUTCSeconds())+'Z'
+}
+
 var requestLogMessages = function(update) {
     var formData = $.map($('.filters').serializeArray(), function(n) {
         if (n.value == "") {
@@ -23,16 +35,18 @@ var requestLogMessages = function(update) {
         function(data,textStatus,jqXHR) {
             if (update) {
                 $(".content .table tbody").html(ich.log_messages(data));
-                lastDisplayedDatetime = data['objects'][data['objects'].length - 1]['datetime'];
+                lastDisplayedDatetime = ISODateString(new Date());
                 $('#refresh_notice').hide();
             } else {
                 pendingData = data;
                 var count = data['objects'].length;
-                if (count >= maxObjects) {
-                    count = count + "+";
+                if (count > 0) {
+                    if (count >= maxObjects) {
+                        count = count + "+";
+                    }
+                    $('#refresh_notice').html(ich.refresh_notice_template({ 'count': count }));
+                    $('#refresh_notice').show();
                 }
-                $('#refresh_notice').html(ich.refresh_notice_template({ 'count': count }));
-                $('#refresh_notice').show();
                 window.setTimeout(function() { requestLogMessages(false); }, refreshTimeout);
             }
         }
