@@ -71,7 +71,9 @@ var refreshClickHandler = function(event) {
 $(document).ready(function() {
     var updateHandler = function() { requestLogMessages(true); };
     $('.filters input, .filters select').change(updateHandler);
-    $('.filters .search-query').keypress(updateHandler);
+    // disable until we have full text search
+    // needs a timeout so it doesn't trigger a search for every key press right away
+    // $('.filters .search-query').keypress(updateHandler);
     $('form.filters').submit(function(event){
         requestLogMessages(true);
         event.preventDefault();
