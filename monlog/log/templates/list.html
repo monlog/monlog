@@ -4,7 +4,7 @@
 {% verbatim %}
     <script id="log_messages" type="text/html">
     {{#objects}}
-        <tr class="sev-{{ severity }}">
+    <tr class="sev-{{ severity }}{{#old}} old-data{{/old}}">
             <td><span class="label">{{ severity }}</span></td>
             <td><span class="">{{ datetime }}</span></td>
             <td><span class="">{{ application.username }}</span></td>
