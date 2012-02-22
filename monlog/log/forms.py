@@ -14,9 +14,10 @@ class LogQueryForm(forms.Form):
     server_values = [(x['server_ip'],x['server_ip']) for x in servers] 
 
     search = forms.CharField(max_length=100,
-                     widget=forms.TextInput(attrs={'class':'search-query', 'placeholder':"Search..."}))
+                     widget=forms.TextInput(attrs={'class':'search-query', 'placeholder':'Search...'}))
     severity__in = forms.MultipleChoiceField(required=False, widget=CheckboxSelectMultiple(attrs={'checked':'checked'}), choices=SEVERITY_CHOICES)
     application__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=user_values)
     server_ip__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=server_values)
     datetime__gte = forms.DateTimeField(required=False, widget=LogDateTime)
     datetime__lte = forms.DateTimeField(required=False, widget=LogDateTime)
+    label = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'Enter a label name...'}))
