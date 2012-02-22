@@ -2,7 +2,7 @@ var pendingData;
 var lastDisplayedDatetime;
 // if refresh requests return more than this, we don't know exact number of new messages
 var maxObjects = 20;
-var refreshTimeout = 5000;
+var refreshTimeout = 500;
 
 // ISO 8601 date format function from:
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference:Global_Objects:Date#Example:_ISO_8601_formatted_dates
