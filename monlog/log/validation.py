@@ -48,12 +48,12 @@ class LogValidation(Validation):
             data = {}
 
         errors = {}
-        
+
         # Validate datetime
         if 'datetime' not in data:
             errors['datetime'] = 'Datetime not included in request.'
         else:
-            DATETIME_REGEX = re.compile('^(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})(T|\s+)(?P<hour>\d{2}):(?P<minute>\d{2}):(?P<second>\d{2}).*?$')
+            DATETIME_REGEX = re.compile('^(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})(T)(?P<hour>\d{2}):(?P<minute>\d{2}):(?P<second>\d{2}).*?$')
             match = DATETIME_REGEX.search(data['datetime'])
             if match:
                 dt_data = match.groupdict()
@@ -63,7 +63,7 @@ class LogValidation(Validation):
                 except ValueError:
                     errors['datetime'] = "ValueError: Datetime is wrong."
             else:
-                errors['datetime'] = 'Datetime badly formatted'
+                errors['datetime'] = 'Datetime badly formatted (use ISO 8601!)'
 
         
         # Validate severity

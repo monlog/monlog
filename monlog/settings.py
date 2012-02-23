@@ -1,5 +1,7 @@
 # Django settings for monlog project.
 
+API_LIMIT_PER_PAGE = 0
+
 FIXTURE_DIRS = ('./log/fixtures',)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -11,7 +13,7 @@ TEMPLATE_DEBUG = DEBUG
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Europe/Stockholm'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html

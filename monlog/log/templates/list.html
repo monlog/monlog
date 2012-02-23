@@ -4,7 +4,7 @@
 {% verbatim %}
     <script id="log_messages" type="text/html">
     {{#objects}}
-        <tr class="sev-{{ severity }}">
+    <tr class="sev-{{ severity }}{{#old}} old-data{{/old}}">
             <td><span class="label">{{ severity }}</span></td>
             <td><span class="">{{ datetime }}</span></td>
             <td><span class="">{{ application.username }}</span></td>
@@ -12,6 +12,9 @@
             <td><span class="">{{ short_desc }}</span></td>
         </tr>
     {{/objects}}
+    </script>
+    <script id="refresh_notice_template" type="text/html">
+        <a href="#">Click here to display {{ count }} new message(s).</a>
     </script>
 {% endverbatim %}
 <form class="well filters form-search">
@@ -68,7 +71,8 @@
                   </div>
               </div>
           </div>
-    </form>
+      </form>
+      <div id="refresh_notice" class="well"></div>
     <table class="table">
         <thead>
             <tr>
