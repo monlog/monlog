@@ -4,7 +4,7 @@
 {% verbatim %}
     <script id="log_messages" type="text/html">
     {{#objects}}
-        <tr class="sev-{{ severity }}">
+    <tr class="sev-{{ severity }}{{#old}} old-data{{/old}}">
             <td><span class="label">{{ severity }}</span></td>
             <td><span class="">{{ datetime }}</span></td>
             <td><span class="">{{ application.username }}</span></td>
@@ -13,62 +13,59 @@
         </tr>
     {{/objects}}
     </script>
+    <script id="refresh_notice_template" type="text/html">
+        <a href="#">Click here to display {{ count }} new message(s).</a>
+    </script>
 {% endverbatim %}
+
 <form class="well filters form-search">
     <input type="hidden" name="order_by" value="-datetime">
-        {% for id, name in severity_choices %}
-            <input type="checkbox" checked="checked" name="severity__in" value="{{ id }}">
-        {% endfor %}
+        <div id="severity-checkboxes">
+        {{ lqf.severity__in }}
+        </div>
         <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
           <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
-            {% for id, name in severity_choices %}
+            {% for id, name in lqf.severity__in.field.choices %}
                 <a href='#' class="btn active sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
             {% endfor %}
           </div>
-          <input type="text" name="search" class="search-query" placeholder="Search...">
+          {{lqf.search}}
           <div id="advanced" class="collapse">
               <hr />
               <div class="control-group">
-                  <label class="control-label" for="selectApplication">Applications</label>
+                  <label class="control-label" for="id_application__in">Applications</label>
                   <div class="controls">
-                      <select multiple="multiple" name="application__in" id="selectApplication" size="5">
-                          {% for app in application_choices %}
-                              <option value="{{ app.id }}">{{ app }}</option>
-                          {% endfor %}
-                      </select>
+                      {{lqf.application__in}}
                   </div>
               </div>
               <div class="control-group">
-                  <label class="control-label" for="selectServer">Servers</label>
+                  <label class="control-label" for="id_application__in">Servers</label>
                   <div class="controls">
-                      <select multiple="multiple" name="server_ip__in" id="selectServer" size="5">
-                          {% for server in server_choices %}
-                              <option value="{{ server.server_ip }}">{{ server.server_ip }}</option>
-                          {% endfor %}
-                      </select>
+                      {{ lqf.server_ip__in }}
                   </div>
               </div>
               <div class="control-group">
-                  <label class="control-label" for="selectTime">Start of time range</label>
+                  <label class="control-label" for="id_datetime__gte">Start of time range</label>
                   <div class="controls">
-                      <input type="date" name="datetime__gte">
+                      {{ lqf.datetime__gte }} 
                   </div>
-                  <label class="control-label" for="selectTime">End of time range (optional)</label>
+                  <label class="control-label" for="id_datetime__lte">End of time range (optional)</label>
                   <div class="controls">
-                      <input type="date" name="datetime__lte">
+                      {{ lqf.datetime__lte }}
                   </div>
               </div>
               <div class="well2">
                   <div class="control-group">
                       <label class="control-label">Save this search as a label</label>
                       <div class="controls">
-                          <input type="text" class="" placeholder="Enter a label name">
+                          {{ lqf.label }}
                           <button class="btn btn-primary">Save</button>
                       </div>
                   </div>
               </div>
           </div>
-    </form>
+      </form>
+      <div id="refresh_notice" class="well"></div>
     <table class="table">
         <thead>
             <tr>
@@ -84,7 +81,7 @@
         </tbody>
     </table>
 <script src="{{ STATIC_URL }}js/api.js" type="text/javascript"></script>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
     $("#advanced").on('show', function(){
             $("#toggle-advanced").addClass("active");
             $("#toggle-advanced").html("&#9650");
@@ -94,7 +91,10 @@
         $("#toggle-advanced").html("&#9660");
         });
     $(document).ready(function() {
-        $("form.filters input[name='severity__in']").hide();
+        $("#severity-checkboxes").hide();
+        var datetimepickerFormat = {timeFormat: 'hh:mm:ss', dateFormat: 'yy-mm-dd', separator :'T'};
+        $("#id_datetime__gte").datetimepicker(datetimepickerFormat);
+        $("#id_datetime__lte").datetimepicker(datetimepickerFormat);
     });
     var toggleSeverity = function(button) {
         var checkbox = $("form.filters input[value='" + button.dataset['value'] + "']");

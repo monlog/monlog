@@ -19,6 +19,7 @@ class LogMessage(models.Model):
     """ Model of a log message """
     severity = models.IntegerField(choices=SEVERITY_CHOICES)
     datetime = models.DateTimeField()
+    add_datetime = models.DateTimeField(auto_now_add=True)
     server_ip = models.IPAddressField()
     application = models.ForeignKey(User)
     short_desc = models.CharField(max_length=100)
