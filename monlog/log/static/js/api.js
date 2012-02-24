@@ -18,19 +18,15 @@ function ISODateString(d){
 }
 
 var displayLogMessages = function(data) {
-    var count = data['objects'].length;
     var newDisplayedIds = [];
-    if (count > 0) {
-        $.each(data['objects'], function(i, el) {
-            if (typeof displayedIds == 'undefined' || $.inArray(el['id'], displayedIds) !== -1) {
-                // this is an old log message
-                el['old'] = true;
-            }
-            newDisplayedIds.push(el['id']);
-        });
-        console.log(data);
-        $(".content .table tbody").html(ich.log_messages(data));
-    }
+    $.each(data['objects'], function(i, el) {
+        if (typeof displayedIds == 'undefined' || $.inArray(el['id'], displayedIds) !== -1) {
+            // this is an old log message
+            el['old'] = true;
+        }
+        newDisplayedIds.push(el['id']);
+    });
+    $(".content .table tbody").html(ich.log_messages(data));
     lastDisplayedDatetime = ISODateString(new Date());
     displayedIds = newDisplayedIds;
     $('#refresh_notice').hide();
