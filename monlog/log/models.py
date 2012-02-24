@@ -42,6 +42,11 @@ class Label(models.Model):
     """ Model of a search filter that may be saved """
     query_string = models.TextField()
     label_name = models.CharField(max_length=20,unique=True)
+
+    def __init__(self, label_name, query_string):
+        self.label_name = label_name
+        #split query_string
+
     def __unicode__(self):
         return self.label_name
 
