@@ -4,12 +4,12 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from models import LogMessage, SEVERITY_CHOICES
 from django.contrib.auth.models import User
+from log.forms import LogQueryForm
 
 @login_required
 def list(request):
     context = RequestContext(request)
     queryset = LogMessage.objects.all()
-    context['severity_choices'] = SEVERITY_CHOICES
-    context['application_choices'] = User.objects.all()
-    context['server_choices'] = LogMessage.objects.all().order_by('server_ip').values('server_ip').distinct()
+    lqf = LogQueryForm()
+    context['lqf'] = lqf
     return render_to_response('list.html', context)
