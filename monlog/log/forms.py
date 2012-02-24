@@ -19,8 +19,8 @@ class LogQueryForm(forms.Form):
     application__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=())
     server_ip__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=())
     
-    def __init__(self):
-        super(LogQueryForm, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(LogQueryForm, self).__init__(*args, **kwargs)
         self.user_values = [(x['id'],x['username']) for x in User.objects.all().values()]
         self.servers = LogMessage.objects.all().order_by('server_ip').values('server_ip').distinct()
         self.server_values = [(x['server_ip'],x['server_ip']) for x in self.servers]

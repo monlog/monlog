@@ -15,7 +15,7 @@ def list(request):
     if label_name:
         label = Label.objects.get()
         if label:
-            lqf = LogQueryForm()
+            lqf = LogQueryForm(label.get_dict())
     context['lqf'] = lqf
     return render_to_response('list.html', context)
 
