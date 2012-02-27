@@ -85,9 +85,13 @@
 <script type="text/javascript">
     $("#collapse-form").on('show', function(){
         $("#collapse-form").removeClass("non-expanded");
+        $("#streaming").addClass("streaming-deactivated");
+        $("#streaming").html("Streaming paused");
     });
     $("#collapse-form").on('hide', function(){
         $("#collapse-form").addClass("non-expanded");
+        $("#streaming").removeClass("streaming-deactivated");
+        $("#streaming").html("Streaming");
     });
     $(document).ready(function() {
         $("#severity-checkboxes").hide();
