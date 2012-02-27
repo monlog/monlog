@@ -50,9 +50,23 @@ class LogValidation(Validation):
         errors = {}
 
         # Validate datetime
-        if 'datetime' not in data:
-            errors['datetime'] = 'Datetime not included in request.'
+  
+        if 'timestamp' not in data:
+            errors['timestamp'] = 'Datetime not included in request.'
         else:
+            if not data.isdigit():
+                errors['timestamp'] = 'Timestamp badly formatted (need to be in UNIX timestamp)' 
+            else:
+                try:
+                    int_test = int(data["timestamp"])
+                except ValueError:
+                    errors['timestamp'] = 'Timestamp needs to be numeric.'
+
+
+                    
+            # We don't need this anymore since we're getting unix timestamp from the client instead.
+            """
+            else:
             DATETIME_REGEX = re.compile('^(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})(T)(?P<hour>\d{2}):(?P<minute>\d{2}):(?P<second>\d{2}).*?$')
             match = DATETIME_REGEX.search(data['datetime'])
             if match:
@@ -64,7 +78,7 @@ class LogValidation(Validation):
                     errors['datetime'] = "ValueError: Datetime is wrong."
             else:
                 errors['datetime'] = 'Datetime badly formatted (use ISO 8601!)'
-
+            """
         
         # Validate severity
         if 'severity' not in data:
