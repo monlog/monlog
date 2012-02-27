@@ -15,6 +15,9 @@ Requirements:
 We'll be using the mod_wsgi Apache module, so install it now:
     apt-get install libapache2-mod-wsgi
 
+To be able to compile and use Python's MySQL driver, install these dependencies:
+    apt-get install libmysqlclient-dev python-dev
+
 Also install Python's virtualenv and pip, for Python dependency resolution:
     apt-get install python-virtualenv python-pip
 
@@ -33,28 +36,40 @@ Enter the virtual environment and install Monlog's Python dependencies:
     . ~/monlog/venv/bin/activate
     pip install -r ~/monlog/requirements.txt
 
+Open ~/monlog/monlog/settings.py and add your database information at the top of the file
+
+(Re-)enter the virtual environment and have Monlog create its database tables:
+    . ~/monlog/venv/bin/activate
+    python ~/monlog/monlog/manage.py syncdb
+
+You'll be asked to create a superuser account, make sure you remember it!
+
 Add an Apache site for Monlog by putting the below in /etc/apache2/sites-available/monlog
 
-    Alias /static/ /path/to/monlog/monlog/static/
+<VirtualHost *:80>
+        ServerName monlog
 
-    <Directory /path/to/monlog/monlog/static>
-            Order deny,allow
-            Allow from all
-    </Directory>
+        Alias /static/ /path/to/monlog/monlog/static/
 
-    WSGIScriptAlias / /path/to/monlog/monlog/wsgi.py
-    # Make sure to change python2.6 below to whatever your Python version is
-    WSGIPythonPath /path/to/monlog/venv/lib/python2.6/site-packages
+        <Directory /path/to/monlog/monlog/static>
+                Order deny,allow
+                Allow from all
+        </Directory>
 
-    <Directory /path/to/monlog/monlog>
-            <Files wsgi.py>
-                    Order allow,deny
-                    Allow from all
-            </Files>
-    </Directory>
+        WSGIScriptAlias / /path/to/monlog/monlog/wsgi.py
+
+        <Directory /path/to/monlog/monlog>
+                <Files wsgi.py>
+                        Order allow,deny
+                        Allow from all
+                </Files>
+        </Directory>
+
+        LogLevel warn
+        ErrorLog /var/log/apache2/monlog_error.log
+        CustomLog /var/log/apache2/monlog_access.log combined
+</VirtualHost>
 
 Enable the Apache site and reload:
     a2ensite monlog
     service apache2 reload
-
-
