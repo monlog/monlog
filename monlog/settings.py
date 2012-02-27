@@ -1,4 +1,17 @@
-# Django settings for monlog project.
+# Monlog settings
+# Please enter your database info here:
+DATABASE_NAME     = ""
+DATABASE_USER     = ""
+DATABASE_PASSWORD = ""
+DATABASE_HOST     = ""
+DATABASE_PORT     = ""
+DATABASE_DRIVER   = "mysql"
+
+import os
+import django
+
+# Constant to use for relative paths in settings
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 API_LIMIT_PER_PAGE = 0
 
@@ -127,12 +140,12 @@ except ImportError:
 
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-            'NAME': '',                      # Or path to database file if using sqlite3.
-            'USER': '',                      # Not used with sqlite3.
-            'PASSWORD': '',                  # Not used with sqlite3.
-            'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-            'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+            'ENGINE': "django.db.backends.%s" % DATABASE_DRIVER,
+            'NAME': DATABASE_NAME,
+            'USER': DATABASE_USER,
+            'PASSWORD': DATABASE_PASSWORD,
+            'HOST': DATABASE_HOST,
+            'PORT': DATABASE_PORT,
         }
     }
 
@@ -143,6 +156,7 @@ except ImportError:
     STATIC_ROOT = ''
 
     TEMPLATE_DIRS = (
+        os.path.join(SITE_ROOT, 'log/templates'),
         # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
         # Always use forward slashes, even on Windows.
         # Don't forget to use absolute paths, not relative paths.
@@ -150,6 +164,7 @@ except ImportError:
 
     # Additional locations of static files
     STATICFILES_DIRS = (
+        os.path.join(SITE_ROOT, 'static'),
         # Put strings here, like "/home/html/static" or "C:/www/django/static".
         # Always use forward slashes, even on Windows.
         # Don't forget to use absolute paths, not relative paths.
