@@ -18,19 +18,18 @@
     </script>
 {% endverbatim %}
 
-<form class="well filters form-search">
+<form class="well filters form-search collapse" id="collapse-form">
     <input type="hidden" name="order_by" value="-datetime">
         <div id="severity-checkboxes">
         {{ lqf.severity__in }}
         </div>
-        <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
           <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
             {% for id, name in lqf.severity__in.field.choices %}
                 <a href='#' class="btn active sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
             {% endfor %}
           </div>
           {{lqf.search}}
-          <div id="advanced" class="collapse">
+          <div id="advanced">
               <hr />
               <div class="control-group">
                   <label class="control-label" for="id_application__in">Applications</label>
