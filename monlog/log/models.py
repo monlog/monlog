@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from tastypie.models import create_api_key
+from django.http import QueryDict
 
 models.signals.post_save.connect(create_api_key, sender=User)
 
@@ -37,3 +38,14 @@ class LogMessage(models.Model):
 
     class Meta:
         ordering = ('-datetime',)
+
+class Label(models.Model):
+    """ Model of a search filter that may be saved """
+    query_string = models.TextField()
+    label_name = models.CharField(max_length=20,unique=True)
+
+    def __unicode__(self):
+        return self.label_name
+
+    def get_dict(self):
+        return QueryDict(self.query_string)

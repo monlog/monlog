@@ -1,16 +1,28 @@
 {% extends "base.html" %}
+{% block toolbar %}
+<ul class="nav">
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Labels <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+            {% for label in labels %}
+            <li><a href="/?label={{label.label_name}}">{{ label.label_name }}</a></li>
+            {% endfor %}
+        </ul>
+    </li>
+</ul>
+{% endblock %}
 {% load verbatim %}
 {% block content %}
 {% verbatim %}
     <script id="log_messages" type="text/html">
     {{#objects}}
     <tr class="sev-{{ severity }}{{#old}} old-data{{/old}}">
-            <td><span class="label">{{ severity }}</span></td>
-            <td><span class="">{{ datetime }}</span></td>
-            <td><span class="">{{ application.username }}</span></td>
-            <td><span class="">{{ server_ip }}</span></td>
-            <td><span class="">{{ short_desc }}</span></td>
-        </tr>
+        <td><span class="label">{{ severity }}</span></td>
+        <td><span class="">{{ datetime }}</span></td>
+        <td><span class="">{{ application.username }}</span></td>
+        <td><span class="">{{ server_ip }}</span></td>
+        <td><span class="">{{ short_desc }}</span></td>
+    </tr>
     {{/objects}}
     </script>
     <script id="refresh_notice_template" type="text/html">
@@ -18,70 +30,81 @@
     </script>
 {% endverbatim %}
 
-<form class="well filters form-search">
+<form id="form-id" class="well filters form-search">
     <input type="hidden" name="order_by" value="-datetime">
-        <div id="severity-checkboxes">
+    <div id="severity-checkboxes">
         {{ lqf.severity__in }}
+    </div>
+    <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
+    <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
+        {% for id, name,active in lqf.severity_choices %}
+        <a href='#' class="btn {% if active %} active {% endif %}sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
+        {% endfor %}
+    </div>
+    {{lqf.search}}
+    <div id="advanced" class="collapse">
+        <hr />
+        <div class="control-group">
+            <label class="control-label" for="id_application__in">Applications</label>
+            <div class="controls">
+                {{lqf.application__in}}
+            </div>
         </div>
-        <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
-          <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
-            {% for id, name in lqf.severity__in.field.choices %}
-                <a href='#' class="btn active sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
-            {% endfor %}
-          </div>
-          {{lqf.search}}
-          <div id="advanced" class="collapse">
-              <hr />
-              <div class="control-group">
-                  <label class="control-label" for="id_application__in">Applications</label>
-                  <div class="controls">
-                      {{lqf.application__in}}
-                  </div>
-              </div>
-              <div class="control-group">
-                  <label class="control-label" for="id_application__in">Servers</label>
-                  <div class="controls">
-                      {{ lqf.server_ip__in }}
-                  </div>
-              </div>
-              <div class="control-group">
-                  <label class="control-label" for="id_datetime__gte">Start of time range</label>
-                  <div class="controls">
-                      {{ lqf.datetime__gte }} 
-                  </div>
-                  <label class="control-label" for="id_datetime__lte">End of time range (optional)</label>
-                  <div class="controls">
-                      {{ lqf.datetime__lte }}
-                  </div>
-              </div>
-              <div class="well2">
-                  <div class="control-group">
-                      <label class="control-label">Save this search as a label</label>
-                      <div class="controls">
-                          {{ lqf.label }}
-                          <button class="btn btn-primary">Save</button>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </form>
-      <div id="refresh_notice" class="well"></div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th id="severity" class="sortable sorted-desc">Severity</th>
-                <th id="datetime" class="sortable sorted-desc sorted-active">Time</th>
-                <th id="application__username" class="sortable sorted-desc">Application</th>
-                <th id="server_ip" class="sortable sorted-desc">Server</th>
-                <th>Message</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- no log messages loaded -->
-        </tbody>
-    </table>
+        <div class="control-group">
+            <label class="control-label" for="id_application__in">Servers</label>
+            <div class="controls">
+                {{ lqf.server_ip__in }}
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="id_datetime__gte">Start of time range</label>
+            <div class="controls">
+                {{ lqf.datetime__gte }} 
+            </div>
+            <label class="control-label" for="id_datetime__lte">End of time range (optional)</label>
+            <div class="controls">
+                {{ lqf.datetime__lte }}
+            </div>
+        </div>
+    </form>
+        <div class="control-group">
+            <label class="control-label">Save this search as a label</label>
+            <div class="controls">
+                {{ label_field }}
+                <button id="label-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+<div id="refresh_notice" class="well"></div>
+<table class="table">
+    <thead>
+        <tr>
+            <th id="severity" class="sortable sorted-desc">Severity</th>
+            <th id="datetime" class="sortable sorted-desc sorted-active">Time</th>
+            <th id="application__username" class="sortable sorted-desc">Application</th>
+            <th id="server_ip" class="sortable sorted-desc">Server</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- no log messages loaded -->
+    </tbody>
+</table>
 <script src="{{ STATIC_URL }}js/api.js" type="text/javascript"></script>
 <script type="text/javascript">
+    $("#label-save").click(function(){
+        var query = $(".filters").serialize();
+        $.post("/label/", {
+            csrfmiddlewaretoken : "{{ csrf_token }}",
+            query_string : query,
+            name: $("#id_label").val()
+            }, 
+            function(data) {
+                console.log(data);
+                window.location=data;
+            }
+        );
+    });
     $("#advanced").on('show', function(){
             $("#toggle-advanced").addClass("active");
             $("#toggle-advanced").html("&#9650");
