@@ -90,6 +90,7 @@ $(document).ready(function() {
     // $('.filters .search-query').keypress(updateHandler);
     $('form.filters').submit(function(event){
         requestLogMessages(true, false);
+        console.log(event);
         event.preventDefault();
     });
     $('#refresh_notice').bind('click', refreshClickHandler);

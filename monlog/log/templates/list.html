@@ -1,4 +1,16 @@
 {% extends "base.html" %}
+{% block toolbar %}
+<ul class="nav">
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Labels <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+            {% for label in labels %}
+            <li><a href="/?label={{label.label_name}}">{{ label.label_name }}</a></li>
+            {% endfor %}
+        </ul>
+    </li>
+</ul>
+{% endblock %}
 {% load verbatim %}
 {% block content %}
 {% verbatim %}
@@ -18,7 +30,7 @@
     </script>
 {% endverbatim %}
 
-<form class="well filters form-search">
+<form id="form-id" class="well filters form-search">
     <input type="hidden" name="order_by" value="-datetime">
     <div id="severity-checkboxes">
         {{ lqf.severity__in }}
@@ -26,7 +38,7 @@
     <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
     <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
         {% for id, name,active in lqf.severity_choices %}
-            <a href='#' class="btn {% if active %} active {% endif %}sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
+        <a href='#' class="btn {% if active %} active {% endif %}sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
         {% endfor %}
     </div>
     {{lqf.search}}
@@ -54,17 +66,15 @@
                 {{ lqf.datetime__lte }}
             </div>
         </div>
-        <div class="well2">
-            <div class="control-group">
-                <label class="control-label">Save this search as a label</label>
-                <div class="controls">
-                    {{ lqf.label }}
-                    <button class="btn btn-primary">Save</button>
-                </div>
+    </form>
+        <div class="control-group">
+            <label class="control-label">Save this search as a label</label>
+            <div class="controls">
+                {{ label_field }}
+                <button id="label-save" class="btn btn-primary">Save</button>
             </div>
         </div>
     </div>
-</form>
 <div id="refresh_notice" class="well"></div>
 <table class="table">
     <thead>
@@ -82,6 +92,19 @@
 </table>
 <script src="{{ STATIC_URL }}js/api.js" type="text/javascript"></script>
 <script type="text/javascript">
+    $("#label-save").click(function(){
+        var query = $(".filters").serialize();
+        $.post("/label/", {
+            csrfmiddlewaretoken : "{{ csrf_token }}",
+            query_string : query,
+            name: $("#id_label").val()
+            }, 
+            function(data) {
+                console.log(data);
+                window.location=data;
+            }
+        );
+    });
     $("#advanced").on('show', function(){
             $("#toggle-advanced").addClass("active");
             $("#toggle-advanced").html("&#9650");

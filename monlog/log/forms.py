@@ -10,13 +10,15 @@ class LogDateTime(DateTimeInput):
     input_type = 'datetime'
     
 
+class LabelForm(forms.Form):
+    label = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'Enter a label name...'}))
+
 class LogQueryForm(forms.Form):
     search = forms.CharField(max_length=100,
                      widget=forms.TextInput(attrs={'class':'search-query', 'placeholder':'Search...'}))
     severity__in = forms.MultipleChoiceField(required=False, widget=CheckboxSelectMultiple(attrs={}), choices=SEVERITY_CHOICES)
     datetime__gte = forms.DateTimeField(required=False, widget=LogDateTime)
     datetime__lte = forms.DateTimeField(required=False, widget=LogDateTime)
-    label = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'Enter a label name...'}))
     application__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=())
     server_ip__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=())
 
