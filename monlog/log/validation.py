@@ -55,7 +55,7 @@ class LogValidation(Validation):
             errors['timestamp'] = 'Datetime not included in request.'
         else:
             try:
-                int_test = int(data["timestamp"])
+                int_test = float(data["timestamp"])
             except ValueError:
                 errors['timestamp'] = 'Timestamp needs to be numeric.'
 
