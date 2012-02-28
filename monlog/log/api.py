@@ -38,6 +38,7 @@ class LogCollectionResource(ModelResource):
             bundle.data['severity'] = SEVERITY_CHOICES[bundle.data['severity']][1]
         return bundle
 
+    
     def build_filters(self, filters=None):
         if filters is None:
             filters = {}
@@ -57,6 +58,12 @@ class LogCollectionResource(ModelResource):
             filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("T", " ")
             filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("Z", "")
 
+        if 'search' in filters:
+            filters['long_desc__in'] = filters['search']
+            filters['short_desc__in'] = filters['search']
+            #del filters['search']
+       
+            
         orm = super(LogCollectionResource, self).build_filters(filters)
 
         # if user doesn't specify severity level, no log messages will be returned.
@@ -72,6 +79,8 @@ class LogCollectionResource(ModelResource):
         authentication = CookieAuthentication()
         authorization = DjangoAuthorization()
         filtering = {
+            "long_desc" : ['in'],
+            "short_desc" : ['in'],
             "severity" : ['in'],
             "datetime" : ['gte','lte'],
             "server_ip" : ['in'],
