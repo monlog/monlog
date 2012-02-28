@@ -1,6 +1,8 @@
-This is an in-progress class project.
+This is an in-progress class project created during the TDP023 Agile Development course at Linköping university.
 
-Members:
+Four students serve as developers and an external product owner is responsible for all product decisions.
+
+Developers:
 - Samuel Andersson
 - Patrick Kumpulainen
 - Albin Englund
@@ -9,3 +11,18 @@ Members:
 Created during the TDP023 course spring of 2012 at LiU.
 Project: Agile System Development
 http://www.ida.liu.se/~TDP023/index.sv.shtml
+
+
+
+Product Owner:
+- Marcus Bendtsen
+
+Course website: http://www.ida.liu.se/~TDP023/index.sv.shtml
+
+--
+
+See INSTALL for installation instructions.
+
+JAVA client library date formatting example:
+        The file 'client_lib_example.txt' can be used to get correctly formatted data
+        it is stored here in the root.
