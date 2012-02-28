@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% load verbatim %}
+{% block navbar %}
+<ul class="nav pull-right">
+    <li class="divider-vertical"></li>
+    <li class="streaming"><a href="#" data-toggle="collapse" data-target="#collapse-form" class="" id="streaming">Streaming</a></li>
+</ul>
+{% endblock %}
 {% block content %}
 {% verbatim %}
     <script id="log_messages" type="text/html">
