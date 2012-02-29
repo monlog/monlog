@@ -16,7 +16,9 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', { 'template_name': 'login.html' }),
     url(r'^api/', include(log_resource.urls)),   # API available with POST
     url(r'^api/', include(log_collection.urls)), # API available from GET
+    url(r'^label/', 'log.views.save_label'),
     url(r'^admin/jsi18n/', 'django.views.i18n.javascript_catalog'),
+    
     # Examples:
     # url(r'^$', 'monlog.views.home', name='home'),
     # url(r'^monlog/', include('monlog.foo.urls')),

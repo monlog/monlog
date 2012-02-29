@@ -11,25 +11,44 @@ from django.contrib.auth.models import User, Permission
 from tastypie.authorization import DjangoAuthorization
 from log.authentication import MonlogAuthentication
 from tastypie.models import create_api_key, ApiKey
-from log.models import LogMessage
+from log.models import LogMessage,Label
 from log.validation import LogValidation
 import simplejson as json
 from django.test import TestCase
-from django.http import HttpRequest
+from django.test.client import RequestFactory
+from django.http import HttpRequest,HttpResponse,HttpResponseBadRequest
 from tastypie.authentication import Authentication
+from log.views import save_label
+import logging
 
-class ValidationTest(TestCase):
-    def test_monlog_user(self):
-        """ Testing if the monlog user is pk=1 """
-        monlog_user = User.objects.get(pk=1)
-        self.assertEqual(monlog_user.username, "monlog")
-
-        
-
-class RestTest(TestCase):
+class MonlogTestCase(TestCase):
     fixtures = ['auth.json']
 
     username = "testapp"
+    userpass = "test"
+
+class ModelTest(MonlogTestCase):
+
+    def setUp(self):
+        login = self.client.login(username=self.username, password=self.userpass)
+        if not login:
+            print "Couldn't log in!"
+
+    def test_save_label(self):
+        """ Testing if label saving works """
+
+        # Check for HttpResponseBadRequest if `name` or `query_string` not provided.
+        data = {}
+        response = self.client.post("/label/", data)
+        self.assertEqual(response.status_code, 400)
+
+        # Valid post should work correctly.
+        data['name']="validname"
+        data['query_string']="severity__in=0" # also valid
+        response = self.client.post("/label/", data)
+        self.assertEqual(response.status_code, 200)
+
+class RestTest(MonlogTestCase):
     api_uri = "/api/log/?api_key="
 
     logmessages_uri = "/api/logmessages/"
@@ -39,7 +58,7 @@ class RestTest(TestCase):
         Creates an api key for test user(from fixture) and sets permission to add logmessages
         """
         super(RestTest, self).setUp()
-        ApiKey.objects.all().delete()        
+        ApiKey.objects.all().delete()
         create_api_key(User, instance=User.objects.get(username=self.username), created=True)
         add_logmessage = Permission.objects.get(codename='add_logmessage')
         User.objects.get(username=self.username).user_permissions.add(add_logmessage)
@@ -54,9 +73,8 @@ class RestTest(TestCase):
 
         testapp = User.objects.get(username=self.username) #API key created in setUp()
         request.GET['api_key'] = testapp.api_key.key 
-        
+
         self.assertEqual(auth.is_authenticated(request), True)
-                
 
     def test_get_from_rest(self):
         """
@@ -83,8 +101,6 @@ class RestTest(TestCase):
         # Missing datetime
         data = {"severity": 0}
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
-        print self.api_uri + testapp.api_key.key
-        print resp
         self.assertEqual(resp.status_code, 400)
         
         # Datetime malformed, missing lots of stuff
