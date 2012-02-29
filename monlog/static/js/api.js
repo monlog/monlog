@@ -9,12 +9,12 @@ var refreshTimeout = 5000;
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference:Global_Objects:Date#Example:_ISO_8601_formatted_dates
 function ISODateString(d){
   function pad(n){return n<10 ? '0'+n : n}
-  return d.getFullYear()+'-'
-      + pad(d.getMonth()+1)+'-'
-      + pad(d.getDate())+'T'
-      + pad(d.getHours())+':'
-      + pad(d.getMinutes())+':'
-      + pad(d.getSeconds())
+  return d.getUTCFullYear()+'-'
+      + pad(d.getUTCMonth()+1)+'-'
+      + pad(d.getUTCDate())+'T'
+      + pad(d.getUTCHours())+':'
+      + pad(d.getUTCMinutes())+':'
+      + pad(d.getUTCSeconds())+'Z'
 }
 
 var displayLogMessages = function(data) {
@@ -58,7 +58,6 @@ var requestLogMessages = function(update, was_refresh) {
     $.getJSON(url,
         function(data,textStatus,jqXHR) {
             if (update) {
-                console.log($('.content table tbody tr'));
                 displayLogMessages(data, true);
                 $("#loading_indicator").fadeOut(300);
             } else {
