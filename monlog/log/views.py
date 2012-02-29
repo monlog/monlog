@@ -32,11 +32,15 @@ def save_label(request):
     query_string = request.POST.get('query_string')
 
     # Look for required fields
-    if not (name and query_string):
+    if not name:
+        logging.debug("Name not defined")
+        return HttpResponseBadRequest("Required fields: name, query_string")
+    if not query_string:
+        logging.debug("Query_String not defined")
         return HttpResponseBadRequest("Required fields: name, query_string")
 
     # Look if label name already exists, overwrite it if it does.
-    label = Label.objects.filter(label_name=name)
+    label = Label.objects.get(label_name=name)
     if label:
         label.query_string = request.POST.get('query_string')
     else:
