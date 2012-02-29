@@ -40,12 +40,12 @@ def save_label(request):
         return HttpResponseBadRequest("Required fields: name, query_string")
 
     # Look if label name already exists, overwrite it if it does.
-    label = Label.objects.get(label_name=name)
-    if label:
-        label.query_string = request.POST.get('query_string')
-    else:
-        label = Label(label_name=name, query_string=request.POST.get('query_string') )
-
-    label.save()
+    try:
+        label = Label.objects.get(label_name=name)
+        label.query_string=query_string
+        label.save()
+    except Label.DoesNotExist:
+        label = Label(label_name=name, query_string=query_string)
+        label.save()
     return HttpResponse('/?label='+name)
 
