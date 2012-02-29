@@ -43,9 +43,9 @@ def save_label(request):
     try:
         label = Label.objects.get(label_name=name)
         label.query_string=query_string
-        label.save()
     except Label.DoesNotExist:
         label = Label(label_name=name, query_string=query_string)
-        label.save()
+    label.save()
     return HttpResponse('/?label='+name)
+
 
