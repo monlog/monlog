@@ -1,0 +1,20 @@
+This will make a sane datetime in the client library.
+Please use this format when making the java client library.
+
+
+An example in java:
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
+public class myDate {
+    public static void main(String args[]) {
+	Date now = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+	// will print out date formatted like this as UTC
+	// "2012-02-28T10:33:51"                                                                                                   
+	System.out.println(dateFormat.format(now));
+    }
+}
