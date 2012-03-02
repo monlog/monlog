@@ -133,26 +133,60 @@ INSTALLED_APPS = (
 # the site admins on every HTTP 500 error.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
+LOG_DIR = os.path.join(SITE_ROOT, '../logging/')
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler'
-        },
-        'console' : {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler'
-        }
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': [],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    }
+   'version': 1,
+   'disable_existing_loggers': True,
+   'formatters': {
+       'verbose': {
+           'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+       },
+       'simple': {
+           'format': '%(levelname)s %(message)s'
+       }
+   },
+   'handlers': {
+       'file_info' : {
+           'level': 'INFO',
+           'class': 'logging.FileHandler',
+           'filename': '%s/django_info.log' % LOG_DIR,
+           'formatter': 'verbose'
+       },
+       'file_debug': {
+           'level': 'DEBUG',
+           'class': 'logging.FileHandler',
+           'filename': '%s/django_debug.log' % LOG_DIR,
+           'formatter': 'verbose'
+       },
+       'file_error': {
+           'level': 'ERROR',
+           'class': 'logging.FileHandler',
+           'filename': '%s/django_error.log' % LOG_DIR,
+           'formatter': 'verbose'
+       },
+       'mail_admins': {
+           'level': 'ERROR',
+           'class': 'django.utils.log.AdminEmailHandler'
+       }
+   },
+   'loggers': {
+       '' : {
+           'handlers': ['file_info'],
+           'level': 'INFO',
+           'propagate': True,
+       },
+
+       'django': {
+           'handlers': ['file_info'],
+           'level': 'INFO',
+           'propagate': True,
+       },
+       'django.request': {
+           'handlers': ['file_error'],
+           'level': 'ERROR',
+           'propagate': True,
+       },
+   }
 }
 
 # local_settings.py is in .gitignore, put your database settings there
