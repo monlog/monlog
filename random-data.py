@@ -7,7 +7,7 @@ names = open('/usr/share/dict/propernames').readlines()
 connectives = open('/usr/share/dict/connectives').readlines()
 severities = [0, 1, 2, 3, 4, 5, 6, 7]
 
-# DATA='{ "severity": 0, "datetime": "2012-02-05T10:10:10", "long_desc": "This is my long description", "short_desc": "Shortdesc" }'
+# DATA='{ "severity": 0, "datetime": "1330676432", "long_desc": "This is my long description", "short_desc": "Shortdesc" }'
 
 short_desc = "%s %s %s %s %s" % (
         random.choice(names).strip(),
@@ -19,7 +19,7 @@ long_desc = short_desc.split(" ") * 50
 random.shuffle(long_desc)
 long_desc = " ".join(long_desc)
 severity = random.choice(severities)
-date_time = datetime.datetime.now().isoformat()
+date_time = datetime.datetime.now().strftime("%s")
 
 data = "{ 'severity': %s, 'datetime': '%s', 'long_desc': '%s', 'short_desc': '%s' }" % ( severity, date_time, long_desc, short_desc )
 
