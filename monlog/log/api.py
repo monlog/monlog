@@ -8,7 +8,7 @@ from log.authentication import MonlogAuthentication
 from log.authentication import CookieAuthentication
 from log.models import LogMessage, SEVERITY_CHOICES
 from log.validation import LogValidation
-
+from datetime import datetime 
 
 class ApplicationResource(ModelResource):
     """
@@ -94,7 +94,9 @@ class LogResource(ModelResource):
     def hydrate(self, bundle):
         bundle.obj.application = bundle.request.user
         bundle.obj.server_ip = bundle.request.META['REMOTE_ADDR']
+        timestamp = bundle.data["timestamp"]
+        _datetime = datetime.utcfromtimestamp(float(timestamp))
+        bundle.obj.datetime = _datetime
         return bundle
-    
 
 
