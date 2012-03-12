@@ -49,3 +49,4 @@ class Label(models.Model):
 
     def get_dict(self):
         return QueryDict(self.query_string)
+
