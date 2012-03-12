@@ -113,11 +113,13 @@
         $("#collapse-form").removeClass("non-expanded");
         $("#streaming").addClass("streaming-deactivated");
         $("#streaming").html("Streaming paused");
+        streamingMode = false;
     });
     $("#collapse-form").on('hide', function(){
         $("#collapse-form").addClass("non-expanded");
         $("#streaming").removeClass("streaming-deactivated");
         $("#streaming").html("Streaming");
+        streamingMode = true;
     });
     $(document).ready(function() {
         $("#severity-checkboxes").hide();
