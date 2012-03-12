@@ -13,14 +13,12 @@ def list(request):
     View for listing all log messages. Labels are used to filter which messages
     are displayed.
     """
-
     # Create a default LogQueryForm which is used if no label is specified.
     # Default is all severities checked, and order by datetime.
-    default_query = "order_by=-datetime&" + \
-                    "severity__in=0&severity__in=1&severity__in=2&" + \
-                    "severity__in=3&severity__in=4&severity__in=5&" + \
-                    "severity__in=6&severity__in=7"
-    lqf = LogQueryForm(QueryDict(default_query))
+    qd = QueryDict('', mutable=True)
+    qd.setlist('severity__in', [x[0] for x in SEVERITY_CHOICES])
+    qd.setlist('order_by', ['-datetime'])
+    lqf = LogQueryForm(qd)
 
     # Get label if user specified one.
     label_name = request.GET.get('label')
