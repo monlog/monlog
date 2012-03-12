@@ -4,3 +4,4 @@ local_settings.py
 example-data.sh
 vagrant
 logging/*
+*.swp
