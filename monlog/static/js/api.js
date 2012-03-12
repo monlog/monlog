@@ -1,3 +1,4 @@
+var pendingData;
 var streamingMode = true;
 var timeoutTime = 5000;
 var displayedIds;
@@ -38,11 +39,25 @@ var displayLogMessages = function(data) {
     $(".content .table tbody").html(ich.log_messages(data));
     displayedIds = newDisplayedIds;
 
+    $('#refresh_notice').hide();
     lastDisplayedDatetime = ISODateString(new Date());
 };
 
 var updateLogTable = function(data) {
     displayLogMessages(data);
+};
+
+var displayRefreshNotice = function(data) {
+    var count = data['objects'].length;
+    var maxObjects = 20;
+
+    if (count > 0) {
+        if (count >= maxObjects) {
+            count = maxObjects + "+";
+        }
+        $('#refresh_notice').html(ich.refresh_notice_template({ 'count': count }));
+        $('#refresh_notice').show();
+    }
 };
 
 var requestLogMessages = function(formData,callback) {
@@ -61,6 +76,12 @@ var handleTimeout = function() {
         requestLogMessages(getFormData(),updateLogTable);
     } else {
         // Make request and show notice
+        formMap = getFormData();
+        if (typeof lastDisplayedDatetime !== 'undefined') {
+            formMap.push({ 'name': 'add_datetime__gte', 'value': lastDisplayedDatetime });
+        }
+
+        requestLogMessages(formMap,displayRefreshNotice);
     }
     window.setTimeout(handleTimeout,timeoutTime);
 };
@@ -68,6 +89,8 @@ var handleTimeout = function() {
 $(document).ready(function() {
     var updateHandler = function() { requestLogMessages(getFormData(),updateLogTable); };
     $('.filters input, .filters select').change(updateHandler);
+
+    $('#refresh_notice').bind('click', updateHandler);
 
     requestLogMessages(getFormData(),updateLogTable);
     window.setTimeout(handleTimeout,timeoutTime);
