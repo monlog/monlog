@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, QueryDict
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
@@ -9,15 +9,28 @@ import logging
 
 @login_required
 def list(request):
-    context = RequestContext(request)
-    queryset = LogMessage.objects.all()
-    lqf = LogQueryForm()
+    """
+    View for listing all log messages. Labels are used to filter which messages
+    are displayed.
+    """
+
+    # Create a default LogQueryForm which is used if no label is specified.
+    # Default is all severities checked, and order by datetime.
+    default_query = "order_by=-datetime&" + \
+                    "severity__in=0&severity__in=1&severity__in=2&" + \
+                    "severity__in=3&severity__in=4&severity__in=5&" + \
+                    "severity__in=6&severity__in=7"
+    lqf = LogQueryForm(QueryDict(default_query))
+
+    # Get label if user specified one.
     label_name = request.GET.get('label')
-    
     if label_name:
         label = Label.objects.get(label_name=label_name)
         if label:
             lqf = LogQueryForm(label.get_dict())
+
+    # Set context variables
+    context = RequestContext(request)
     context['lqf'] = lqf
     context['labels'] = Label.objects.all()
     context['label_field'] = LabelForm()
