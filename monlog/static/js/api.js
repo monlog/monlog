@@ -13,7 +13,7 @@ function ISODateString(d){
       + pad(d.getUTCHours())+':'
       + pad(d.getUTCMinutes())+':'
       + pad(d.getUTCSeconds())+'Z'
-};
+}
 
 var getFormData = function() {
     return $.map($('.filters').serializeArray(), function(n) {
@@ -39,7 +39,6 @@ var displayLogMessages = function(data) {
     displayedIds = newDisplayedIds;
 
     lastDisplayedDatetime = ISODateString(new Date());
-    $('#refresh_notice').hide();
 };
 
 var updateLogTable = function(data) {
@@ -47,9 +46,12 @@ var updateLogTable = function(data) {
 };
 
 var requestLogMessages = function(formData,callback) {
+    $("#loading_indicator").fadeIn(300);
+
     var url = "/api/logmessages/?" + $.param(formData);
     $.getJSON(url, function(data,textStatus,jqXHR) {
         callback(data);
+        $("#loading_indicator").fadeOut(300);
     });
 };
 
