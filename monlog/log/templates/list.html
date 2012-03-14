@@ -25,7 +25,10 @@
         <td><span class="">{{ datetime }}</span></td>
         <td><span class="">{{ application.username }}</span></td>
         <td><span class="">{{ server_ip }}</span></td>
-        <td><span class="">{{ short_desc }}</span></td>
+        <td>
+            <a href="#" data-toggle="collapse" data-target="#details-msg-{{ id }}"><div class="">{{ short_desc }}</div></a>
+            <div id="details-msg-{{ id }}" class="collapse"><pre class="long_desc" >{{ long_desc }}</pre></div>
+        </td>
     </tr>
     {{/objects}}
     </script>
