@@ -8,10 +8,14 @@ from django.http import QueryDict
 
 class LogDateTime(DateTimeInput):
     input_type = 'datetime'
-    
 
 class LabelForm(forms.Form):
-    label = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'Enter a label name...'}))
+    label = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'placeholder':'Enter a label name...'}))
+
+    def __init__(self, label_name, *args, **kwargs):
+        super(LabelForm, self).__init__(*args, **kwargs)
+        if label_name != None:
+            self.fields['label'].widget.attrs['value'] = label_name
 
 class LogQueryForm(forms.Form):
     search = forms.CharField(max_length=100,
