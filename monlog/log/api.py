@@ -58,8 +58,8 @@ class LogCollectionResource(ModelResource):
             filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("Z", "")
 
         if 'search' in filters:
-            filters['long_desc__contains'] = filters['search']
-            filters['short_desc__contains'] = filters['search']
+            filters['long_desc__icontains'] = filters['search']
+            filters['short_desc__icontains'] = filters['search']
             del filters['search']
 
         orm = super(LogCollectionResource, self).build_filters(filters)
@@ -76,8 +76,8 @@ class LogCollectionResource(ModelResource):
         authentication = CookieAuthentication()
         authorization = DjangoAuthorization()
         filtering = {
-            "long_desc" : ['contains'],
-            "short_desc" : ['contains'],
+            "long_desc" : ['icontains'],
+            "short_desc" : ['icontains'],
             "severity" : ['in'],
             "datetime" : ['gte','lte'],
             "server_ip" : ['in'],
