@@ -128,9 +128,21 @@ var handleTimeout = function() {
     window.setTimeout(handleTimeout,timeoutTime);
 };
 
+var delay = (function() {
+    var timer = 0;
+    return function(callback, ms) {
+        window.clearTimeout (timer)
+        timer = window.setTimeout(callback, ms);
+    };
+})();
+
 $(document).ready(function() {
     var updateHandler = function() { requestLogMessages(getFormData(),updateLogTable); };
     $('.filters input, .filters select').change(updateHandler);
+
+    $('.search-query').keyup(function() {
+        delay(updateHandler,500)
+    });
     $('form.filters').submit(function(event){
         updateHandler();
         event.preventDefault();
