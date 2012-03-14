@@ -141,7 +141,7 @@ $(document).ready(function() {
     $('.filters input, .filters select').change(updateHandler);
 
     $('.search-query').keyup(function() {
-        delay(updateHandler,100) 
+        delay(updateHandler,500)
     });
     $('form.filters').submit(function(event){
         updateHandler();
