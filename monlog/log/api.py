@@ -63,9 +63,6 @@ class LogCollectionResource(ModelResource):
             del filters['search']
 
         orm = super(LogCollectionResource, self).build_filters(filters)
-        # if user doesn't specify severity level, no log messages will be returned.
-        if "severity__in" not in filters:
-            orm['severity__in'] = ""
 
         return orm
 
