@@ -1,9 +1,23 @@
+/*
+ * api.js - Monlog 2012
+ *
+ * Events that triggers an api request:
+ * - StreamingMode enabled
+ *      Repopulate table when timeout is triggered
+ *      updateLogTable(data)
+ * - StreamingMode disabled
+ *      Request api to check for new entries, notify user if that's the case
+ *      displayRefreshNotice(data)
+ * - Manual Refresh when StreamingMode is disabled
+ *      User clicks the link in the notifcation. Repopulate entry table and highlight new entries.
+ *      manualRefreshTriggered(data)
+*/
+
 var pendingData;
+var streamingMode = true;
+var timeoutTime = 5000;
 var displayedIds;
 var lastDisplayedDatetime;
-// if refresh requests return more than this, we don't know exact number of new messages
-var maxObjects = 20;
-var refreshTimeout = 5000;
 
 // ISO 8601 date format function from:
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference:Global_Objects:Date#Example:_ISO_8601_formatted_dates
@@ -17,8 +31,22 @@ function ISODateString(d){
       + pad(d.getUTCSeconds())+'Z'
 }
 
+var getFormData = function() {
+    return $.map($('.filters').serializeArray(), function(n) {
+        // Remove all empty form fields from serialization
+        if (n.value == "") {
+            return null;
+        }
+        return n;
+    });
+};
+
+
+
 var displayLogMessages = function(data) {
     var newDisplayedIds = [];
+
+    // Flag every old entry with old-class property
     $.each(data['objects'], function(i, el) {
         if (typeof displayedIds == 'undefined' || $.inArray(el['id'], displayedIds) !== -1) {
             // this is an old log message
@@ -26,59 +54,78 @@ var displayLogMessages = function(data) {
         }
         newDisplayedIds.push(el['id']);
     });
+
+    // Apply data to ICanHaz templates
     $(".content .table tbody").html(ich.log_messages(data));
-    lastDisplayedDatetime = ISODateString(new Date());
     displayedIds = newDisplayedIds;
+
     $('#refresh_notice').hide();
+    lastDisplayedDatetime = ISODateString(new Date());
 };
 
-var requestLogMessages = function(update, was_refresh) {
-    var formData = $.map($('.filters').serializeArray(), function(n) {
-        if (n.value == "") {
-            return null;
-        }
-        return n;
-    });
 
-    if (was_refresh) {
-        $('.content table').addClass('was-refreshed');
-    } else if (update) {
-        $('.content table').removeClass('was-refreshed');
-    }
+/* Request event handlers */
+var updateLogTable = function(data) {
+    // Called when streaming mode is enabled
 
-    if (! update) { // this is a refresh request, so we should only match new log messages
-        if (typeof lastDisplayedDatetime !== 'undefined') {
-            formData.push({ 'name': 'add_datetime__gte', 'value': lastDisplayedDatetime });
+    // When this function is called we do not want to
+    // highligt new entries
+    $('.content table').removeClass('was-refreshed');
+
+    displayLogMessages(data);
+};
+
+var displayRefreshNotice = function(data) {
+    // Streming mode is disabled - called every timeoutTime ms
+    var count = data['objects'].length;
+    var maxObjects = 20;
+
+    if (count > 0) {
+        if (count >= maxObjects) {
+            count = maxObjects + "+";
         }
-    } else {
-        $("#loading_indicator").fadeIn(300);
+        $('#refresh_notice').html(ich.refresh_notice_template({ 'count': count }));
+        $('#refresh_notice').show();
     }
+};
+
+var manualRefreshTriggered = function(data) {
+    // This function is called when refresh notice link is clicked
+    // Streaming mode disabled
+    // Highlight new entries
+    $('.content table').addClass('was-refreshed');
+    displayLogMessages(data);
+}
+
+
+
+var requestLogMessages = function(formData,callback) {
+    $("#loading_indicator").fadeIn(300);
 
     var url = "/api/logmessages/?" + $.param(formData);
-    $.getJSON(url,
-        function(data,textStatus,jqXHR) {
-            if (update) {
-                displayLogMessages(data, true);
-                $("#loading_indicator").fadeOut(300);
-            } else {
-                pendingData = data;
-                var count = data['objects'].length;
-                if (count > 0) {
-                    if (count >= maxObjects) {
-                        count = count + "+";
-                    }
-                    $('#refresh_notice').html(ich.refresh_notice_template({ 'count': count }));
-                    $('#refresh_notice').show();
-                }
-                window.setTimeout(function() { requestLogMessages(false); }, refreshTimeout);
-            }
-        }
-    );
+    $.getJSON(url, function(data,textStatus,jqXHR) {
+        callback(data);
+        $("#loading_indicator").fadeOut(300);
+    });
 };
 
-var refreshClickHandler = function(event) {
-    requestLogMessages(true, true);
-    $('#refresh_notice').hide();
+var handleTimeout = function() {
+    if (streamingMode) {
+        // Auto update table
+        requestLogMessages(getFormData(),updateLogTable);
+    } else {
+        // Make request and show notice
+        formMap = getFormData();
+        if (typeof lastDisplayedDatetime !== 'undefined') {
+            // Add lastDisplayedDatetime to only recieve the new entries since last update
+            formMap.push({ 'name': 'add_datetime__gte', 'value': lastDisplayedDatetime });
+        }
+
+        requestLogMessages(formMap,displayRefreshNotice);
+    }
+
+    // Set new timeout
+    window.setTimeout(handleTimeout,timeoutTime);
 };
 
 var delay = (function() {
@@ -90,18 +137,20 @@ var delay = (function() {
 })();
 
 $(document).ready(function() {
-    var updateHandler = function() { requestLogMessages(true, false); };
+    var updateHandler = function() { requestLogMessages(getFormData(),updateLogTable); };
     $('.filters input, .filters select').change(updateHandler);
 
-    // needs a timeout so it doesn't trigger a search for every key press right away
     $('.search-query').keyup(function() {
         delay(updateHandler,100) 
     });
     $('form.filters').submit(function(event){
-        requestLogMessages(true, false);
+        updateHandler();
         event.preventDefault();
     });
-    $('#refresh_notice').bind('click', refreshClickHandler);
-    requestLogMessages(true, false);
-    window.setTimeout(function() { requestLogMessages(false, false); }, refreshTimeout);
+
+    var manualUpdate = function() { requestLogMessages(getFormData(),manualRefreshTriggered); };
+    $('#refresh_notice').bind('click', manualUpdate);
+
+    requestLogMessages(getFormData(),updateLogTable);
+    window.setTimeout(handleTimeout,timeoutTime);
 });

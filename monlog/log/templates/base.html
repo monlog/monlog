@@ -40,12 +40,14 @@
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container-fluid">
-                <a class="brand" href="#">Monlog</a>
-                <ul class="nav">
+              <a class="brand" href="#">Monlog</a>
+              <div class="nav-collapse">
+                <ul class="nav pull-left">
                     <li><a href="/admin/">Django admin</a></li>
                 </ul>
-                {% block toolbar %}{% endblock %}
-                <div id="loading_indicator"><img src="{{ STATIC_URL }}img/ajax-loader.gif"></div>
+                {% block navbar %}{% endblock %}
+              </div>
+              <div id="loading_indicator"><img src="{{ STATIC_URL }}img/ajax-loader.gif"></div>
             </div>
         </div>
     </div>

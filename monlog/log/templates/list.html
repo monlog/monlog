@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block toolbar %}
+{% load verbatim %}
+{% block navbar %}
 <ul class="nav">
     <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Labels <b class="caret"></b></a>
@@ -10,8 +11,11 @@
         </ul>
     </li>
 </ul>
+<ul class="nav pull-right">
+    <li class="divider-vertical"></li>
+    <li class="streaming"><a href="#" data-toggle="collapse" data-target="#collapse-form" class="" id="streaming">Streaming</a></li>
+</ul>
 {% endblock %}
-{% load verbatim %}
 {% block content %}
 {% verbatim %}
     <script id="log_messages" type="text/html">
@@ -29,54 +33,54 @@
         <a href="#">Click here to display {{ count }} new message(s).</a>
     </script>
 {% endverbatim %}
-
-<form id="form-id" class="well filters form-search">
-    <input type="hidden" name="order_by" value="-datetime">
-    <div id="severity-checkboxes">
-        {{ lqf.severity__in }}
-    </div>
-    <a href="#" id="toggle-advanced" class="btn" data-toggle="collapse" data-target="#advanced">&#9660;</a>
-    <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
-        {% for id, name,active in lqf.severity_choices %}
-        <a href='#' class="btn {% if active %} active {% endif %}sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
-        {% endfor %}
-    </div>
-    {{lqf.search}}
-    <div id="advanced" class="collapse">
-        <hr />
-        <div class="control-group">
-            <label class="control-label" for="id_application__in">Applications</label>
-            <div class="controls">
-                {{lqf.application__in}}
-            </div>
+<form class="well filters form-search collapse non-expanded" id="collapse-form">
+    <div id="form-wrapper">
+        <input type="hidden" name="order_by" value="-datetime">
+        <div id="severity-checkboxes">
+            {{ lqf.severity__in }}
         </div>
-        <div class="control-group">
-            <label class="control-label" for="id_application__in">Servers</label>
-            <div class="controls">
-                {{ lqf.server_ip__in }}
-            </div>
+        <div id="severity-buttons" class="btn-group" data-toggle="buttons-checkbox">
+            {% for id, name,active in lqf.severity_choices %}
+            <a href='#' class="btn {% if active %} active {% endif %}sev-{{ name }}" data-value="{{ id }}"><span class="dot">&nbsp;</span>{{ name|capfirst }}</a>
+            {% endfor %}
         </div>
-        <div class="control-group">
-            <label class="control-label" for="id_datetime__gte">Start of time range</label>
-            <div class="controls">
-                {{ lqf.datetime__gte }} 
+        {{lqf.search}}
+        <div id="advanced">
+            <hr />
+            <div class="control-group">
+                <label class="control-label" for="id_application__in">Applications</label>
+                <div class="controls">
+                    {{lqf.application__in}}
+                </div>
             </div>
-            <label class="control-label" for="id_datetime__lte">End of time range (optional)</label>
-            <div class="controls">
-                {{ lqf.datetime__lte }}
+            <div class="control-group">
+                <label class="control-label" for="id_application__in">Servers</label>
+                <div class="controls">
+                    {{ lqf.server_ip__in }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="id_datetime__gte">Start of time range</label>
+                <div class="controls">
+                    {{ lqf.datetime__gte }} 
+                </div>
+                <label class="control-label" for="id_datetime__lte">End of time range (optional)</label>
+                <div class="controls">
+                    {{ lqf.datetime__lte }}
+                </div>
             </div>
         </div>
     </form>
-        <div class="control-group">
-            <label class="control-label">Save this search as a label</label>
-            <div class="controls">
-                {{ label_field }}
-                <form action="#">
-                    <button id="label-save" class="btn btn-primary">Save</button>
-                </form>
-            </div>
+    <div class="control-group well2">
+        <label class="control-label">Save this search as a label</label>
+        <div class="controls">
+            {{ label_field }}
+            <form action="#">
+                <button id="label-save" class="btn btn-primary">save</button>
+            </form>
         </div>
     </div>
+</div>
 <div id="refresh_notice" class="well"></div>
 <table class="table">
     <thead>
@@ -107,14 +111,18 @@
             }
         );
     });
-    $("#advanced").on('show', function(){
-            $("#toggle-advanced").addClass("active");
-            $("#toggle-advanced").html("&#9650");
+    $("#collapse-form").on('show', function(){
+        $("#collapse-form").removeClass("non-expanded");
+        $("#streaming").addClass("streaming-deactivated");
+        $("#streaming").html("Streaming paused");
+        streamingMode = false;
     });
-    $("#advanced").on('hide', function(){
-        $("#toggle-advanced").removeClass("active");
-        $("#toggle-advanced").html("&#9660");
-        });
+    $("#collapse-form").on('hide', function(){
+        $("#collapse-form").addClass("non-expanded");
+        $("#streaming").removeClass("streaming-deactivated");
+        $("#streaming").html("Streaming");
+        streamingMode = true;
+    });
     $(document).ready(function() {
         $("#severity-checkboxes").hide();
         var datetimepickerFormat = {timeFormat: 'hh:mm:ss', dateFormat: 'yy-mm-dd', separator :'T'};
