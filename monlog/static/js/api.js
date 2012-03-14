@@ -81,11 +81,22 @@ var refreshClickHandler = function(event) {
     $('#refresh_notice').hide();
 };
 
+var delay = (function() {
+    var timer = 0;
+    return function(callback, ms) {
+        window.clearTimeout (timer)
+        timer = window.setTimeout(callback, ms);
+    };
+})();
+
 $(document).ready(function() {
     var updateHandler = function() { requestLogMessages(true, false); };
     $('.filters input, .filters select').change(updateHandler);
+
     // needs a timeout so it doesn't trigger a search for every key press right away
-    $('.filters .search-query').keypress(updateHandler);
+    $('.search-query').keyup(function() {
+        delay(updateHandler,100) 
+    });
     $('form.filters').submit(function(event){
         requestLogMessages(true, false);
         event.preventDefault();
