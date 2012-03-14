@@ -1,6 +1,7 @@
 #REST API
 
 from django.contrib.auth.models import User
+from django.db.models import Q
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL
 from tastypie.authorization import DjangoAuthorization
@@ -37,7 +38,6 @@ class LogCollectionResource(ModelResource):
             bundle.data['severity'] = SEVERITY_CHOICES[bundle.data['severity']][1]
         return bundle
 
-    
     def build_filters(self, filters=None):
         if filters is None:
             filters = {}
@@ -57,13 +57,14 @@ class LogCollectionResource(ModelResource):
             filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("T", " ")
             filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("Z", "")
 
+        # Create an OR'd filter for text searching in long description and short description
+        search_filter = {}
         if 'search' in filters:
-            filters['long_desc__icontains'] = filters['search']
-            filters['short_desc__icontains'] = filters['search']
+            queryset = LogMessage.objects.filter(Q(long_desc__icontains=filters['search']) | Q(short_desc__icontains=filters['search']))
+            search_filter = {'pk__in' : [i.pk for i in queryset]}
             del filters['search']
 
-        orm = super(LogCollectionResource, self).build_filters(filters)
-
+        orm = super(LogCollectionResource, self).build_filters(filters).update(search_filter)
         return orm
 
     class Meta:
@@ -73,13 +74,12 @@ class LogCollectionResource(ModelResource):
         authentication = CookieAuthentication()
         authorization = DjangoAuthorization()
         filtering = {
-            "long_desc" : ['icontains'],
-            "short_desc" : ['icontains'],
             "severity" : ['in'],
             "datetime" : ['gte','lte'],
             "server_ip" : ['in'],
             "application" : ['in'],
-            "add_datetime" : ['gte', 'lte']
+            "add_datetime" : ['gte', 'lte'],
+            "pk" : ['in']
         }
         ordering = ["severity",
                     "datetime",
