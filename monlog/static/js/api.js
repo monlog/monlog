@@ -131,6 +131,10 @@ var handleTimeout = function() {
 $(document).ready(function() {
     var updateHandler = function() { requestLogMessages(getFormData(),updateLogTable); };
     $('.filters input, .filters select').change(updateHandler);
+    $('form.filters').submit(function(event){
+        updateHandler();
+        event.preventDefault();
+    });
 
     var manualUpdate = function() { requestLogMessages(getFormData(),manualRefreshTriggered); };
     $('#refresh_notice').bind('click', manualUpdate);
