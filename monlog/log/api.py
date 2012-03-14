@@ -64,7 +64,8 @@ class LogCollectionResource(ModelResource):
             search_filter = {'pk__in' : [i.pk for i in queryset]}
             del filters['search']
 
-        orm = super(LogCollectionResource, self).build_filters(filters).update(search_filter)
+        orm = super(LogCollectionResource, self).build_filters(filters)
+        orm.update(search_filter)
         return orm
 
     class Meta:
