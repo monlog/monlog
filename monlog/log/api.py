@@ -40,9 +40,8 @@ class LogCollectionResource(ModelResource):
 
     def build_filters(self, filters=None):
         if filters is None:
-            filters = {}
-        else:
-            filters = filters.copy()
+            filters = QueryDict('')
+        filters._mutable = True
 
         if 'datetime__gte' in filters:
             filters['datetime__gte'] = filters['datetime__gte'].replace("T", " ")
