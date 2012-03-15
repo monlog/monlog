@@ -14,7 +14,7 @@ class LabelForm(forms.Form):
 
     def __init__(self, label_name, *args, **kwargs):
         super(LabelForm, self).__init__(*args, **kwargs)
-        if label_name != None:
+        if label_name is not None:
             self.fields['label'].widget.attrs['value'] = label_name
 
 class LogQueryForm(forms.Form):
