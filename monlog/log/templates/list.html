@@ -145,7 +145,7 @@
     $("#collapse-form").on('show', function() { toggleStreamingMode(false); });
     $("#collapse-form").on('hide', function() { toggleStreamingMode(true); });
     $("table tbody").on('show', '.long_desc', function(event) {
-            if (streamingMode) {
+        if (streamingMode) {
             // Make sure the clicked log message will be visible after collapse
             $(window).scrollTop($(event.target).offset().top - 60);
             // Go to pause mode, showing the filter form will trigger toggleStreamingMode correctly
