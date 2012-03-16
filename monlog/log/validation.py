@@ -3,7 +3,6 @@ from log.models import LogMessage
 from django.contrib.auth.models import User
 from datetime import datetime
 import simplejson as json
-import re
 
 class LogValidation(Validation):
     def log_malformed_data(self, data, errors, bundle):
@@ -12,16 +11,15 @@ class LogValidation(Validation):
         by adding an extra log to the system by monlog, notifying the user about
         the problem.
         """
-        client_ip = bundle.request.META["REMOTE_ADDR"]
-        client_ip = {"client_ip" : client_ip}
+
+        client_ip = {"client_ip" : bundle.request.META["REMOTE_ADDR"] }
         get_dict = bundle.request.GET
-        desc = data        
-        desc.update(client_ip)
-        desc.update(get_dict)       
-        desc = json.dumps(desc)
+        data.update(client_ip)
+        data.update(get_dict)
+        desc = json.dumps(data)
         current_date = datetime.now()
         monlog_user = User.objects.get(username="monlog")
-        severity = 4
+        severity = 4 # Error
         server_ip = "127.0.0.1"
 
         short_desc = "Malformed data! %s" % ", ".join(errors.values())
@@ -50,19 +48,17 @@ class LogValidation(Validation):
         errors = {}
 
         # Validate datetime
-  
         if 'timestamp' not in data:
-            errors['timestamp'] = 'Datetime not included in request.'
+            errors['timestamp'] = "Datetime not included in request."
         else:
             try:
-                int_test = float(data["timestamp"])
+                int_test = float(data['timestamp'])
             except ValueError:
-                errors['timestamp'] = 'Timestamp needs to be numeric.'
+                errors['timestamp'] = "Timestamp needs to be numeric."
 
-        
         # Validate severity
         if 'severity' not in data:
-            errors['severity'] = 'Severity level not inluded in request.'
+            errors['severity'] = "Severity level not inluded in request."
         else:
             if data['severity'] < 0 or data['severity'] > 7:
                 errors['severity'] = "Not supported severity level."
@@ -70,7 +66,6 @@ class LogValidation(Validation):
         # this function posts as monlog on errors.
         if len(errors) > 0:
             self.log_malformed_data(data, errors, bundle)
-        
+
         return errors
-    
 

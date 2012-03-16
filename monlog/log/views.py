@@ -13,6 +13,7 @@ def list(request):
     View for listing all log messages. Labels are used to filter which messages
     are displayed.
     """
+
     # Create a default LogQueryForm which is used if no label is specified.
     # Default is all severities checked, and order by datetime.
     qd = QueryDict('', mutable=True)
@@ -31,7 +32,7 @@ def list(request):
     context = RequestContext(request)
     context['lqf'] = lqf
     context['labels'] = Label.objects.all()
-    context['label_field'] = LabelForm()
+    context['label_field'] = LabelForm(label_name)
     return render_to_response('list.html', context)
 
 @login_required
@@ -39,6 +40,7 @@ def save_label(request):
     """
     Used when a user saves a new label.
     """
+
     name = request.POST.get('name')
     query_string = request.POST.get('query_string')
 

@@ -17,7 +17,10 @@ SEVERITY_CHOICES = (
                    )
 
 class LogMessage(models.Model):
-    """ Model of a log message """
+    """
+    Model of a log message
+    """
+
     severity = models.IntegerField(choices=SEVERITY_CHOICES)
     datetime = models.DateTimeField()
     add_datetime = models.DateTimeField(auto_now_add=True)
@@ -30,17 +33,18 @@ class LogMessage(models.Model):
         return self.short_desc
 
     def pretty_severity(self):
+        """
+        Return the string name of this log message severity.
+        """
         return SEVERITY_CHOICES[self.severity][1]
-
-    def sanitize_timestamp(self):
-        # Implement this.
-        pass
 
     class Meta:
         ordering = ('-datetime',)
 
 class Label(models.Model):
-    """ Model of a search filter that may be saved """
+    """
+    Model of a search filter that may be saved
+    """
     query_string = models.TextField()
     label_name = models.CharField(max_length=20,unique=True)
 
@@ -48,5 +52,8 @@ class Label(models.Model):
         return self.label_name
 
     def get_dict(self):
+        """
+        Creates a ``QueryDict`` from the querystring of this label.
+        """
         return QueryDict(self.query_string)
 

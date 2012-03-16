@@ -1,6 +1,7 @@
 #REST API
 
 from django.contrib.auth.models import User
+from django.db.models import Q
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL
 from tastypie.authorization import DjangoAuthorization
@@ -39,9 +40,8 @@ class LogCollectionResource(ModelResource):
 
     def build_filters(self, filters=None):
         if filters is None:
-            filters = {}
-        else:
-            filters = filters.copy()
+            filters = QueryDict('')
+        filters._mutable = True
 
         if 'datetime__gte' in filters:
             filters['datetime__gte'] = filters['datetime__gte'].replace("T", " ")
@@ -56,12 +56,15 @@ class LogCollectionResource(ModelResource):
             filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("T", " ")
             filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("Z", "")
 
+        # Create an OR'd filter for text searching in long description and short description
+        search_filter = {}
+        if 'search' in filters:
+            queryset = LogMessage.objects.filter(Q(long_desc__icontains=filters['search']) | Q(short_desc__icontains=filters['search']))
+            search_filter = {'pk__in' : [i.pk for i in queryset]}
+            del filters['search']
+
         orm = super(LogCollectionResource, self).build_filters(filters)
-
-        # if user doesn't specify severity level, no log messages will be returned.
-        if "severity__in" not in filters:
-            orm['severity__in'] = ""
-
+        orm.update(search_filter)
         return orm
 
     class Meta:
@@ -75,7 +78,8 @@ class LogCollectionResource(ModelResource):
             "datetime" : ['gte','lte'],
             "server_ip" : ['in'],
             "application" : ['in'],
-            "add_datetime" : ['gte', 'lte']
+            "add_datetime" : ['gte', 'lte'],
+            "pk" : ['in']
         }
         ordering = ["severity",
                     "datetime",
@@ -83,6 +87,9 @@ class LogCollectionResource(ModelResource):
                     "application"]
 
 class LogResource(ModelResource):
+    """
+    This is the API resource for inserting new log messages into the database.
+    """
     class Meta:
         allowed_methods = ['post']
         queryset = LogMessage.objects.all()

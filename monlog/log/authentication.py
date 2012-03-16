@@ -5,13 +5,16 @@ from tastypie.authentication import Authentication
 
 class CookieAuthentication(Authentication):
     """
-    Handles auth from Session cookie provided by the user. 
-    """ 
+    Handles auth from Session cookie provided by the user.
+    """
 
     def _unauthorized(self):
         return HttpUnauthorized()
- 
+
     def is_authenticated(self, request, **kwargs):
+        """
+        User is authenticated if the variable ``_auth_user_id`` is found in the session.
+        """
         from django.contrib.sessions.models import Session
         if 'sessionid' in request.COOKIES:
             s = Session.objects.get(pk=request.COOKIES['sessionid'])
@@ -28,23 +31,28 @@ class MonlogAuthentication(Authentication):
 
     Uses the ``ApiKey`` model that ships with tastypie. 
     """
+
     def _unauthorized(self):
         return HttpUnauthorized()
 
     def extract_apikey(self, request):
-        api_key = request.GET.get('api_key') or request.POST.get('api_key')
-        return api_key
-
-    def extract_username(self, api_key):
         """
-        Extracts the username from a string containing the API key.
+        Extracts the API key from the request
+
+        If both GET and POST dictionaries contains ``api_key``, POST will be used.
+        """
+        return request.GET.get('api_key') or request.POST.get('api_key')
+
+    def get_username_from_api_key(self, api_key):
+        """
+        Gets the username connected to an API key.
         """
         try:
             key = ApiKey.objects.get(key=api_key)
             username = User.objects.get(username=key.user.username)
         except ApiKey.DoesNotExist, User.DoesNotExist:
             return self._unauthorized()
-    
+
     def is_authenticated(self, request, **kwargs):
         """
         Finds the user associated with an API key.
@@ -52,7 +60,7 @@ class MonlogAuthentication(Authentication):
         Returns either ``True`` if allowed, or ``HttpUnauthorized`` if not.
         """
         api_key = self.extract_apikey(request)
-        
+
         if not api_key:
             return self._unauthorized()
 
@@ -67,11 +75,11 @@ class MonlogAuthentication(Authentication):
 
     def get_identifier(self, request):
         """
-        Provides a unique string identifier for the requestor.
+        Provides a unique string identifier for the requester.
 
-        This implementation returns the user's username.
+        This implementation returns the username of the user or ``nouser`` if something went wrong.
         """
         api_key = self.extract_apikey(request)
-        username = self.extract_username(api_key)
+        username = self.get_username_from_api_key(api_key)
         return username or 'nouser'
 

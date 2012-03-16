@@ -6,14 +6,27 @@ from log.models import SEVERITY_CHOICES
 from django.contrib.auth.models import User
 from django.http import QueryDict
 
-class LogDateTime(DateTimeInput):
-    input_type = 'datetime'
-    
-
 class LabelForm(forms.Form):
-    label = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'Enter a label name...'}))
+    """
+    Small form for saving label. The charfield is populated with label name if it's available.
+    """
+    label = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'placeholder':'Enter a label name...'}))
+
+    def __init__(self, label_name, *args, **kwargs):
+        super(LabelForm, self).__init__(*args, **kwargs)
+        if label_name is not None:
+            self.fields['label'].widget.attrs['value'] = label_name
+
+class LogDateTime(DateTimeInput):
+    """
+    Used in ``LogQueryForm`` as the widget for ``DateTimeField``. Sets input type to be ``datetime``, which is for HTML5.
+    """
+    input_type = 'datetime'
 
 class LogQueryForm(forms.Form):
+    """
+    This is the form for the log message filter. 
+    """
     search = forms.CharField(max_length=100,
                      widget=forms.TextInput(attrs={'class':'search-query', 'placeholder':'Search...'}))
     severity__in = forms.MultipleChoiceField(required=False, widget=CheckboxSelectMultiple(attrs={}), choices=SEVERITY_CHOICES)
