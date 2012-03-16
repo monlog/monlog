@@ -13,21 +13,21 @@
 </ul>
 <ul class="nav pull-right">
     <li class="divider-vertical"></li>
-    <li class="streaming"><a href="#" data-toggle="collapse" data-target="#collapse-form" class="" id="streaming">Streaming</a></li>
+    <li class="streaming"><a href="#" onclick="event.preventDefault()" data-toggle="collapse" data-target="#collapse-form" class="" id="streaming">Streaming</a></li>
 </ul>
 {% endblock %}
 {% block content %}
 {% verbatim %}
     <script id="log_messages" type="text/html">
     {{#objects}}
-    <tr class="sev-{{ severity }}{{#old}} old-data{{/old}}">
+    <tr class="sev-{{ severity }}{{#old}} old-data{{/old}}" id="msg-{{ id }}">
         <td><span class="label">{{ severity }}</span></td>
         <td><span class="">{{ datetime }}</span></td>
         <td><span class="">{{ application.username }}</span></td>
         <td><span class="">{{ server_ip }}</span></td>
         <td>
-            <a href="#" data-toggle="collapse" data-target="#details-msg-{{ id }}"><div class="">{{ short_desc }}</div></a>
-            <div id="details-msg-{{ id }}" class="collapse"><pre class="long_desc" >{{ long_desc }}</pre></div>
+            <a href="#" onclick="event.preventDefault();" data-toggle="collapse" data-target="#details-msg-{{ id }}"><div class="">{{ short_desc }}</div></a>
+            <div id="details-msg-{{ id }}" class="collapse long_desc"><pre>{{ long_desc }}</pre></div>
         </td>
     </tr>
     {{/objects}}
@@ -114,18 +114,6 @@
             }
         );
     });
-    $("#collapse-form").on('show', function(){
-        $("#collapse-form").removeClass("non-expanded");
-        $("#streaming").addClass("streaming-deactivated");
-        $("#streaming").html("Streaming paused");
-        streamingMode = false;
-    });
-    $("#collapse-form").on('hide', function(){
-        $("#collapse-form").addClass("non-expanded");
-        $("#streaming").removeClass("streaming-deactivated");
-        $("#streaming").html("Streaming");
-        streamingMode = true;
-    });
     $(document).ready(function() {
         $("#severity-checkboxes").hide();
         var datetimepickerFormat = {timeFormat: 'hh:mm:ss', dateFormat: 'yy-mm-dd', separator :'T'};
@@ -153,6 +141,16 @@
         var ordering_param = ($(this).hasClass('sorted-desc') ? '-' : '') + this.id;
         $('form.filters input[name="order_by"]').attr('value', ordering_param);
         $('form.filters input[name="order_by"]').change();
+    });
+    $("#collapse-form").on('show', function() { toggleStreamingMode(false); });
+    $("#collapse-form").on('hide', function() { toggleStreamingMode(true); });
+    $("table tbody").on('show', '.long_desc', function(event) {
+            if (streamingMode) {
+            // Make sure the clicked log message will be visible after collapse
+            $(window).scrollTop($(event.target).offset().top - 60);
+            // Go to pause mode, showing the filter form will trigger toggleStreamingMode correctly
+            $("#collapse-form").collapse('show');
+        }
     });
 </script>
 {% endblock %}

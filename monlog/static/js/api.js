@@ -64,19 +64,19 @@ var displayLogMessages = function(data) {
 };
 
 
-/* Request event handlers */
 var updateLogTable = function(data) {
-    // Called when streaming mode is enabled
+    // Handles a full request, i.e. a non-refresh request
+    // Full requests happen every timeoutTime in streaming mode,
+    // and whenever you change filters or click the refresh notice otherwise
 
-    // When this function is called we do not want to
-    // highligt new entries
+    // When this function is called we do not want to highlight new entries
     $('.content table').removeClass('was-refreshed');
 
     displayLogMessages(data);
 };
 
 var displayRefreshNotice = function(data) {
-    // Streming mode is disabled - called every timeoutTime ms
+    // Called every timeoutTime ms when streaming mode is disabled
     var count = data['objects'].length;
     var maxObjects = 20;
 
@@ -95,9 +95,28 @@ var manualRefreshTriggered = function(data) {
     // Highlight new entries
     $('.content table').addClass('was-refreshed');
     displayLogMessages(data);
-}
+};
 
-
+var toggleStreamingMode = function(enable) {
+    console.log("toggleStreamingMode:", enable);
+    if (typeof enable == "undefined") {
+        // we want to end up with the inverse of the current streaming mode
+        enable = ! streamingMode;
+    }
+    if (enable != streamingMode) {
+        // actually toggle streaming mode
+        if (enable) {
+            $("#collapse-form").addClass("non-expanded");
+            $("#streaming").removeClass("streaming-deactivated");
+            $("#streaming").html("Streaming");
+        } else {
+            $("#collapse-form").removeClass("non-expanded");
+            $("#streaming").addClass("streaming-deactivated");
+            $("#streaming").html("Streaming paused");
+        }
+        streamingMode = enable;
+    }
+};
 
 var requestLogMessages = function(formData,callback) {
     $("#loading_indicator").fadeIn(300);
@@ -112,7 +131,12 @@ var requestLogMessages = function(formData,callback) {
 var handleTimeout = function() {
     if (streamingMode) {
         // Auto update table
-        requestLogMessages(getFormData(),updateLogTable);
+        requestLogMessages(getFormData(), function(data) {
+            if (streamingMode) {
+                // We need to make sure we haven't left streamingMode
+                updateLogTable(data);
+            }
+        });
     } else {
         // Make request and show notice
         formMap = getFormData();
