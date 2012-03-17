@@ -19,6 +19,11 @@ var timeoutTime = 5000;
 var displayedIds;
 var lastDisplayedDatetime;
 
+// These variables is related to lazyloading
+var messagesPerPage = 25;
+var nextOffset = 0;
+var messagesTotal = 0;
+
 // ISO 8601 date format function from:
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference:Global_Objects:Date#Example:_ISO_8601_formatted_dates
 function ISODateString(d){
@@ -61,6 +66,10 @@ var displayLogMessages = function(data) {
 
     $('#refresh_notice').hide();
     lastDisplayedDatetime = ISODateString(new Date());
+
+    // Save data needed for lazyloading
+    nextOffset = messagesPerPage;
+    messagesTotal = data['meta']['total_count'];
 };
 
 
@@ -95,18 +104,38 @@ var manualRefreshTriggered = function(data) {
     // Highlight new entries
     $('.content table').addClass('was-refreshed');
     displayLogMessages(data);
-}
+};
+
+var lazyloadAppend = function(data) {
+    // Append data to already populated table
+    $(".content .table tbody").append(ich.log_messages(data));
+    nextOffset += messagesPerPage;
+};
 
 
 
 var requestLogMessages = function(formData,callback) {
     $("#loading_indicator").fadeIn(300);
 
-    var url = "/api/logmessages/?" + $.param(formData);
+    var url = "/api/logmessages/?limit=" + messagesPerPage + "&" + $.param(formData);
     $.getJSON(url, function(data,textStatus,jqXHR) {
         callback(data);
         $("#loading_indicator").fadeOut(300);
     });
+};
+
+var lazyloadTrigger = function() {
+    // Called when trigger element is in view port
+    if (!streamingMode &&
+    typeof lastDisplayedDatetime !== 'undefined' &&
+    nextOffset <= messagesTotal) {
+        formMap = getFormData();
+        // Only older data is requested
+        formMap.push({ 'name': 'add_datetime__lte', 'value': lastDisplayedDatetime });
+        // Add offset so that the next page is loaded
+        formMap.push({ 'name': 'offset', 'value': nextOffset });
+        requestLogMessages(formMap, lazyloadAppend);
+    }
 };
 
 var handleTimeout = function() {
