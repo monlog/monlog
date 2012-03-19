@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseBadRequest, QueryDict
+from django.http import HttpResponse, HttpResponseBadRequest, HttpUnauthorized, QueryDict
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
@@ -52,12 +52,18 @@ def save_label(request):
         logging.debug("Query_String not defined")
         return HttpResponseBadRequest("Required fields: name, query_string")
 
+    # Labels are connected to users, so we must retrieve the user.
+    try:
+        user = User.objects.get(username=request.user)
+    except User.DoesNotExist:
+        return HttpUnauthorized()
+
     # Look if label name already exists, overwrite it if it does.
     try:
         label = Label.objects.get(label_name=name)
         label.query_string=query_string
     except Label.DoesNotExist:
-        label = Label(label_name=name, query_string=query_string)
+        label = Label(user=user, label_name=name, query_string=query_string)
     label.save()
     return HttpResponse('/?label='+name)
 

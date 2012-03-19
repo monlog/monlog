@@ -46,18 +46,26 @@ class Filter(models.Model):
     """
     Model of a search filter. This is used in expectations and labels.
     """
+
+    class Meta:
+        abstract = True
+
     query_string = models.TextField()
+
+    def __unicode__(self):
+        return self.query_string
+
     def get_dict(self):
         """
         Creates a ``QueryDict`` from the querystring of this label.
         """
         return QueryDict(self.query_string)
 
-class Label(models.Model):
+class Label(Filter):
     """
     Model for labels.
     """
-    filter = models.ForeignKey(Filter)
+    user = models.ForeignKey(User)
     label_name = models.CharField(max_length=20,unique=True)
 
     def __unicode__(self):
