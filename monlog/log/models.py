@@ -41,19 +41,25 @@ class LogMessage(models.Model):
     class Meta:
         ordering = ('-datetime',)
 
-class Label(models.Model):
+
+class Filter(models.Model):
     """
-    Model of a search filter that may be saved
+    Model of a search filter. This is used in expectations and labels.
     """
     query_string = models.TextField()
-    label_name = models.CharField(max_length=20,unique=True)
-
-    def __unicode__(self):
-        return self.label_name
-
     def get_dict(self):
         """
         Creates a ``QueryDict`` from the querystring of this label.
         """
         return QueryDict(self.query_string)
+
+class Label(models.Model):
+    """
+    Model for labels.
+    """
+    filter = models.ForeignKey(Filter)
+    label_name = models.CharField(max_length=20,unique=True)
+
+    def __unicode__(self):
+        return self.label_name
 

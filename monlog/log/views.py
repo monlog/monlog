@@ -26,7 +26,7 @@ def list(request):
     if label_name:
         label = Label.objects.get(label_name=label_name)
         if label:
-            lqf = LogQueryForm(label.get_dict())
+            lqf = LogQueryForm(label.filter.get_dict())
 
     # Set context variables
     context = RequestContext(request)
