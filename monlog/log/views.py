@@ -1,5 +1,4 @@
 from django.http import HttpResponse, HttpResponseBadRequest, QueryDict
-from tastypie.http import HttpUnauthorized
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
@@ -26,7 +25,7 @@ def list(request):
     label_name = request.GET.get('label')
     if label_name:
         try:
-            label = Label.objects.get(label_name=label_name)
+            label = Label.objects.get(label_name=label_name, user=request.user)
             lqf = LogQueryForm(label.get_dict())
         except Label.DoesNotExist:
             label_name = None
@@ -57,7 +56,7 @@ def save_label(request):
 
     # Look if label name already exists, overwrite it if it does.
     try:
-        label = Label.objects.get(label_name=name)
+        label = Label.objects.get(label_name=name, user=request.user)
         label.query_string=query_string
     except Label.DoesNotExist:
         label = Label(user=request.user, label_name=name, query_string=query_string)
