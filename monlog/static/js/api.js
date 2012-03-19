@@ -16,7 +16,6 @@
 var pendingData;
 var streamingMode = true;
 var timeoutTime = 5000;
-var displayedIds;
 var lastDisplayedDatetime;
 
 // These variables is related to lazyloading
@@ -49,20 +48,8 @@ var getFormData = function() {
 
 
 var displayLogMessages = function(data) {
-    var newDisplayedIds = [];
-
-    // Flag every old entry with old-class property
-    $.each(data['objects'], function(i, el) {
-        if (typeof displayedIds == 'undefined' || $.inArray(el['id'], displayedIds) !== -1) {
-            // this is an old log message
-            el['old'] = true;
-        }
-        newDisplayedIds.push(el['id']);
-    });
-
     // Apply data to ICanHaz templates
     $(".content .table tbody").html(ich.log_messages(data));
-    displayedIds = newDisplayedIds;
 
     $('#refresh_notice').hide();
     lastDisplayedDatetime = ISODateString(new Date());
@@ -76,11 +63,6 @@ var displayLogMessages = function(data) {
 /* Request event handlers */
 var updateLogTable = function(data) {
     // Called when streaming mode is enabled
-
-    // When this function is called we do not want to
-    // highligt new entries
-    $('.content table').removeClass('was-refreshed');
-
     displayLogMessages(data);
 };
 
@@ -101,8 +83,6 @@ var displayRefreshNotice = function(data) {
 var manualRefreshTriggered = function(data) {
     // This function is called when refresh notice link is clicked
     // Streaming mode disabled
-    // Highlight new entries
-    $('.content table').addClass('was-refreshed');
     displayLogMessages(data);
 };
 
