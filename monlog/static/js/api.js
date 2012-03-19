@@ -16,8 +16,12 @@
 var pendingData;
 var streamingMode = true;
 var timeoutTime = 5000;
-var displayedIds;
 var lastDisplayedDatetime;
+
+// These variables is related to lazyloading
+var messagesPerPage = 25;
+var nextOffset = 0;
+var messagesTotal = 0;
 
 // ISO 8601 date format function from:
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference:Global_Objects:Date#Example:_ISO_8601_formatted_dates
@@ -44,34 +48,21 @@ var getFormData = function() {
 
 
 var displayLogMessages = function(data) {
-    var newDisplayedIds = [];
-
-    // Flag every old entry with old-class property
-    $.each(data['objects'], function(i, el) {
-        if (typeof displayedIds == 'undefined' || $.inArray(el['id'], displayedIds) !== -1) {
-            // this is an old log message
-            el['old'] = true;
-        }
-        newDisplayedIds.push(el['id']);
-    });
-
     // Apply data to ICanHaz templates
     $(".content .table tbody").html(ich.log_messages(data));
-    displayedIds = newDisplayedIds;
 
     $('#refresh_notice').hide();
     lastDisplayedDatetime = ISODateString(new Date());
+
+    // Save data needed for lazyloading
+    nextOffset = messagesPerPage;
+    messagesTotal = data['meta']['total_count'];
 };
 
 
 /* Request event handlers */
 var updateLogTable = function(data) {
     // Called when streaming mode is enabled
-
-    // When this function is called we do not want to
-    // highligt new entries
-    $('.content table').removeClass('was-refreshed');
-
     displayLogMessages(data);
 };
 
@@ -92,21 +83,39 @@ var displayRefreshNotice = function(data) {
 var manualRefreshTriggered = function(data) {
     // This function is called when refresh notice link is clicked
     // Streaming mode disabled
-    // Highlight new entries
-    $('.content table').addClass('was-refreshed');
     displayLogMessages(data);
-}
+};
+
+var lazyloadAppend = function(data) {
+    // Append data to already populated table
+    $(".content .table tbody").append(ich.log_messages(data));
+    nextOffset += messagesPerPage;
+};
 
 
 
 var requestLogMessages = function(formData,callback) {
     $("#loading_indicator").fadeIn(300);
 
-    var url = "/api/logmessages/?" + $.param(formData);
+    var url = "/api/logmessages/?limit=" + messagesPerPage + "&" + $.param(formData);
     $.getJSON(url, function(data,textStatus,jqXHR) {
         callback(data);
         $("#loading_indicator").fadeOut(300);
     });
+};
+
+var lazyloadTrigger = function() {
+    // Called when trigger element is in view port
+    if (!streamingMode &&
+    typeof lastDisplayedDatetime !== 'undefined' &&
+    nextOffset <= messagesTotal) {
+        formMap = getFormData();
+        // Only older data is requested
+        formMap.push({ 'name': 'add_datetime__lte', 'value': lastDisplayedDatetime });
+        // Add offset so that the next page is loaded
+        formMap.push({ 'name': 'offset', 'value': nextOffset });
+        requestLogMessages(formMap, lazyloadAppend);
+    }
 };
 
 var handleTimeout = function() {
