@@ -1,4 +1,5 @@
-from django.http import HttpResponse, HttpResponseBadRequest, HttpUnauthorized, QueryDict
+from django.http import HttpResponse, HttpResponseBadRequest, QueryDict
+from tastypie.http import HttpUnauthorized
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
@@ -24,14 +25,16 @@ def list(request):
     # Get label if user specified one.
     label_name = request.GET.get('label')
     if label_name:
-        label = Label.objects.get(label_name=label_name)
-        if label:
-            lqf = LogQueryForm(label.filter.get_dict())
+        try:
+            label = Label.objects.get(label_name=label_name)
+            lqf = LogQueryForm(label.get_dict())
+        except Label.DoesNotExist:
+            label_name = None
 
     # Set context variables
     context = RequestContext(request)
     context['lqf'] = lqf
-    context['labels'] = Label.objects.all()
+    context['labels'] = Label.objects.filter(user=request.user)
     context['label_field'] = LabelForm(label_name)
     return render_to_response('list.html', context)
 
@@ -52,18 +55,12 @@ def save_label(request):
         logging.debug("Query_String not defined")
         return HttpResponseBadRequest("Required fields: name, query_string")
 
-    # Labels are connected to users, so we must retrieve the user.
-    try:
-        user = User.objects.get(username=request.user)
-    except User.DoesNotExist:
-        return HttpUnauthorized()
-
     # Look if label name already exists, overwrite it if it does.
     try:
         label = Label.objects.get(label_name=name)
         label.query_string=query_string
     except Label.DoesNotExist:
-        label = Label(user=user, label_name=name, query_string=query_string)
+        label = Label(user=request.user, label_name=name, query_string=query_string)
     label.save()
     return HttpResponse('/?label='+name)
 

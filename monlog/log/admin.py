@@ -6,4 +6,3 @@ from log.models import LogMessage, Label, Filter
 admin.site.register(ApiKey)
 admin.site.register(LogMessage)
 admin.site.register(Label)
-admin.site.register(Filter)
