@@ -33,6 +33,7 @@ def list(request):
     context['lqf'] = lqf
     context['labels'] = Label.objects.all()
     context['label_field'] = LabelForm(label_name)
+    context['label_name'] = label_name
     return render_to_response('list.html', context)
 
 @login_required
