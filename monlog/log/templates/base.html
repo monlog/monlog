@@ -22,8 +22,24 @@
     <script src="{{ STATIC_URL }}lib/jquery/jquery-ui.min.js"></script>
     <script src="{{ STATIC_URL }}lib/jquery/jquery-ui-timepicker-addon.js"></script>
     <script src="{{ STATIC_URL }}lib/jquery/jquery.appear-1.1.1.min.js"></script>
-    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap.js"></script>
+
+    <!-- Add all Bootstrap JS components separately since we include their repo as a submodule now
+         We really need to fix LESS compilation and JS minification etc. before final release-->
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-alert.js"></script>
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-button.js"></script>
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-carousel.js"></script>
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-collapse.js"></script>
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-modal.js"></script>
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-tooltip.js"></script>
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-popover.js"></script>
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-scrollspy.js"></script>
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-tab.js"></script>
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-transition.js"></script>
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap-typeahead.js"></script>
+
     <script src="{{ STATIC_URL }}lib/icanhaz/ICanHaz.min.js"></script>
+
 
  </head>
 
