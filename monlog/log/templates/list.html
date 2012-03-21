@@ -19,7 +19,11 @@
             <li class="divider"></li>
             {% if labels %}
                 {% for label in labels %}
-                    <li><a href="/?label={{label.label_name}}">{{ label.label_name }}</a></li>
+                    {% if label_name == label.label_name %}
+                        <li class="active-label"><a href="/">{{ label.label_name }}</a></li>
+                    {% else %}
+                        <li><a href="/?label={{label.label_name}}">{{ label.label_name }}</a></li>
+                    {% endif %}
                 {% endfor %}
             {% else %}
                 <li class="disabled">No saved labels</li>
