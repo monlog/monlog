@@ -2,7 +2,9 @@ from django.contrib.auth.models import User
 from django.db import models
 from tastypie.models import create_api_key
 from django.http import QueryDict
-from datetime import timedelta, datetime
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+import time
 
 models.signals.post_save.connect(create_api_key, sender=User)
 
@@ -82,7 +84,7 @@ class Label(Filter):
         return self.label_name
 
 
-class Expectation(Filter):
+class Expectation(Label):
     """
     Model for expectations.
     """
@@ -110,12 +112,18 @@ class Expectation(Filter):
         Enddate   = Deadline + Tolerance
         """
 
-        timedelta = get_timedelta(tolerance_unit, tolerance_amount)
-        startdate = (self.deadline - timedelta).replace(microsecond=0)
-        enddate   = (self.deadline + timedelta).replace(microsecond=0)
-        if !self.query_string.empty():
-            self.query_string += "&"
-        self.query_string += "datetime__gte=" + startdate.isoformat() + "&datetime__lte=" + enddate.isoformat()
+        td = self.get_timedelta(self.tolerance_unit, self.tolerance_amount)
+        if td is None:
+            print "Couldn't apply tolerance to Expectation"
+            return
+
+        startdate = (self.deadline - td)
+        enddate   = (self.deadline + td)
+
+        qs = QueryDict(self.query_string, mutable=True)
+        qs['datetime__gte'] = time.mktime(startdate.utctimetuple())
+        qs['datetime__lte'] = time.mktime(enddate.utctimetuple())
+        self.query_string = qs.urlencode()
 
     def check_expectation(self):
         """
@@ -128,28 +136,27 @@ class Expectation(Filter):
         """
         Returns next deadline as a datetime object. Does NOT change the deadline.
         """
-        timedelta = (get_timedelta(repeat_unit, repeat_delta).replace(microsecond=0))
-        return deadline + timedelta
+        timedelta = self.get_timedelta(self.repeat_unit, self.repeat_delta)
+        return self.deadline + timedelta
 
     def get_timedelta(self, unit, value):
         """
         Returns a timedelta object from specified unit and value. See ``EXPECTATION_UNITS`` for valid units.
         """
-        if value <= 0 return None
+        if unit < 0 or unit >= len(EXPECTATION_UNITS):
+            print "Error: Not valid time unit; ",  unit
+            return None
 
         if unit == 0: # month
-            return timedelta(weeks=(4*value))
+            return relativedelta(months=value)
         elif unit == 1: # week
-            return timedelta(weeks=value)
+            return relativedelta(weeks=value)
         elif unit == 2: # day
-            return timedelta(days=value)
+            return relativedelta(days=value)
         elif unit == 3: # hour
-            return timedelta(hours=value)
+            return relativedelta(hours=value)
         elif unit == 4: # minute
-            return timedelta(minutes=value)
+            return relativedelta(minutes=value)
         elif unit == 5: # second
-            return timedelta(seconds=value)
-        else:
-            # Invalid unit
-            return None
+            return relativedelta(seconds=value)
 
