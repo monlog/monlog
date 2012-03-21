@@ -3,11 +3,13 @@
 {% block navbar %}
 <ul class="nav">
     <li class="dropdown">
+        <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">
         {% if label_name %}
-            <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">{{ label_name }}<span class="changed_label_indicator">*</span> <b class="caret"></b></a>
+            {{ label_name }}<span class="changed_label_indicator">*</span> <b class="caret"></b>
         {% else %}
-            <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">Label <b class="caret"></b></a>
+            Label <b class="caret"></b>
         {% endif %}
+        </a>
         <ul class="dropdown-menu">
             {% if label_name %}
             <li><a href="#" class="label-save">Save<span class="changed_label_indicator">*</span></a></li>
@@ -18,11 +20,11 @@
             {% endif %}
             <li class="divider"></li>
             {% if labels %}
-                {% for label in labels %}
-                    {% if label_name == label.label_name %}
-                        <li class="active-label"><a href="/">{{ label.label_name }}</a></li>
+                {% for current_label in labels %}
+                    {% if label_name == current_label.label_name %}
+                        <li class="active-label"><a href="/">{{ current_label.label_name }}</a></li>
                     {% else %}
-                        <li><a href="/?label={{label.label_name}}">{{ label.label_name }}</a></li>
+                        <li><a href="/?label={{ current_label.label_name }}">{{ current_label.label_name }}</a></li>
                     {% endif %}
                 {% endfor %}
             {% else %}
