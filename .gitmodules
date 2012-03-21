@@ -1,0 +1,6 @@
+[submodule "bootstrap"]
+	path = bootstrap
+	url = https://github.com/twitter/bootstrap/
+[submodule "monlog/static/lib/bootstrap"]
+	path = monlog/static/lib/bootstrap
+	url = https://github.com/twitter/bootstrap/
