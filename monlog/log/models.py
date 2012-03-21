@@ -111,10 +111,13 @@ class Expectation(Label):
         Startdate = Deadline - Tolerance
         Enddate   = Deadline + Tolerance
         """
+        if self.deadline is None:
+            print "Error: Deadline must've been set before applying tolerance to query string."
+            return
 
         td = self.get_timedelta(self.tolerance_unit, self.tolerance_amount)
         if td is None:
-            print "Couldn't apply tolerance to Expectation"
+            print "Error: Couldn't apply tolerance to Expectation"
             return
 
         startdate = (self.deadline - td)
@@ -137,7 +140,11 @@ class Expectation(Label):
         Returns next deadline as a datetime object. Does NOT change the deadline.
         """
         timedelta = self.get_timedelta(self.repeat_unit, self.repeat_delta)
-        return self.deadline + timedelta
+        if timedelta is not None:
+            return self.deadline + timedelta
+        else:
+            print "Error: Couldn't get next deadline."
+            return None
 
     def get_timedelta(self, unit, value):
         """
@@ -160,3 +167,16 @@ class Expectation(Label):
         elif unit == 5: # second
             return relativedelta(seconds=value)
 
+    @staticmethod
+    def get_expectation_unit_from_string(string):
+        for x in EXPECTATION_UNITS:
+            if x[1] == string.lower():
+                return x[0]
+        return -1
+
+    @staticmethod
+    def get_expectation_unit_from_int(i):
+        for x in EXPECTATION_UNITS:
+            if x[0] == i:
+                return x[1]
+        return ''
