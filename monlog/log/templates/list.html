@@ -10,7 +10,7 @@
         {% endif %}
         <ul class="dropdown-menu">
             {% if label_name %}
-            <li><a href="#">Save<span class="changed_label_indicator">*</span></a></li>
+            <li><a href="#" class="label-save">Save<span class="changed_label_indicator">*</span></a></li>
                 <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
                 <li><a href="#">Remove</a></li>
             {% else %}
@@ -98,7 +98,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        <a href="#" id="label-save" class="btn btn-primary">Save</a>
+        <a href="#" class="btn btn-primary label-save">Save</a>
         <a href="#" class="btn" data-dismiss="modal">Close</a>
     </div>
 </div>
@@ -124,7 +124,7 @@
         $(".changed_label_indicator").show();
     });
     $('#lazyload-trigger').appear(lazyloadTrigger, { 'one': false });
-    $("#label-save").click(function(){
+    $(".label-save").click(function(){
         var query = $(".filters").serialize();
         $.post("/label/", {
             csrfmiddlewaretoken : "{{ csrf_token }}",
