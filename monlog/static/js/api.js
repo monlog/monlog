@@ -103,6 +103,8 @@ var toggleStreamingMode = function(enable) {
             $("#collapse-form").addClass("non-expanded");
             $("#streaming").removeClass("streaming-deactivated");
             $("#streaming").html("Streaming");
+            // collapse all expanded detail rows
+            $("table tbody .details .in").collapse('hide');
         } else {
             $("#collapse-form").removeClass("non-expanded");
             $("#streaming").addClass("streaming-deactivated");
