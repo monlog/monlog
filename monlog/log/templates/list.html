@@ -25,7 +25,7 @@
         <td><span class="">{{ datetime }}</span></td>
         <td><span class="">{{ application.username }}</span></td>
         <td><span class="">{{ server_ip }}</span></td>
-        <td><a href="#" onclick="event.preventDefault();" data-toggle="collapse" data-target="#details-msg-{{ id }}"><div class="">{{ short_desc }}</div></a></td>
+        <td><a href="#" class="short_desc" onclick="event.preventDefault();" data-toggle="collapse" data-target="#details-msg-{{ id }}">{{ short_desc }}<i class="icon-expandable"></i></a></td>
     </tr>
     <tr>
         <td colspan="5" class="details">
