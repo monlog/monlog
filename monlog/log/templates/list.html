@@ -108,11 +108,13 @@
         <!-- no log messages loaded -->
     </tbody>
 </table>
+<div id="lazyload-trigger"></div>
 <script src="{{ STATIC_URL }}js/api.js" type="text/javascript"></script>
 <script type="text/javascript">
     $('.filters input, .filters select').change(function() {
         $(".changed_label_indicator").show();
     });
+    $('#lazyload-trigger').appear(lazyloadTrigger, { 'one': false });
     $("#label-save").click(function(){
         var query = $(".filters").serialize();
         $.post("/label/", {

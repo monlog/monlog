@@ -24,14 +24,16 @@ def list(request):
     # Get label if user specified one.
     label_name = request.GET.get('label')
     if label_name:
-        label = Label.objects.get(label_name=label_name)
-        if label:
+        try:
+            label = Label.objects.get(label_name=label_name, user=request.user)
             lqf = LogQueryForm(label.get_dict())
+        except Label.DoesNotExist:
+            label_name = None
 
     # Set context variables
     context = RequestContext(request)
     context['lqf'] = lqf
-    context['labels'] = Label.objects.all()
+    context['labels'] = Label.objects.filter(user=request.user)
     context['label_field'] = LabelForm(label_name)
     context['label_name'] = label_name
     return render_to_response('list.html', context)
@@ -55,10 +57,10 @@ def save_label(request):
 
     # Look if label name already exists, overwrite it if it does.
     try:
-        label = Label.objects.get(label_name=name)
+        label = Label.objects.get(label_name=name, user=request.user)
         label.query_string=query_string
     except Label.DoesNotExist:
-        label = Label(label_name=name, query_string=query_string)
+        label = Label(user=request.user, label_name=name, query_string=query_string)
     label.save()
     return HttpResponse('/?label='+name)
 
