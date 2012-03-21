@@ -1,7 +1,7 @@
 from log.models import LogMessage
 from django.db import models
 from django import forms
-from django.forms.widgets import CheckboxSelectMultiple,SelectMultiple, DateTimeInput
+from django.forms.widgets import CheckboxSelectMultiple, SelectMultiple, DateTimeInput
 from log.models import SEVERITY_CHOICES
 from django.contrib.auth.models import User
 from django.http import QueryDict
@@ -17,12 +17,6 @@ class LabelForm(forms.Form):
         if label_name is not None:
             self.fields['label'].widget.attrs['value'] = label_name
 
-class LogDateTime(DateTimeInput):
-    """
-    Used in ``LogQueryForm`` as the widget for ``DateTimeField``. Sets input type to be ``datetime``, which is for HTML5.
-    """
-    input_type = 'datetime'
-
 class LogQueryForm(forms.Form):
     """
     This is the form for the log message filter. 
@@ -30,8 +24,8 @@ class LogQueryForm(forms.Form):
     search = forms.CharField(max_length=100,
                      widget=forms.TextInput(attrs={'class':'search-query', 'placeholder':'Search...'}))
     severity__in = forms.MultipleChoiceField(required=False, widget=CheckboxSelectMultiple(attrs={}), choices=SEVERITY_CHOICES)
-    datetime__gte = forms.DateTimeField(required=False, widget=LogDateTime)
-    datetime__lte = forms.DateTimeField(required=False, widget=LogDateTime)
+    datetime__gte = forms.DateTimeField(required=False, widget=DateTimeInput)
+    datetime__lte = forms.DateTimeField(required=False, widget=DateTimeInput)
     application__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=())
     server_ip__in = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=())
 
