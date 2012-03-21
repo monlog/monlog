@@ -4,9 +4,9 @@
 <ul class="nav">
     <li class="dropdown">
         {% if label_name %}
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Label: {{ label_name }}<span class="changed_label_indicator">*</span> <b class="caret"></b></a>
+            <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">{{ label_name }}<span class="changed_label_indicator">*</span> <b class="caret"></b></a>
         {% else %}
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Label <b class="caret"></b></a>
+            <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">Label <b class="caret"></b></a>
         {% endif %}
         <ul class="dropdown-menu">
             {% if label_name %}
