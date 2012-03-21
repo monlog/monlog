@@ -60,14 +60,13 @@ var displayLogMessages = function(data) {
 };
 
 
-/* Request event handlers */
 var updateLogTable = function(data) {
     // Called when streaming mode is enabled
     displayLogMessages(data);
 };
 
 var displayRefreshNotice = function(data) {
-    // Streming mode is disabled - called every timeoutTime ms
+    // Called every timeoutTime ms when streaming mode is disabled
     var count = data['objects'].length;
     var maxObjects = 20;
 
@@ -92,7 +91,28 @@ var lazyloadAppend = function(data) {
     nextOffset += messagesPerPage;
 };
 
-
+var toggleStreamingMode = function(enable) {
+    console.log("toggleStreamingMode:", enable);
+    if (typeof enable == "undefined") {
+        // we want to end up with the inverse of the current streaming mode
+        enable = ! streamingMode;
+    }
+    if (enable != streamingMode) {
+        // actually toggle streaming mode
+        if (enable) {
+            $("#collapse-form").addClass("non-expanded");
+            $("#streaming").removeClass("streaming-deactivated");
+            $("#streaming").html("Streaming");
+            // collapse all expanded detail rows
+            $("table tbody .details .in").collapse('hide');
+        } else {
+            $("#collapse-form").removeClass("non-expanded");
+            $("#streaming").addClass("streaming-deactivated");
+            $("#streaming").html("Streaming paused");
+        }
+        streamingMode = enable;
+    }
+};
 
 var requestLogMessages = function(formData,callback) {
     $("#loading_indicator").fadeIn(300);
@@ -121,7 +141,12 @@ var lazyloadTrigger = function() {
 var handleTimeout = function() {
     if (streamingMode) {
         // Auto update table
-        requestLogMessages(getFormData(),updateLogTable);
+        requestLogMessages(getFormData(), function(data) {
+            if (streamingMode) {
+                // We need to make sure we haven't left streamingMode
+                updateLogTable(data);
+            }
+        });
     } else {
         // Make request and show notice
         formMap = getFormData();

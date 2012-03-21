@@ -24,6 +24,8 @@
 // from bootstrap
 .icon-chevron-up         { background-position: -288px -120px; }
 .icon-chevron-down       { background-position: -313px -119px; } // 1px off
+.icon-plus               { background-position: -408px -96px; }
+.icon-minus              { background-position: -433px -96px; }
 
 .dot {
     display: block;
@@ -32,6 +34,7 @@
     background-color: #f00;
     margin: 5px 5px 0 0;
     float: left;
+    pointer-events: none;
     .border-radius(3px);
 }
 
@@ -212,3 +215,21 @@ body {
 #form-wrapper {
     margin:19px;
 }
+
+a.short_desc .icon-expandable {
+    float: right;
+    visibility: hidden;
+
+    .icon-plus;
+}
+a.short_desc:hover .icon-expandable {
+    visibility: visible;
+}
+
+// this is the table cell that contains long_desc
+td.details {
+    padding: 0;
+    border: 0;
+}
+
+
