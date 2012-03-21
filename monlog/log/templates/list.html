@@ -17,9 +17,13 @@
                 <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
             {% endif %}
             <li class="divider"></li>
-            {% for label in labels %}
-                <li><a href="/?label={{label.label_name}}">{{ label.label_name }}</a></li>
-            {% endfor %}
+            {% if labels %}
+                {% for label in labels %}
+                    <li><a href="/?label={{label.label_name}}">{{ label.label_name }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li class="disabled">No saved labels</li>
+            {% endif %}
         </ul>
     </li>
 </ul>
