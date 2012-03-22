@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django import forms
 from tastypie.models import create_api_key
 from django.http import QueryDict
 from datetime import datetime
@@ -8,15 +9,6 @@ from tastypie.utils import dict_strip_unicode_keys
 import time
 
 models.signals.post_save.connect(create_api_key, sender=User)
-
-EXPECTATION_UNITS = (
-                    (0,'month'),
-                    (1,'week'),
-                    (2,'day'),
-                    (3,'hour'),
-                    (4,'minute'),
-                    (5,'second')
-                  )
 
 SEVERITY_CHOICES = (
                     (0, 'debug'),
@@ -91,16 +83,11 @@ class RelativedeltaField(models.Field):
 
     __metaclass__ = models.SubfieldBase
 
-    def __init__(self, unit, delta=0, *args, **kwargs):
-        self.unit = unit
-        self.delta = delta
-        super(RelativedeltaField, self).__init__(*args, **kwargs)
-
     def db_type(self):
         """
         Representation in DB wouldn't need more than 3 letters for delta value, and 3 letters for unit value
         """
-        return 'char(8)' # at most VVV_UUU    V=value, U=unit, _=delimiter
+        return 'char(30)'
 
     def to_python(self, value):
         """
@@ -108,24 +95,9 @@ class RelativedeltaField(models.Field):
         """
         if not value:
             return None
-        if isinstance(value, str):
-            val, unit = value.split("_") #raises ValueError if split not possible.
-
-            if unit == 'month':
-                return relativedelta(months=int(val))
-            elif unit == 'week':
-                return relativedelta(weeks=int(val))
-            elif unit == 'day':
-                return relativedelta(days=int(val))
-            elif unit == 'hour':
-                return relativedelta(hours=int(val))
-            elif unit == 'minute':
-                return relativedelta(minutes=int(val))
-            elif unit == 'second':
-                return relativedelta(seconds=int(val))
-            else:
-                #invalid unit type
-                raise TypeError('Invalid unit type: %s' % unit)
+        if isinstance(value, (str, unicode)):
+            months, days, hours, minutes, seconds = value.split("_") #raises ValueError if split not possible.
+            return relativedelta(months=int(months), days=int(days), hours=int(hours), minutes=int(minutes), seconds=int(seconds))
         elif isinstance(value, relativedelta):
             return value
         else:
@@ -133,23 +105,30 @@ class RelativedeltaField(models.Field):
 
     def get_db_prep_value(self, value):
         """
-        Concatenate unit and timedelta into an at most 8-letter string.
+        Concatenate unit and timedelta into a string.
         """
-        return "%s_%s" % self.unit, self.delta
+        return "%i_%i_%i_%i_%i" % (value.months, value.days, value.hours, value.minutes, value.seconds)
 
     def formfield(self, **kwargs):
-            defaults = { 'form_class' : forms.CharField() }
-            defaults.update(kwargs)
-            return super(RelativedeltaField, self).formfield(**kwargs)
+        """
+        Using a RelativedeltaField to represent this field in a form.
+        """
+        from log import forms as logforms
+        defaults = { 'form_class' : logforms.RelativedeltaField }
+        defaults.update(kwargs)
+        return super(RelativedeltaField, self).formfield(**defaults)
 
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
         return self.get_db_prep_value(value)
 
-class Expectation(Label):
+class Expectation(Filter):
     """
     Model for expectations.
     """
+
+    expectation_name = models.CharField(max_length=20, unique=True)
+    user = models.ForeignKey(User)
 
     # timestamp for next deadline
     deadline = models.DateTimeField()
@@ -164,17 +143,12 @@ class Expectation(Label):
 
     least_amount_of_hits = models.IntegerField()
 
-    def __init__(self, deadline=datetime.now(), tolerance=relativedelta(minute=10), repeat=relativedelta(month=1), least_amount_of_hits=1, label_name="Expectation", user=None):
-        super(Expectation, self).__init__()
-        self.deadline = datetime.now()
-        self.tolerance = tolerance
-        self.repeat = repeat
-        self.least_amount_of_hits = least_amount_of_hits
-        self.label_name = label_name
+    def __unicode__(self):
+        return self.expectation_name
 
-    def apply_tolerance(self):
+    def apply_tolerance(self, querydict):
         """
-        Sets startdate and enddate for filter.
+        Applies startdate and enddate to a querydict.
 
         Startdate = Deadline - Tolerance
         Enddate   = Deadline + Tolerance
@@ -186,10 +160,9 @@ class Expectation(Label):
         startdate = (self.deadline - self.tolerance)
         enddate   = (self.deadline + self.tolerance)
 
-        qs = QueryDict(self.query_string, mutable=True)
-        qs['datetime__gte'] = startdate.isoformat().replace('T',' ')
-        qs['datetime__lte'] = enddate.isoformat().replace('T',' ')
-        self.query_string = qs.urlencode()
+        querydict['datetime__gte'] = startdate.isoformat().replace('T',' ')
+        querydict['datetime__lte'] = enddate.isoformat().replace('T',' ')
+        return querydict
 
     def check_expectation(self):
         """
@@ -199,11 +172,12 @@ class Expectation(Label):
         Returns a dict of errors. If no errors was found an empty dict will be returned.
         """
         errors = {}
-        qd = dict_strip_unicode_keys(self.get_dict())
+        qd = dict_strip_unicode_keys(QueryDict(self.query_string, mutable=True))
+        qd = self.apply_tolerance(qd)
         qs = LogMessage.objects.filter(**qd)
         if len(qs) < self.least_amount_of_hits:
             errors['not_enough_results'] = "Not enough results found. Found: \"" + str(len(qs)) + "\" out of \"" + str(self.least_amount_of_hits) + "\"."
-            #errors['queryset'] = qs    #we might want to return this
+        errors['queryset'] = qs    #we might want to return this
 
         return errors
 
