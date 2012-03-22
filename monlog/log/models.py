@@ -85,6 +85,67 @@ class Label(Filter):
         return self.label_name
 
 
+class RelativedeltaField(models.Field):
+
+    description = "A relative timedelta"
+
+    __metaclass__ = models.SubfieldBase
+
+    def __init__(self, unit, delta=0, *args, **kwargs):
+        self.unit = unit
+        self.delta = delta
+        super(RelativedeltaField, self).__init__(*args, **kwargs)
+
+    def db_type(self):
+        """
+        Representation in DB wouldn't need more than 3 letters for delta value, and 3 letters for unit value
+        """
+        return 'char(8)' # at most VVV_UUU    V=value, U=unit, _=delimiter
+
+    def to_python(self, value):
+        """
+        Creates a relativedelta object from what we get from the database.
+        """
+        if not value:
+            return None
+        if isinstance(value, str):
+            val, unit = value.split("_") #raises ValueError if split not possible.
+
+            if unit == 'month':
+                return relativedelta(months=int(val))
+            elif unit == 'week':
+                return relativedelta(weeks=int(val))
+            elif unit == 'day':
+                return relativedelta(days=int(val))
+            elif unit == 'hour':
+                return relativedelta(hours=int(val))
+            elif unit == 'minute':
+                return relativedelta(minutes=int(val))
+            elif unit == 'second':
+                return relativedelta(seconds=int(val))
+            else:
+                #invalid unit type
+                raise TypeError('Invalid unit type: %s' % unit)
+        elif isinstance(value, relativedelta):
+            return value
+        else:
+            return None
+
+    def get_db_prep_value(self, value):
+        """
+        Concatenate unit and timedelta into an at most 8-letter string.
+        """
+        return "%s_%s" % self.unit, self.delta
+
+    def formfield(self, **kwargs):
+            defaults = { 'form_class' : forms.CharField() }
+            defaults.update(kwargs)
+            return super(RelativedeltaField, self).formfield(**kwargs)
+
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return self.get_db_prep_value(value)
+
 class Expectation(Label):
     """
     Model for expectations.
@@ -95,26 +156,21 @@ class Expectation(Label):
 
     # +- amount of unit
     # example: '+- 10 minute'
-    tolerance_amount = models.IntegerField()
-    tolerance_unit = models.IntegerField()
+    tolerance = RelativedeltaField()
 
     # repeat every ``repeat_delta`` ``repeat_unit``
     # example: 'every 2 month'
-    repeat_delta = models.IntegerField()
-    repeat_unit = models.IntegerField()
+    repeat = RelativedeltaField()
 
     least_amount_of_hits = models.IntegerField()
 
-    def __init__(self, deadline=datetime.now(), tolerance_amount=10, tolerance_unit=4, repeat_delta=1, repeat_unit=0, least_amount_of_hits=1, label_name="Expectation", user=None):
+    def __init__(self, deadline=datetime.now(), tolerance=relativedelta(minute=10), repeat=relativedelta(month=1), least_amount_of_hits=1, label_name="Expectation", user=None):
         super(Expectation, self).__init__()
         self.deadline = datetime.now()
-        self.tolerance_amount = tolerance_amount
-        self.tolerance_unit = tolerance_unit
-        self.repeat_delta = repeat_delta
-        self.repeat_unit = repeat_unit
+        self.tolerance = tolerance
+        self.repeat = repeat
         self.least_amount_of_hits = least_amount_of_hits
         self.label_name = label_name
-        self.apply_tolerance()
 
     def apply_tolerance(self):
         """
@@ -127,13 +183,8 @@ class Expectation(Label):
             print "Error: Deadline must've been set before applying tolerance to query string."
             return
 
-        td = Expectation.get_timedelta(self.tolerance_unit, self.tolerance_amount)
-        if td is None:
-            print "Error: Couldn't apply tolerance to Expectation"
-            return
-
-        startdate = (self.deadline - td)
-        enddate   = (self.deadline + td)
+        startdate = (self.deadline - self.tolerance)
+        enddate   = (self.deadline + self.tolerance)
 
         qs = QueryDict(self.query_string, mutable=True)
         qs['datetime__gte'] = startdate.isoformat().replace('T',' ')
@@ -160,50 +211,5 @@ class Expectation(Label):
         """
         Returns next deadline as a datetime object. Does NOT change the deadline.
         """
-        timedelta = Expectation.get_timedelta(self.repeat_unit, self.repeat_delta)
-        if timedelta is not None:
-            return self.deadline + timedelta
-        else:
-            print "Error: Couldn't get next deadline."
-            return None
+        return self.deadline + self.repeat
 
-    @staticmethod
-    def get_timedelta(unit, value):
-        """
-        Returns a timedelta object from specified unit and value. See ``EXPECTATION_UNITS`` for valid units.
-        """
-        if isinstance(unit, str): unit = get_expectation_unit_from_string(unit)
-        if value is None:
-            print "Error: Value error. ", value
-            return None
-
-        if unit < 0 or unit >= len(EXPECTATION_UNITS):
-            print "Error: Not valid time unit; ",  unit
-            return None
-
-        if unit == 0: # month
-            return relativedelta(months=value)
-        elif unit == 1: # week
-            return relativedelta(weeks=value)
-        elif unit == 2: # day
-            return relativedelta(days=value)
-        elif unit == 3: # hour
-            return relativedelta(hours=value)
-        elif unit == 4: # minute
-            return relativedelta(minutes=value)
-        elif unit == 5: # second
-            return relativedelta(seconds=value)
-
-    @staticmethod
-    def get_expectation_unit_from_string(string):
-        for x in EXPECTATION_UNITS:
-            if x[1] == string.lower():
-                return x[0]
-        return -1
-
-    @staticmethod
-    def get_expectation_unit_from_int(i):
-        for x in EXPECTATION_UNITS:
-            if x[0] == i:
-                return x[1]
-        return ''
