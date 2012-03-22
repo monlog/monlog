@@ -4,6 +4,7 @@ from tastypie.models import create_api_key
 from django.http import QueryDict
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from tastypie.utils import dict_strip_unicode_keys
 import time
 
 models.signals.post_save.connect(create_api_key, sender=User)
@@ -104,6 +105,17 @@ class Expectation(Label):
 
     least_amount_of_hits = models.IntegerField()
 
+    def __init__(self, deadline=datetime.now(), tolerance_amount=10, tolerance_unit=4, repeat_delta=1, repeat_unit=0, least_amount_of_hits=1, label_name="Expectation", user=None):
+        super(Expectation, self).__init__()
+        self.deadline = datetime.now()
+        self.tolerance_amount = tolerance_amount
+        self.tolerance_unit = tolerance_unit
+        self.repeat_delta = repeat_delta
+        self.repeat_unit = repeat_unit
+        self.least_amount_of_hits = least_amount_of_hits
+        self.label_name = label_name
+        self.apply_tolerance()
+
     def apply_tolerance(self):
         """
         Sets startdate and enddate for filter.
@@ -115,7 +127,7 @@ class Expectation(Label):
             print "Error: Deadline must've been set before applying tolerance to query string."
             return
 
-        td = self.get_timedelta(self.tolerance_unit, self.tolerance_amount)
+        td = Expectation.get_timedelta(self.tolerance_unit, self.tolerance_amount)
         if td is None:
             print "Error: Couldn't apply tolerance to Expectation"
             return
@@ -124,32 +136,47 @@ class Expectation(Label):
         enddate   = (self.deadline + td)
 
         qs = QueryDict(self.query_string, mutable=True)
-        qs['datetime__gte'] = time.mktime(startdate.utctimetuple())
-        qs['datetime__lte'] = time.mktime(enddate.utctimetuple())
+        qs['datetime__gte'] = startdate.isoformat().replace('T',' ')
+        qs['datetime__lte'] = enddate.isoformat().replace('T',' ')
         self.query_string = qs.urlencode()
 
     def check_expectation(self):
         """
         Checks if X amount of log messages matches the filter.
         X is the least amount of log messages we need in order to accept the expectation.
+
+        Returns a dict of errors. If no errors was found an empty dict will be returned.
         """
-        return LogMessage.objects.filter(self.get_dict()) >= self.least_amount_of_hits
+        errors = {}
+        qd = dict_strip_unicode_keys(self.get_dict())
+        qs = LogMessage.objects.filter(**qd)
+        if len(qs) < self.least_amount_of_hits:
+            errors['not_enough_results'] = "Not enough results found. Found: \"" + str(len(qs)) + "\" out of \"" + str(self.least_amount_of_hits) + "\"."
+            #errors['queryset'] = qs    #we might want to return this
+
+        return errors
 
     def next_deadline(self):
         """
         Returns next deadline as a datetime object. Does NOT change the deadline.
         """
-        timedelta = self.get_timedelta(self.repeat_unit, self.repeat_delta)
+        timedelta = Expectation.get_timedelta(self.repeat_unit, self.repeat_delta)
         if timedelta is not None:
             return self.deadline + timedelta
         else:
             print "Error: Couldn't get next deadline."
             return None
 
-    def get_timedelta(self, unit, value):
+    @staticmethod
+    def get_timedelta(unit, value):
         """
         Returns a timedelta object from specified unit and value. See ``EXPECTATION_UNITS`` for valid units.
         """
+        if isinstance(unit, str): unit = get_expectation_unit_from_string(unit)
+        if value is None:
+            print "Error: Value error. ", value
+            return None
+
         if unit < 0 or unit >= len(EXPECTATION_UNITS):
             print "Error: Not valid time unit; ",  unit
             return None
