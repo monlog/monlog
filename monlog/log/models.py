@@ -1,12 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django import forms
 from tastypie.models import create_api_key
 from django.http import QueryDict
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from tastypie.utils import dict_strip_unicode_keys
-import time
 
 models.signals.post_save.connect(create_api_key, sender=User)
 
@@ -85,7 +83,7 @@ class RelativedeltaField(models.Field):
 
     def db_type(self):
         """
-        Representation in DB wouldn't need more than 3 letters for delta value, and 3 letters for unit value
+        Current representation of RelativedeltaField in the database.
         """
         return 'char(30)'
 
@@ -113,8 +111,8 @@ class RelativedeltaField(models.Field):
         """
         Using a RelativedeltaField to represent this field in a form.
         """
-        from log import forms as logforms
-        defaults = { 'form_class' : logforms.RelativedeltaField }
+        from log import forms # why can't I import this at the top?
+        defaults = { 'form_class' : forms.RelativedeltaField }
         defaults.update(kwargs)
         return super(RelativedeltaField, self).formfield(**defaults)
 
@@ -133,11 +131,11 @@ class Expectation(Filter):
     # timestamp for next deadline
     deadline = models.DateTimeField()
 
-    # +- amount of unit
+    # +- tolerance in relative delta
     # example: '+- 10 minute'
     tolerance = RelativedeltaField()
 
-    # repeat every ``repeat_delta`` ``repeat_unit``
+    # repeat every ``repeat`` relative delta
     # example: 'every 2 month'
     repeat = RelativedeltaField()
 
@@ -155,12 +153,12 @@ class Expectation(Filter):
         """
         if self.deadline is None:
             print "Error: Deadline must've been set before applying tolerance to query string."
-            return
+            return querydict
 
         startdate = (self.deadline - self.tolerance)
         enddate   = (self.deadline + self.tolerance)
 
-        querydict['datetime__gte'] = startdate.isoformat().replace('T',' ')
+        querydict['datetime__gte'] = startdate.isoformat().replace('T',' ') # replace() is not needed post django 1.4
         querydict['datetime__lte'] = enddate.isoformat().replace('T',' ')
         return querydict
 
@@ -177,7 +175,7 @@ class Expectation(Filter):
         qs = LogMessage.objects.filter(**qd)
         if len(qs) < self.least_amount_of_hits:
             errors['not_enough_results'] = "Not enough results found. Found: \"" + str(len(qs)) + "\" out of \"" + str(self.least_amount_of_hits) + "\"."
-        errors['queryset'] = qs    #we might want to return this
+            errors['queryset'] = qs    #we might want to return this
 
         return errors
 
