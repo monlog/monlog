@@ -2,6 +2,9 @@ from django.contrib.auth.models import User
 from django.db import models
 from tastypie.models import create_api_key
 from django.http import QueryDict
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from tastypie.utils import dict_strip_unicode_keys
 
 models.signals.post_save.connect(create_api_key, sender=User)
 
@@ -70,4 +73,115 @@ class Label(Filter):
 
     def __unicode__(self):
         return self.label_name
+
+
+class RelativedeltaField(models.Field):
+
+    description = "A relative timedelta"
+
+    __metaclass__ = models.SubfieldBase
+
+    def db_type(self):
+        """
+        Current representation of RelativedeltaField in the database.
+        """
+        return 'char(30)'
+
+    def to_python(self, value):
+        """
+        Creates a relativedelta object from what we get from the database.
+        """
+        if not value:
+            return None
+        if isinstance(value, (str, unicode)):
+            months, days, hours, minutes, seconds = value.split("_") #raises ValueError if split not possible.
+            return relativedelta(months=int(months), days=int(days), hours=int(hours), minutes=int(minutes), seconds=int(seconds))
+        elif isinstance(value, relativedelta):
+            return value
+        else:
+            return None
+
+    def get_db_prep_value(self, value):
+        """
+        Concatenate unit and timedelta into a string.
+        """
+        return "%i_%i_%i_%i_%i" % (value.months, value.days, value.hours, value.minutes, value.seconds)
+
+    def formfield(self, **kwargs):
+        """
+        Using a RelativedeltaField to represent this field in a form.
+        """
+        from log import forms # why can't I import this at the top?
+        defaults = { 'form_class' : forms.RelativedeltaField }
+        defaults.update(kwargs)
+        return super(RelativedeltaField, self).formfield(**defaults)
+
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return self.get_db_prep_value(value)
+
+class Expectation(Filter):
+    """
+    Model for expectations.
+    """
+
+    expectation_name = models.CharField(max_length=20, unique=True)
+    user = models.ForeignKey(User)
+
+    # timestamp for next deadline
+    deadline = models.DateTimeField()
+
+    # +- tolerance in relative delta
+    # example: '+- 10 minute'
+    tolerance = RelativedeltaField()
+
+    # repeat every ``repeat`` relative delta
+    # example: 'every 2 month'
+    repeat = RelativedeltaField()
+
+    least_amount_of_results = models.IntegerField()
+
+    def __unicode__(self):
+        return self.expectation_name
+
+    def apply_tolerance(self, querydict):
+        """
+        Applies startdate and enddate to a querydict.
+
+        Startdate = Deadline - Tolerance
+        Enddate   = Deadline + Tolerance
+        """
+        if self.deadline is None:
+            print "Error: Deadline must've been set before applying tolerance to query string."
+            return querydict
+
+        startdate = (self.deadline - self.tolerance)
+        enddate   = (self.deadline + self.tolerance)
+
+        querydict['datetime__gte'] = startdate.isoformat()
+        querydict['datetime__lte'] = enddate.isoformat()
+        return querydict
+
+    def check_expectation(self):
+        """
+        Checks if X amount of log messages matches the filter.
+        X is the least amount of log messages we need in order to accept the expectation.
+
+        Returns a dict of errors and the queryset. If no errors was found an empty dict will be returned.
+        """
+        errors = {}
+        qd = dict_strip_unicode_keys(QueryDict(self.query_string, mutable=True))
+        qd = self.apply_tolerance(qd)
+        qs = LogMessage.objects.filter(**qd)
+        if len(qs) < self.least_amount_of_results:
+            errors['not_enough_results'] = "Not enough results found. Found: \"" + str(len(qs)) + "\" out of \"" + str(self.least_amount_of_results) + "\"."
+
+        return (errors, qs)
+
+    def next_deadline(self):
+        """
+        Returns next deadline as a datetime object. Does NOT change the deadline.
+        """
+        self.deadline = self.deadline + self.repeat
+        return self.deadline
 

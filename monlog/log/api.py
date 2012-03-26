@@ -43,19 +43,6 @@ class LogCollectionResource(ModelResource):
             filters = QueryDict('')
         filters._mutable = True
 
-        if 'datetime__gte' in filters:
-            filters['datetime__gte'] = filters['datetime__gte'].replace("T", " ")
-            filters['datetime__gte'] = filters['datetime__gte'].replace("Z", "")
-        if 'datetime__lte' in filters:
-            filters['datetime__lte'] = filters['datetime__lte'].replace("T", " ")
-            filters['datetime__lte'] = filters['datetime__lte'].replace("Z", "")
-        if 'add_datetime__gte' in filters:
-            filters['add_datetime__gte'] = filters['add_datetime__gte'].replace("T", " ")
-            filters['add_datetime__gte'] = filters['add_datetime__gte'].replace("Z", "")
-        if 'add_datetime__lte' in filters:
-            filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("T", " ")
-            filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("Z", "")
-
         # Create an OR'd filter for text searching in long description and short description
         search_filter = {}
         if 'search' in filters:
