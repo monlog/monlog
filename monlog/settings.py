@@ -48,7 +48,7 @@ USE_L10N = True
 
 # Disable Django's timezone aware features
 # Monlog us timezone naive, i.e. we assume all timestamps are in UTC
-USE_TZ = False
+USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
