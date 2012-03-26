@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load verbatim %}
+{% block navbar %}
+<ul class="nav">
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">
+        {% if active_label %}
+            {{ active_label }}<span class="changed_label_indicator">*</span> <b class="caret"></b>
+        {% else %}
+            Label <b class="caret"></b>
+        {% endif %}
+        </a>
+        <ul class="dropdown-menu">
+            {% if active_label and label_id %}
+            <li><a href="#" class="label-save">Save<span class="changed_label_indicator">*</span></a></li>
+                <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
+                <li><a href="/label/delete/{{ label_id }}">Remove</a></li>
+            {% else %}
+                <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
+            {% endif %}
+            <li class="divider"></li>
+            {% if labels %}
+                {% for label in labels %}
+                    {% if active_label == label.label_name %}
+                        <li class="active-label"><a href="/">{{ label.label_name }}</a></li>
+                    {% else %}
+                        <li><a href="/?label={{ label.label_name }}">{{ label.label_name }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <li class="disabled">No saved labels</li>
+            {% endif %}
+        </ul>
+    </li>
+</ul>
+<ul class="nav pull-right">
+    <li class="divider-vertical"></li>
+    <li class="streaming"><a href="#" onclick="event.preventDefault()" data-toggle="collapse" data-target="#collapse-form" class="" id="streaming">Streaming</a></li>
+</ul>
+{% endblock %}
+{% block content %}
+{% verbatim %}
+    <script id="log_messages" type="text/html">
+    {{#objects}}
+    <tr class="sev-{{ severity }}{{#old}} old-data{{/old}}" id="msg-{{ id }}">
+        <td><span class="label">{{ severity }}</span></td>
+        <td><span class="">{{ datetime }}</span></td>
+        <td><span class="">{{ application.username }}</span></td>
+        <td><span class="">{{ server_ip }}</span></td>
+        <td><a href="#" class="short_desc" onclick="event.preventDefault();" data-toggle="collapse" data-target="#details-msg-{{ id }}">{{ short_desc }}<i class="icon-expandable"></i></a></td>
+    </tr>
+    <tr>
+        <td colspan="5" class="details">
+            <div id="details-msg-{{ id }}" class="collapse long_desc"><pre>{{ long_desc }}</pre></div>
+        </td>
+    </tr>
+    {{/objects}}
+    </script>
+{% endverbatim %}
+<form class="well filters form-search collapse non-expanded" id="collapse-form">
+    <div id="form-wrapper">
+         Expectation form
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th id="severity" class="sortable sorted-desc">Severity</th>
+            <th id="datetime" class="sortable sorted-desc sorted-active">Time</th>
+            <th id="application__username" class="sortable sorted-desc">Application</th>
+            <th id="server_ip" class="sortable sorted-desc">Server</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- no log messages loaded -->
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(document).ready(function() {
+    $("th.sortable").append('<i class="icon-sortable"></i>');
+    $("th.sortable").bind('click', function(event){
+        if ($(this).hasClass('sorted-active')) {
+            // already sorted on this column, so user wants to switch direction of sort
+            $(this).toggleClass('sorted-desc').toggleClass('sorted-asc');
+        } else {
+            $("th.sortable").removeClass('sorted-active');
+            $(this).toggleClass('sorted-active');
+        }
+
+        var ordering_param = ($(this).hasClass('sorted-desc') ? '-' : '') + this.id;
+        $('form.filters input[name="order_by"]').attr('value', ordering_param);
+        $('form.filters input[name="order_by"]').change();
+    });
+    $("#collapse-form").on('show', function() { toggleStreamingMode(false); });
+    $("#collapse-form").on('hide', function() { toggleStreamingMode(true); });
+    $("table tbody").on('show', '.long_desc', function(event) {
+        if (streamingMode) {
+            // Go to pause mode, showing the filter form will trigger toggleStreamingMode correctly
+            $("#collapse-form").collapse('show');
+        }
+    });
+</script>
+{% endblock %}

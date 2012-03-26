@@ -12,6 +12,8 @@ urlpatterns = patterns('',
     url(r'^label/save', 'monlog.log.views.save_label'),
     url(r'^label/delete/(?P<label_id>\d+)', 'monlog.log.views.delete_label'),
 
+    url(r'^expectation', 'monlog.log.views.expectation'),
+
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', { 'template_name': 'login.html' }),
 
     url(r'^admin/jsi18n/', 'django.views.i18n.javascript_catalog'),

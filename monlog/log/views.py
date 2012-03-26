@@ -8,6 +8,11 @@ from monlog.log.forms import LogQueryForm, LabelForm
 import logging
 
 @login_required
+def expectation(request):
+    context = RequestContext(request)
+    return render_to_response('expectation.html', context)
+
+@login_required
 def list(request):
     """
     View for listing all log messages. Labels are used to filter which messages
