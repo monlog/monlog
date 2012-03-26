@@ -80,11 +80,6 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-# URL prefix for admin static files -- CSS, JavaScript and images.
-# Make sure to use a trailing slash.
-# Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = '/static/admin/'
-
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (

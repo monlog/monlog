@@ -7,7 +7,7 @@ from tastypie.resources import ModelResource, ALL
 from tastypie.authorization import DjangoAuthorization
 from monlog.log.api.authentication import MonlogAuthentication
 from monlog.log.api.authentication import CookieAuthentication
-from monlog.log.api.models import LogMessage, SEVERITY_CHOICES
+from monlog.log.models import LogMessage, SEVERITY_CHOICES
 from monlog.log.api.validation import LogValidation
 from datetime import datetime 
 
