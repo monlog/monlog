@@ -15,16 +15,16 @@ class Command(BaseCommand):
         if debug: print "Retrieving expectations to check..."
 
         expectations = Expectation.objects.filter(deadline__lte=datetime.utcnow().isoformat())
-        if debug: print "Number of expectations found: " + str(len(expectations))
+        if debug: print "Number of expectations found: %s " % len(expectations)
 
         for expect in expectations:
             while expect.deadline < datetime.utcnow():
-                if debug: print "  Checking expectation \"%s\" with deadline \"%s\". " % (str(expect), expect.deadline.isoformat())
+                if debug: print "  Checking expectation \"%s\" with deadline \"%s\". " % (expect, expect.deadline.isoformat())
 
                 errors, qs = expect.check_expectation()
                 if debug:
-                    print "    errors: \"%s\"" % str(errors)
-                    print "    queryset: %s" % str(qs)
+                    print "    errors: \"%s\"" % errors
+                    print "    queryset: %s" % qs
 
                 try:
                     monlog_user = User.objects.get(username="monlog")
