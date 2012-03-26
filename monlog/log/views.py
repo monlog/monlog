@@ -35,7 +35,7 @@ def list(request):
     context['lqf'] = lqf
     context['labels'] = Label.objects.filter(user=request.user)
     context['label_field'] = LabelForm(label_name)
-    context['label_name'] = label_name
+    context['active_label'] = label_name
     return render_to_response('list.html', context)
 
 @login_required
