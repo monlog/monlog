@@ -81,7 +81,7 @@ class RelativedeltaField(models.Field):
 
     __metaclass__ = models.SubfieldBase
 
-    def db_type(self):
+    def db_type(self, connection=None):
         """
         Current representation of RelativedeltaField in the database.
         """
