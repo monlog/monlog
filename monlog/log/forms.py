@@ -1,8 +1,7 @@
-from log.models import LogMessage
 from django.db import models
 from django import forms
 from django.forms.widgets import CheckboxSelectMultiple, SelectMultiple, DateTimeInput
-from log.models import SEVERITY_CHOICES
+from monlog.log.models import SEVERITY_CHOICES, LogMessage
 from django.contrib.auth.models import User
 from django.http import QueryDict
 
@@ -44,4 +43,24 @@ class LogQueryForm(forms.Form):
 
         self.fields['application__in'] = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=self.user_values)
         self.fields['server_ip__in'] = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=self.server_values)
+
+
+class RelativedeltaField(forms.Field):
+    """
+    A field to provide ability to make relative deltas.
+
+    FIXME
+    This works, but is very inconvenient. The user must specify a correct relative delta as a string:
+    "<months>_<days>_<hours>_<minutes>_<seconds>"
+
+    example: 10 minutes would be "0_0_0_10_0"
+    example: 2 months would be "2_0_0_0_0"
+    """
+    widget = forms.widgets.TextInput
+
+    def prepare_value(self, value):
+        if not value:
+            return None
+        return "%i_%i_%i_%i_%i" % (value.months, value.days, value.hours, value.minutes, value.seconds)
+
 

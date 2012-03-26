@@ -5,10 +5,10 @@ from django.db.models import Q
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL
 from tastypie.authorization import DjangoAuthorization
-from log.api.authentication import MonlogAuthentication
-from log.api.authentication import CookieAuthentication
-from log.models import LogMessage, SEVERITY_CHOICES
-from log.api.validation import LogValidation
+from monlog.log.api.authentication import MonlogAuthentication
+from monlog.log.api.authentication import CookieAuthentication
+from monlog.log.api.models import LogMessage, SEVERITY_CHOICES
+from monlog.log.api.validation import LogValidation
 from datetime import datetime 
 
 class ApplicationResource(ModelResource):
@@ -42,19 +42,6 @@ class LogCollectionResource(ModelResource):
         if filters is None:
             filters = QueryDict('')
         filters._mutable = True
-
-        if 'datetime__gte' in filters:
-            filters['datetime__gte'] = filters['datetime__gte'].replace("T", " ")
-            filters['datetime__gte'] = filters['datetime__gte'].replace("Z", "")
-        if 'datetime__lte' in filters:
-            filters['datetime__lte'] = filters['datetime__lte'].replace("T", " ")
-            filters['datetime__lte'] = filters['datetime__lte'].replace("Z", "")
-        if 'add_datetime__gte' in filters:
-            filters['add_datetime__gte'] = filters['add_datetime__gte'].replace("T", " ")
-            filters['add_datetime__gte'] = filters['add_datetime__gte'].replace("Z", "")
-        if 'add_datetime__lte' in filters:
-            filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("T", " ")
-            filters['add_datetime__lte'] = filters['add_datetime__lte'].replace("Z", "")
 
         # Create an OR'd filter for text searching in long description and short description
         search_filter = {}

@@ -9,16 +9,16 @@ from django.conf import settings
 from tastypie.api import Api
 from django.contrib.auth.models import User, Permission
 from tastypie.authorization import DjangoAuthorization
-from log.api.authentication import MonlogAuthentication
+from monlog.log.api.authentication import MonlogAuthentication
 from tastypie.models import create_api_key, ApiKey
-from log.models import LogMessage,Label
-from log.api.validation import LogValidation
+from monlog.log.models import LogMessage,Label
+from monlog.log.api.validation import LogValidation
 import simplejson as json
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.http import HttpRequest,HttpResponse,HttpResponseBadRequest
 from tastypie.authentication import Authentication
-from log.views import save_label
+from monlog.log.views import save_label
 import logging
 
 class MonlogTestCase(TestCase):

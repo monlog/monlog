@@ -1,5 +1,5 @@
 from tastypie.validation import Validation
-from log.models import LogMessage
+from monlog.log.models import LogMessage
 from django.contrib.auth.models import User
 from datetime import datetime
 import simplejson as json

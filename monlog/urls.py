@@ -7,10 +7,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', 'log.views.list'),
-    url(r'^api/', include('log.api.urls')),
-    url(r'^label/save', 'log.views.save_label'),
-    url(r'^label/delete/(?P<label_id>\d+)', 'log.views.delete_label'),
+    url(r'^$', 'monlog.log.views.list'),
+    url(r'^api/', include('monlog.log.api.urls')),
+    url(r'^label/save', 'monlog.log.views.save_label'),
+    url(r'^label/delete/(?P<label_id>\d+)', 'monlog.log.views.delete_label'),
 
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', { 'template_name': 'login.html' }),
 

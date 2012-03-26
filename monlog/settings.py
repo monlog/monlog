@@ -122,7 +122,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'tastypie',
     'django.contrib.admin',
-    'log',
+    'monlog.log',
     'django_extensions',
     'compressor',
     # Uncomment the next line to enable admin documentation:
