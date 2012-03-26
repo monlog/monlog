@@ -101,7 +101,7 @@ class RelativedeltaField(models.Field):
         else:
             return None
 
-    def get_db_prep_value(self, value):
+    def get_db_prep_value(self, value, connection=None, prepared=False):
         """
         Concatenate unit and timedelta into a string.
         """
