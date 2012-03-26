@@ -1,6 +1,6 @@
 from django.contrib import admin
 from tastypie.models import ApiKey
-from log.models import LogMessage, Label, Filter, Expectation
+from monlog.log.models import LogMessage, Label, Filter, Expectation
 
 # Register models which are accessible through django admin
 admin.site.register(ApiKey)

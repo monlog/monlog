@@ -111,7 +111,7 @@ class RelativedeltaField(models.Field):
         """
         Using a RelativedeltaField to represent this field in a form.
         """
-        from log import forms # why can't I import this at the top?
+        from monlog.log import forms # why can't I import this at the top?
         defaults = { 'form_class' : forms.RelativedeltaField }
         defaults.update(kwargs)
         return super(RelativedeltaField, self).formfield(**defaults)

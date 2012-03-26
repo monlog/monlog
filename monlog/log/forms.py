@@ -1,8 +1,7 @@
-from log.models import LogMessage
 from django.db import models
 from django import forms
 from django.forms.widgets import CheckboxSelectMultiple, SelectMultiple, DateTimeInput
-from log.models import SEVERITY_CHOICES
+from monlog.log.models import SEVERITY_CHOICES, LogMessage
 from django.contrib.auth.models import User
 from django.http import QueryDict
 
