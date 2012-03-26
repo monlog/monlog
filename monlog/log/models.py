@@ -101,7 +101,7 @@ class RelativedeltaField(models.Field):
         else:
             return None
 
-    def get_db_prep_value(self, value):
+    def get_db_prep_value(self, value, connection=None, prepared=False):
         """
         Concatenate unit and timedelta into a string.
         """
@@ -182,6 +182,5 @@ class Expectation(Filter):
         """
         Returns next deadline as a datetime object. Does NOT change the deadline.
         """
-        self.deadline = self.deadline + self.repeat
-        return self.deadline
+        return self.deadline + self.repeat
 
