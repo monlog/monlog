@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
 from models import LogMessage, Label, SEVERITY_CHOICES
 from django.contrib.auth.models import User
-from log.forms import LogQueryForm, LabelForm
+from monlog.log.forms import LogQueryForm, LabelForm
 import logging
 
 @login_required
