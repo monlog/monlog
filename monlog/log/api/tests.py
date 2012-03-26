@@ -9,10 +9,10 @@ from django.conf import settings
 from tastypie.api import Api
 from django.contrib.auth.models import User, Permission
 from tastypie.authorization import DjangoAuthorization
-from monlog.log.authentication import MonlogAuthentication
+from monlog.log.api.authentication import MonlogAuthentication
 from tastypie.models import create_api_key, ApiKey
 from monlog.log.models import LogMessage,Label
-from monlog.log.validation import LogValidation
+from monlog.log.api.validation import LogValidation
 import simplejson as json
 from django.test import TestCase
 from django.test.client import RequestFactory

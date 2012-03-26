@@ -167,11 +167,39 @@ body {
 .streaming {
     a {
         padding-left:25px !important;
-        background:url('/static/img/stream.png') no-repeat center left;
+        background:url('../img/stream.png') no-repeat center left;
     }
 
     .streaming-deactivated {
-        background:url('/static/img/no-stream.png') no-repeat center left;
+        background:url('../img/no-stream.png') no-repeat center left;
+    }
+}
+
+.navbar .nav {
+    li .label_menu {
+        background: url('../img/tags.png') no-repeat 0 13px;
+        padding-left: 20px;
+    }
+
+    .dropdown-menu {
+        .disabled {
+            padding: 3px 15px;
+            color: #999;
+            font-style: italic;
+        }
+        .active-label a {
+            background: url('../img/checkmark-black.png') no-repeat 140px 6px;
+        }
+        .active-label a:hover {
+            background: url('../img/checkmark-black.png') #08C no-repeat 140px 6px;
+            color: #fff;
+        }
+    }
+
+    .changed_label_indicator {
+        color: #C43C35;
+        padding-left: 5px;
+        display: none;
     }
 }
 

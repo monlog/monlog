@@ -5,10 +5,10 @@ from django.db.models import Q
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL
 from tastypie.authorization import DjangoAuthorization
-from monlog.log.authentication import MonlogAuthentication
-from monlog.log.authentication import CookieAuthentication
+from monlog.log.api.authentication import MonlogAuthentication
+from monlog.log.api.authentication import CookieAuthentication
 from monlog.log.models import LogMessage, SEVERITY_CHOICES
-from monlog.log.validation import LogValidation
+from monlog.log.api.validation import LogValidation
 from datetime import datetime 
 
 class ApplicationResource(ModelResource):

@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseBadRequest, QueryDict
+from django.http import HttpResponse, HttpResponseBadRequest, QueryDict, HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
@@ -23,10 +23,12 @@ def list(request):
 
     # Get label if user specified one.
     label_name = request.GET.get('label')
+    label_id = None
     if label_name:
         try:
             label = Label.objects.get(label_name=label_name, user=request.user)
             lqf = LogQueryForm(label.get_dict())
+            label_id = label.id
         except Label.DoesNotExist:
             label_name = None
 
@@ -35,6 +37,8 @@ def list(request):
     context['lqf'] = lqf
     context['labels'] = Label.objects.filter(user=request.user)
     context['label_field'] = LabelForm(label_name)
+    context['active_label'] = label_name
+    context['label_id'] = label_id
     return render_to_response('list.html', context)
 
 @login_required
@@ -63,4 +67,16 @@ def save_label(request):
     label.save()
     return HttpResponse('/?label='+name)
 
+@login_required
+def delete_label(request, label_id):
+    """
+    Used when a user deletes a label
+    """
 
+    try:
+        label = Label.objects.get(pk=label_id, user=request.user)
+        label.delete()
+    except Label.DoesNotExist:
+        pass
+
+    return HttpResponseRedirect('/')
