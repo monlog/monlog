@@ -158,8 +158,8 @@ class Expectation(Filter):
         startdate = (self.deadline - self.tolerance)
         enddate   = (self.deadline + self.tolerance)
 
-        querydict['datetime__gte'] = startdate.isoformat().replace('T',' ') # replace() is not needed post django 1.4
-        querydict['datetime__lte'] = enddate.isoformat().replace('T',' ')
+        querydict['datetime__gte'] = startdate.isoformat()
+        querydict['datetime__lte'] = enddate.isoformat()
         return querydict
 
     def check_expectation(self):
@@ -183,5 +183,6 @@ class Expectation(Filter):
         """
         Returns next deadline as a datetime object. Does NOT change the deadline.
         """
-        return self.deadline + self.repeat
+        self.deadline = self.deadline + self.repeat
+        return self.deadline
 
