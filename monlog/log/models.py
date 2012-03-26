@@ -167,7 +167,7 @@ class Expectation(Filter):
         Checks if X amount of log messages matches the filter.
         X is the least amount of log messages we need in order to accept the expectation.
 
-        Returns a dict of errors. If no errors was found an empty dict will be returned.
+        Returns a dict of errors and the queryset. If no errors was found an empty dict will be returned.
         """
         errors = {}
         qd = dict_strip_unicode_keys(QueryDict(self.query_string, mutable=True))
@@ -175,9 +175,8 @@ class Expectation(Filter):
         qs = LogMessage.objects.filter(**qd)
         if len(qs) < self.least_amount_of_results:
             errors['not_enough_results'] = "Not enough results found. Found: \"" + str(len(qs)) + "\" out of \"" + str(self.least_amount_of_results) + "\"."
-            errors['queryset'] = qs    #we might want to return this
 
-        return errors
+        return (errors, qs)
 
     def next_deadline(self):
         """
