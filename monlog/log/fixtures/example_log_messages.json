@@ -6,10 +6,10 @@
             "long_desc": "Spam filter should only block actual spam",
             "severity": 3,
             "short_desc": "You shouldn't be using spam filter for quality control",
-            "datetime": "2012-02-09 11:54:25",
+            "datetime": "2012-02-09T11:54:25Z",
             "application": 2,
             "server_ip": "10.0.0.1",
-            "add_datetime": "2012-02-19 13:00:12"
+            "add_datetime": "2012-02-19T13:00:12Z"
         }
     },
     {
@@ -19,10 +19,10 @@
             "long_desc": "Not allowed by spam filter",
             "severity": 4,
             "short_desc": "Detected lorem ipsum",
-            "datetime": "2012-02-09 11:53:58",
+            "datetime": "2012-02-09T11:53:58Z",
             "application": 2,
             "server_ip": "10.0.0.1",
-            "add_datetime": "2012-02-20 13:34:26"
+            "add_datetime": "2012-02-20T13:34:26Z"
         }
     },
     {
@@ -32,10 +32,10 @@
             "long_desc": "Lorem ipsum dolor sit amet",
             "severity": 0,
             "short_desc": "Lorem ipsum dolor sit amet",
-            "datetime": "2012-02-09 11:53:36",
+            "datetime": "2012-02-09T11:53:36Z",
             "application": 2,
             "server_ip": "10.0.0.1",
-            "add_datetime": "2012-02-20 13:34:26"
+            "add_datetime": "2012-02-20T13:34:26Z"
         }
     },
     {
@@ -45,10 +45,10 @@
             "long_desc": "Something is working",
             "severity": 1,
             "short_desc": "Something is working",
-            "datetime": "2012-02-09 11:23:07",
+            "datetime": "2012-02-09T11:23:07Z",
             "application": 2,
             "server_ip": "10.0.0.1",
-            "add_datetime": "2012-02-20 13:34:26"
+            "add_datetime": "2012-02-20T13:34:26Z"
         }
     }
 ]
