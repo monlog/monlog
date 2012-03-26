@@ -39,13 +39,13 @@ class ModelTest(MonlogTestCase):
 
         # Check for HttpResponseBadRequest if `name` or `query_string` not provided.
         data = {}
-        response = self.client.post("/label/", data)
+        response = self.client.post("/label/save", data)
         self.assertEqual(response.status_code, 400)
 
         # Valid post should work correctly.
         data['name']="validname"
         data['query_string']="severity__in=0" # also valid
-        response = self.client.post("/label/", data)
+        response = self.client.post("/label/save", data)
         self.assertEqual(response.status_code, 200)
 
 class RestTest(MonlogTestCase):
