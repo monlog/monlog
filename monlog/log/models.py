@@ -139,7 +139,7 @@ class Expectation(Filter):
     # example: 'every 2 month'
     repeat = RelativedeltaField()
 
-    least_amount_of_hits = models.IntegerField()
+    least_amount_of_results = models.IntegerField()
 
     def __unicode__(self):
         return self.expectation_name
@@ -173,8 +173,8 @@ class Expectation(Filter):
         qd = dict_strip_unicode_keys(QueryDict(self.query_string, mutable=True))
         qd = self.apply_tolerance(qd)
         qs = LogMessage.objects.filter(**qd)
-        if len(qs) < self.least_amount_of_hits:
-            errors['not_enough_results'] = "Not enough results found. Found: \"" + str(len(qs)) + "\" out of \"" + str(self.least_amount_of_hits) + "\"."
+        if len(qs) < self.least_amount_of_results:
+            errors['not_enough_results'] = "Not enough results found. Found: \"" + str(len(qs)) + "\" out of \"" + str(self.least_amount_of_results) + "\"."
             errors['queryset'] = qs    #we might want to return this
 
         return errors
