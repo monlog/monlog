@@ -6,6 +6,10 @@ from django.core.management.base import BaseCommand, CommandError
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
+        """
+        Script that retrieves all expectation that has a deadline earlier than 'now' and checks their status.
+        The script logs the status of the expectations and sets new deadlines for them.
+        """
         debug = True if 'debug' in args else False
 
         if debug: print "Retrieving expectations to check..."
@@ -22,20 +26,25 @@ class Command(BaseCommand):
                     print "    errors: \"%s\"" % str(errors)
                     print "    queryset: %s" % str(qs)
 
-                monlog_user = User.objects.get(username="monlog")
+                try:
+                    monlog_user = User.objects.get(username="monlog")
+                except User.DoesNotExist
+                    # What to do?
+                    if debug: print "User 'monlog' does not exist. Cannot log!"
+                    return
+
                 message = LogMessage(server_ip='127.0.0.1', application=monlog_user, datetime=expect.deadline, long_desc="", short_desc="")
 
                 message.long_desc += "Results: %s of %s" % (len(qs), expect.least_amount_of_results)
 
-                # no errors found
                 if len(errors) == 0:
-                    # send info to db 1
+                    # no errors found, log severity level ``info``
                     if debug: print "    Expectation OK!"
                     message.severity = 1
                     message.short_desc = '%s reported OK' % expect.expectation_name
 
                 else:
-                    # errors found, send error to db 4
+                    # errors found, log severity level ``error``
                     if debug:
                         print "    Expectation FAILED!"
                         print "\n".join(errors[key] for key in errors.keys()) + "\n"
