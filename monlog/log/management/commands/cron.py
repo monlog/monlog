@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-
-from monlog.log.models import Expectation as exp
+from monlog.log.models import Expectation
 from monlog.log.models import LogMessage
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
-
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
@@ -13,7 +10,7 @@ class Command(BaseCommand):
 
         if debug: print "Retrieving expectations to check..."
 
-        expectations = exp.objects.filter(deadline__lte=datetime.utcnow().isoformat())
+        expectations = Expectation.objects.filter(deadline__lte=datetime.utcnow().isoformat())
         if debug: print "Number of expectations found: " + str(len(expectations))
 
         for expect in expectations:
@@ -28,7 +25,7 @@ class Command(BaseCommand):
                 monlog_user = User.objects.get(username="monlog")
                 message = LogMessage(server_ip='127.0.0.1', application=monlog_user, datetime=expect.deadline, long_desc="", short_desc="")
 
-                message.long_desc += "Results: " + str(len(qs)) + " of " + str(expect.least_amount_of_results) + "\n"
+                message.long_desc += "Results: %s of %s" % (len(qs), expect.least_amount_of_results)
 
                 # no errors found
                 if len(errors) == 0:
@@ -46,12 +43,7 @@ class Command(BaseCommand):
                     message.long_desc += "\n".join(errors[key] for key in errors.keys()) + "\n"
                     message.short_desc = '%s FAILED' % expect.expectation_name
 
-                message.long_desc += "QuerySet: " + str(qs)
+                message.long_desc += "QuerySet: " % qs
                 message.save()
                 expect.deadline = expect.next_deadline()
                 expect.save()
-
-
-if __name__ == '__main__':
-    check_expectations()
-
