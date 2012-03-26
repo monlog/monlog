@@ -182,6 +182,5 @@ class Expectation(Filter):
         """
         Returns next deadline as a datetime object. Does NOT change the deadline.
         """
-        self.deadline = self.deadline + self.repeat
-        return self.deadline
+        return self.deadline + self.repeat
 
