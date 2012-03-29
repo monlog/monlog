@@ -122,6 +122,8 @@ class ExpectationForm(forms.ModelForm):
 
     least_amount_of_results = models.IntegerField()
 
+    query_string = forms.CharField(widget=forms.HiddenInput)
+
     # Filter options
     search = forms.CharField(required=False, max_length=100,
                      widget=forms.TextInput(attrs={'class':'search-query', 'placeholder':'Search...'}))
@@ -144,6 +146,16 @@ class ExpectationForm(forms.ModelForm):
 
         self.fields['application__in'] = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=self.user_values)
         self.fields['server_ip__in'] = forms.MultipleChoiceField(required=False, widget=SelectMultiple, choices=self.server_values)
+
+    def clean(self):
+        """Creates the query_string from Filter parameters in the form"""
+        cleaned_data = super(ExpectationForm, self).clean()
+        qd = QueryDict(self.cleaned_data["query_string"], mutable=True)
+        params = ["application__in", "server_ip__in", "severity__in", "search"]
+        for param in params:
+            qd.setlist(param, cleaned_data[param])
+        self.cleaned_data["query_string"] = qd.urlencode()
+        return cleaned_data
 
     class Meta:
         model = Expectation
