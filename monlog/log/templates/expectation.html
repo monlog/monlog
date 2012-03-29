@@ -23,12 +23,11 @@
         {% endif %}
         </a>
         <ul class="dropdown-menu">
+            <li><a href="/expectation/add/">Create new...</a></li>
             {% if active_expectation %}
+            <li class="divider"></li>
             <li><a href="#" class="expectation-save">Save<span class="changed_indicator">*</span></a></li>
-                <li><a href="#save-new-expectation" data-toggle="modal">Save as...</a></li>
                 <li><a href="/expectation/delete/{{ active_expectation }}">Remove</a></li>
-            {% else %}
-                <li><a href="#save-new-expectation" data-toggle="modal">Save as...</a></li>
             {% endif %}
             <li class="divider"></li>
             {% if expectations %}
