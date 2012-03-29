@@ -22,7 +22,7 @@
             {% if labels %}
                 {% for label in labels %}
                     {% if active_label == label.label_name %}
-                        <li class="active-label"><a href="/">{{ label.label_name }}</a></li>
+                        <li class="active-item"><a href="/">{{ label.label_name }}</a></li>
                     {% else %}
                         <li><a href="/label/{{ label.label_name }}">{{ label.label_name }}</a></li>
                     {% endif %}
