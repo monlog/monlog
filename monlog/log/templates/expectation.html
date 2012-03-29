@@ -15,8 +15,22 @@
         </ul>
     </li>
     <li class="dropdown">
-        <a href="#" class="dropdown-toggle expectation_menu" data-toggle="dropdown">Expectations <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle expectation_menu" data-toggle="dropdown">
+        {% if active_expectation %}
+            {{ active_expectation }}<span class="changed_indicator">*</span> <b class="caret"></b>
+        {% else %}
+            Expectations <b class="caret"></b>
+        {% endif %}
+        </a>
         <ul class="dropdown-menu">
+            {% if active_expectation %}
+            <li><a href="#" class="expectation-save">Save<span class="changed_indicator">*</span></a></li>
+                <li><a href="#save-new-expectation" data-toggle="modal">Save as...</a></li>
+                <li><a href="/expectation/delete/{{ active_expectation }}">Remove</a></li>
+            {% else %}
+                <li><a href="#save-new-expectation" data-toggle="modal">Save as...</a></li>
+            {% endif %}
+            <li class="divider"></li>
             {% if expectations %}
                 {% for exp in expectations %}
                     <li><a href="/expectation/{{ exp.expectation_name }}">{{ exp.expectation_name }}</a></li>
