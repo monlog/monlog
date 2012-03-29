@@ -67,6 +67,9 @@
     </tbody>
 </table>
 <script type="text/javascript">
+    $('.filters input, .filters select').change(function() {
+        $(".changed_indicator").show();
+    });
     $(document).ready(function() {
     $("th.sortable").append('<i class="icon-sortable"></i>');
     $("th.sortable").bind('click', function(event){
