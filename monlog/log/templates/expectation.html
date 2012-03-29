@@ -33,10 +33,6 @@
         </ul>
     </li>
 </ul>
-<ul class="nav pull-right">
-    <li class="divider-vertical"></li>
-    <li class="streaming"><a href="#" onclick="event.preventDefault()" data-toggle="collapse" data-target="#collapse-form" class="" id="streaming">Streaming</a></li>
-</ul>
 {% endblock %}
 {% block content %}
 {% verbatim %}
@@ -57,11 +53,11 @@
     {{/objects}}
     </script>
 {% endverbatim %}
-<form class="well filters form-search collapse non-expanded" id="collapse-form">
+<form class="well form-search">
     <div id="form-wrapper">
          Expectation form
     </div>
-</div>
+</form>
 <table class="table">
     <thead>
         <tr>
@@ -91,14 +87,6 @@
         var ordering_param = ($(this).hasClass('sorted-desc') ? '-' : '') + this.id;
         $('form.filters input[name="order_by"]').attr('value', ordering_param);
         $('form.filters input[name="order_by"]').change();
-    });
-    $("#collapse-form").on('show', function() { toggleStreamingMode(false); });
-    $("#collapse-form").on('hide', function() { toggleStreamingMode(true); });
-    $("table tbody").on('show', '.long_desc', function(event) {
-        if (streamingMode) {
-            // Go to pause mode, showing the filter form will trigger toggleStreamingMode correctly
-            $("#collapse-form").collapse('show');
-        }
     });
 </script>
 {% endblock %}
