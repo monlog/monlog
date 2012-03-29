@@ -7,7 +7,7 @@
         <ul class="dropdown-menu">
             {% if labels %}
                 {% for label in labels %}
-                    <li><a href="/?label={{ label.label_name }}">{{ label.label_name }}</a></li>
+                    <li><a href="/label/{{ label.label_name }}">{{ label.label_name }}</a></li>
                 {% endfor %}
             {% else %}
                 <li class="disabled">No labels</li>
@@ -19,7 +19,7 @@
         <ul class="dropdown-menu">
             {% if expectations %}
                 {% for exp in expectations %}
-                    <li><a href="/expectation/?exp={{ exp.expectation_name }}">{{ exp.expectation_name }}</a></li>
+                    <li><a href="/expectation/{{ exp.expectation_name }}">{{ exp.expectation_name }}</a></li>
                 {% endfor %}
             {% else %}
                 <li class="disabled">No expectations</li>
