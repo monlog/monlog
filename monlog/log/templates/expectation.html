@@ -15,11 +15,28 @@
         </ul>
     </li>
     <li class="dropdown">
-        <a href="#" class="dropdown-toggle expectation_menu" data-toggle="dropdown">Expectations <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle expectation_menu" data-toggle="dropdown">
+        {% if active_expectation %}
+            {{ active_expectation }}<span class="changed_indicator">*</span> <b class="caret"></b>
+        {% else %}
+            Expectations <b class="caret"></b>
+        {% endif %}
+        </a>
         <ul class="dropdown-menu">
+            <li><a href="/expectation/add/">Create new...</a></li>
+            {% if active_expectation %}
+            <li class="divider"></li>
+            <li><a href="#" class="expectation-save">Save<span class="changed_indicator">*</span></a></li>
+                <li><a href="/expectation/delete/{{ active_expectation }}">Remove</a></li>
+            {% endif %}
+            <li class="divider"></li>
             {% if expectations %}
                 {% for exp in expectations %}
-                    <li><a href="/expectation/{{ exp.expectation_name }}">{{ exp.expectation_name }}</a></li>
+                    {% if active_expectation == exp.expectation_name %}
+                        <li class="active-item"><a href="/">{{ exp.expectation_name }}</a></li>
+                    {% else %}
+                        <li><a href="/expectation/{{ exp.expectation_name }}">{{ exp.expectation_name }}</a></li>
+                    {% endif %}
                 {% endfor %}
             {% else %}
                 <li class="disabled">No expectations</li>
@@ -97,6 +114,9 @@
     </tbody>
 </table>
 <script type="text/javascript">
+    $('.filters input, .filters select').change(function() {
+        $(".changed_indicator").show();
+    });
     $(document).ready(function() {
     $("th.sortable").append('<i class="icon-sortable"></i>');
     $("th.sortable").bind('click', function(event){

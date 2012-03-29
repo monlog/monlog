@@ -12,19 +12,17 @@ def expectation(request, exp_name):
     """
     A view for editing expectations.
     """
-    exp_id = None
     if exp_name:
         try:
             exp = Expectation.objects.get(expectation_name=exp_name, user=request.user)
             #eqf = ExpectationForm(exp.get_dict())
-            exp_id = exp.id
         except Expectation.DoesNotExist:
             exp_name = None
 
     context = RequestContext(request)
     #context['eqf'] = eqf
-    context['exp_id'] = exp_id
     context['labels'] = Label.objects.filter(user=request.user)
+    context['active_expectation'] = exp_name
     context['expectations'] = Expectation.objects.filter(user=request.user)
     return render_to_response('expectation.html', context)
 
