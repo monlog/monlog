@@ -3,14 +3,26 @@
 {% block navbar %}
 <ul class="nav">
     <li class="dropdown">
-        <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">Label <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">Labels <b class="caret"></b></a>
         <ul class="dropdown-menu">
             {% if labels %}
                 {% for label in labels %}
                     <li><a href="/?label={{ label.label_name }}">{{ label.label_name }}</a></li>
                 {% endfor %}
             {% else %}
-                <li class="disabled">No saved labels</li>
+                <li class="disabled">No labels</li>
+            {% endif %}
+        </ul>
+    </li>
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">Expectations <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+            {% if expectations %}
+                {% for exp in expectations %}
+                    <li><a href="/expectation/?exp={{ exp.expectation_name }}">{{ exp.expectation_name }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li class="disabled">No expectations</li>
             {% endif %}
         </ul>
     </li>
