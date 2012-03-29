@@ -27,7 +27,7 @@ class LogMessage(models.Model):
     severity = models.IntegerField(choices=SEVERITY_CHOICES)
     datetime = models.DateTimeField()
     add_datetime = models.DateTimeField(auto_now_add=True)
-    server_ip = models.IPAddressField()
+    server_ip = models.GenericIPAddressField()
     application = models.ForeignKey(User)
     short_desc = models.CharField(max_length=100)
     long_desc = models.TextField()

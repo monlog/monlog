@@ -10,7 +10,7 @@ class Command(BaseCommand):
         Script that retrieves all expectation that has a deadline earlier than 'now' and checks their status.
         The script logs the status of the expectations and sets new deadlines for them.
         """
-        debug = True if 'debug' in args else False
+        debug = 'debug' in args
 
         if debug: print "Retrieving expectations to check..."
 
