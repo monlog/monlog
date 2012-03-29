@@ -2,14 +2,31 @@ from django.http import HttpResponse, HttpResponseBadRequest, QueryDict, HttpRes
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
-from models import LogMessage, Label, SEVERITY_CHOICES
+from models import LogMessage, Label, Expectation, SEVERITY_CHOICES
 from django.contrib.auth.models import User
 from monlog.log.forms import LogQueryForm, LabelForm
 import logging
 
 @login_required
 def expectation(request):
+    """
+    A view for editing expectations.
+    """
+    exp_name = request.GET.get('expectation')
+    exp_id = None
+    if exp_name:
+        try:
+            exp = Label.objects.get(expectation_name=exp_name, user=request.user)
+            #eqf = ExpectationForm(exp.get_dict())
+            exp_id = exp.id
+        except Expectation.DoesNotExist:
+            exp_name = None
+
     context = RequestContext(request)
+    #context['eqf'] = eqf
+    context['exp_id'] = exp_id
+    context['labels'] = Label.objects.filter(user=request.user)
+    context['expectations'] = Expectation.objects.filter(user=request.user)
     return render_to_response('expectation.html', context)
 
 @login_required
@@ -44,6 +61,7 @@ def list(request):
     context['label_field'] = LabelForm(label_name)
     context['active_label'] = label_name
     context['label_id'] = label_id
+    context['expectations'] = Expectation.objects.filter(user=request.user)
     return render_to_response('list.html', context)
 
 @login_required
