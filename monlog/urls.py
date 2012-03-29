@@ -7,11 +7,11 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^label/(?P<label_name>\w+)', 'monlog.log.views.list'),
     url(r'^$', 'monlog.log.views.list', {'label_name' : None}),
     url(r'^api/', include('monlog.log.api.urls')),
-    url(r'^label/save', 'monlog.log.views.save_label'),
+    url(r'^label/save/', 'monlog.log.views.save_label'),
     url(r'^label/delete/(?P<label_id>\d+)', 'monlog.log.views.delete_label'),
+    url(r'^label/(?P<label_name>\w+)', 'monlog.log.views.list'),
 
     url(r'^expectation/(?P<exp_name>\w+)', 'monlog.log.views.expectation'),
 

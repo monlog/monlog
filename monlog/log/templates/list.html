@@ -153,11 +153,11 @@
     $('#lazyload-trigger').appear(lazyloadTrigger, { 'one': false });
     $(".label-save").click(function(){
         var query = $(".filters").serialize();
-        $.post("/label/save", {
+        $.post("/label/save/", {
             csrfmiddlewaretoken : "{{ csrf_token }}",
             query_string : query,
             name: $("#id_label").val()
-            }, 
+            },
             function(data) {
                 console.log(data);
                 window.location=data;
