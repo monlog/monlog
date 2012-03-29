@@ -26,6 +26,19 @@ def expectation(request, exp_name):
     context['expectations'] = Expectation.objects.filter(user=request.user)
     return render_to_response('expectation.html', context)
 
+def delete_expectation(request, exp_name):
+    """
+    Used when a user deletes an expectation
+    """
+
+    try:
+        expectation = Expectation.objects.get(expectation_name=exp_name, user=request.user)
+        expectation.delete()
+    except Expectation.DoesNotExist:
+        pass
+
+    return HttpResponseRedirect('/')
+
 @login_required
 def list(request, label_name):
     """
