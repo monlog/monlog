@@ -16,7 +16,3 @@ Course website: http://www.ida.liu.se/~TDP023/index.sv.shtml
 --
 
 See INSTALL for installation instructions.
-
-JAVA client library date formatting example:
-        The file 'client_lib_example.txt' can be used to get correctly formatted data
-        it is stored here in the root.
