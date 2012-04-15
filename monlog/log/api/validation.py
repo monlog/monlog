@@ -8,8 +8,8 @@ class LogValidation(Validation):
     def log_malformed_data(self, data, errors, bundle):
         """
         If data provided by client is corrupt or malformed, we handle it here
-        by adding an extra log to the system by monlog, notifying the user about
-        the problem.
+        by adding an extra log to the system by monlog, notifying the user
+        about the problem.
         """
 
         client_ip = {"client_ip" : bundle.request.META["REMOTE_ADDR"] }
@@ -24,12 +24,12 @@ class LogValidation(Validation):
 
         short_desc = "Malformed data! %s" % ", ".join(errors.values())
 
-        log = LogMessage(datetime=current_date,
-                long_desc=desc,
-                short_desc=short_desc,
-                application=monlog_user,
-                server_ip=server_ip,
-                severity=severity)
+        log = LogMessage(datetime=current_date, 
+                         long_desc=desc,
+                         short_desc=short_desc,
+                         application=monlog_user,
+                         server_ip=server_ip,
+                         severity=severity)
 
         log.save()
 

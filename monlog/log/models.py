@@ -94,8 +94,13 @@ class RelativedeltaField(models.Field):
         if not value:
             return None
         if isinstance(value, (str, unicode)):
-            months, days, hours, minutes, seconds = value.split("_") #raises ValueError if split not possible.
-            return relativedelta(months=int(months), days=int(days), hours=int(hours), minutes=int(minutes), seconds=int(seconds))
+            #raises ValueError if split not possible.
+            months, days, hours, minutes, seconds = value.split("_")
+            return relativedelta(months=int(months),
+                                 days=int(days),
+                                 hours=int(hours),
+                                 minutes=int(minutes),
+                                 seconds=int(seconds))
         elif isinstance(value, relativedelta):
             return value
         else:
@@ -105,7 +110,11 @@ class RelativedeltaField(models.Field):
         """
         Concatenate unit and timedelta into a string.
         """
-        return "%i_%i_%i_%i_%i" % (value.months, value.days, value.hours, value.minutes, value.seconds)
+        return "%i_%i_%i_%i_%i" % (value.months,
+                                   value.days,
+                                   value.hours,
+                                   value.minutes,
+                                   value.seconds)
 
     def formfield(self, **kwargs):
         """
@@ -152,7 +161,8 @@ class Expectation(Filter):
         Enddate   = Deadline + Tolerance
         """
         if self.deadline is None:
-            print "Error: Deadline must've been set before applying tolerance to query string."
+            print ("Error: Deadline must've been set before "
+                   "applying tolerance to query string.")
             return querydict
 
         startdate = (self.deadline - self.tolerance)
@@ -165,22 +175,27 @@ class Expectation(Filter):
     def check_expectation(self):
         """
         Checks if X amount of log messages matches the filter.
-        X is the least amount of log messages we need in order to accept the expectation.
+        X is the least amount of log messages we need in order to accept
+        the expectation.
 
-        Returns a dict of errors and the queryset. If no errors was found an empty dict will be returned.
+        Returns a dict of errors and the queryset. If no errors was found
+        an empty dict will be returned.
         """
         errors = {}
-        qd = dict_strip_unicode_keys(QueryDict(self.query_string, mutable=True))
+        qd = dict_strip_unicode_keys(QueryDict(self.query_string,mutable=True))
         qd = self.apply_tolerance(qd)
         qs = LogMessage.objects.filter(**qd)
         if len(qs) < self.least_amount_of_results:
-            errors['not_enough_results'] = "Not enough results found. Found: \"" + str(len(qs)) + "\" out of \"" + str(self.least_amount_of_results) + "\"."
-
+            errors['not_enough_results'] = (
+                "Not enough results found. Found:
+                \"" + str(len(qs)) + "\" out of \"" +
+                str(self.least_amount_of_results) + "\".")
         return (errors, qs)
 
     def next_deadline(self):
         """
-        Returns next deadline as a datetime object. Does NOT change the deadline.
+        Returns next deadline as a datetime object.
+        Does NOT change the deadline.
         """
         return self.deadline + self.repeat
 
