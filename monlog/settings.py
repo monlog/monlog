@@ -6,12 +6,16 @@ DATABASE_PASSWORD = ""
 DATABASE_HOST     = ""
 DATABASE_PORT     = ""
 DATABASE_DRIVER   = "mysql"
+ROOT_URL          = "/"
 
 import os
 import django
 
 # Constant to use for relative paths in settings
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+
+LOGIN_URL = ROOT_URL + "accounts/login/"
+USE_X_FORWARDED_HOST = True
 
 API_LIMIT_PER_PAGE = 0
 
@@ -57,11 +61,11 @@ MEDIA_ROOT = os.path.join(SITE_ROOT, 'static')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = ROOT_URL + ''
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_URL = ROOT_URL + 'static/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
