@@ -13,7 +13,8 @@ class CookieAuthentication(Authentication):
 
     def is_authenticated(self, request, **kwargs):
         """
-        User is authenticated if the variable ``_auth_user_id`` is found in the session.
+        User is authenticated if the variable ``_auth_user_id`` is
+        found in the session.
         """
         from django.contrib.sessions.models import Session
         if 'sessionid' in request.COOKIES:
@@ -39,7 +40,8 @@ class MonlogAuthentication(Authentication):
         """
         Extracts the API key from the request
 
-        If both GET and POST dictionaries contains ``api_key``, POST will be used.
+        If both GET and POST dictionaries contains ``api_key``, POST
+        will be used.
         """
         return request.GET.get('api_key') or request.POST.get('api_key')
 
@@ -77,7 +79,8 @@ class MonlogAuthentication(Authentication):
         """
         Provides a unique string identifier for the requester.
 
-        This implementation returns the username of the user or ``nouser`` if something went wrong.
+        This implementation returns the username of the user or ``nouser``
+        if something went wrong.
         """
         api_key = self.extract_apikey(request)
         username = self.get_username_from_api_key(api_key)
