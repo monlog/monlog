@@ -187,8 +187,8 @@ class Expectation(Filter):
         qs = LogMessage.objects.filter(**qd)
         if len(qs) < self.least_amount_of_results:
             errors['not_enough_results'] = (
-                "Not enough results found. Found:
-                \"" + str(len(qs)) + "\" out of \"" +
+                "Not enough results found. Found:\"" +
+                str(len(qs)) + "\" out of \"" +
                 str(self.least_amount_of_results) + "\".")
         return (errors, qs)
 
