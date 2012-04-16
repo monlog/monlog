@@ -13,7 +13,7 @@ from datetime import datetime
 
 class ApplicationResource(ModelResource):
     """
-    Used by LogCollectionResource to enable filtering on applications. 
+    Used by LogCollectionResource to enable filtering on applications.
     This resource is not available in the REST Api.
     """
     class Meta:
@@ -26,11 +26,14 @@ class ApplicationResource(ModelResource):
 
 class LogCollectionResource(ModelResource):
     """
-    Allows a user to get log messages through GET requests. 
+    Allows a user to get log messages through GET requests.
 
-    User must be logged in and provide Djangos authentication cookie to be authenticated.
+    User must be logged in and provide Djangos authentication cookie
+    to be authenticated.
     """
-    application = fields.ForeignKey(ApplicationResource, 'application', full=True)
+    application = fields.ForeignKey(ApplicationResource,
+                                    'application',
+                                    full=True)
 
     def dehydrate(self, bundle):
         if 'severity' in bundle.data:
@@ -43,10 +46,13 @@ class LogCollectionResource(ModelResource):
             filters = QueryDict('')
         filters._mutable = True
 
-        # Create an OR'd filter for text searching in long description and short description
+        # Create an OR'd filter for text searching in
+        # long description and short description
         search_filter = {}
         if 'search' in filters:
-            queryset = LogMessage.objects.filter(Q(long_desc__icontains=filters['search']) | Q(short_desc__icontains=filters['search']))
+            queryset = LogMessage.objects.filter(
+                            Q(long_desc__icontains=filters['search']) |
+                            Q(short_desc__icontains=filters['search']))
             search_filter = {'pk__in' : [i.pk for i in queryset]}
             del filters['search']
 

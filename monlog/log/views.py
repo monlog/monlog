@@ -95,7 +95,9 @@ def save_label(request):
         label = Label.objects.get(label_name=name, user=request.user)
         label.query_string=query_string
     except Label.DoesNotExist:
-        label = Label(user=request.user, label_name=name, query_string=query_string)
+        label = Label(user=request.user,
+                      label_name=name,
+                      query_string=query_string)
     label.save()
     return HttpResponse('/label/'+name)
 
