@@ -135,10 +135,11 @@ class Expectation(Filter):
     """
 
     expectation_name = models.CharField(max_length=20, unique=True)
-    user = models.ForeignKey(User)
+    user             = models.ForeignKey(User)
 
-    # timestamp for next deadline
-    deadline = models.DateTimeField()
+    # timestamp for original deadline
+    deadline          = models.DateTimeField()
+    original_deadline = models.DateTimeField()
 
     # +- tolerance in relative delta
     # example: '+- 10 minute'
@@ -146,7 +147,8 @@ class Expectation(Filter):
 
     # repeat every ``repeat`` relative delta
     # example: 'every 2 month'
-    repeat = RelativedeltaField()
+    repeat       = RelativedeltaField()
+    repeat_count = models.IntegerField()
 
     least_amount_of_results = models.IntegerField()
 
@@ -157,8 +159,8 @@ class Expectation(Filter):
         """
         Applies startdate and enddate to a querydict.
 
-        Startdate = Deadline - Tolerance
-        Enddate   = Deadline + Tolerance
+        Startdate = Current Deadline - Tolerance
+        Enddate   = Current Deadline + Tolerance
         """
         if self.deadline is None:
             print ("Error: Deadline must've been set before "
@@ -192,10 +194,12 @@ class Expectation(Filter):
                 str(self.least_amount_of_results) + "\".")
         return (errors, qs)
 
+    @property
     def next_deadline(self):
         """
         Returns next deadline as a datetime object.
         Does NOT change the deadline.
         """
-        return self.deadline + self.repeat
+        return self.original_deadline + \
+               self.repeat * self.repeat_count
 
