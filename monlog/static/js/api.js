@@ -57,6 +57,8 @@ var displayLogMessages = function(data) {
     // Save data needed for lazyloading
     nextOffset = messagesPerPage;
     messagesTotal = data['meta']['total_count'];
+    // updates width of pre content
+    longdescSize();
 };
 
 
@@ -170,6 +172,11 @@ var delay = (function() {
     };
 })();
 
+var longdescSize = function() {
+    var content_width = $("#form-wrapper").outerWidth(true);
+    $(".long_desc").css("width", content_width);
+};
+
 $(document).ready(function() {
     var updateHandler = function() { requestLogMessages(getFormData(),updateLogTable); };
     $('.filters input, .filters select').change(updateHandler);
@@ -187,4 +194,7 @@ $(document).ready(function() {
 
     requestLogMessages(getFormData(),updateLogTable);
     window.setTimeout(handleTimeout,timeoutTime);
+    // resize pre content
+    longdescSize();
+    $(window).resize(longdescSize);    
 });
