@@ -181,22 +181,31 @@ body {
         padding-left: 20px;
     }
 
+    li .expectation_menu {
+        background: url('../img/expectation.png') no-repeat 0 13px;
+        padding-left: 20px;
+    }
+
+    .dropdown {
+        margin: 0 10px 0 0;
+    }
+
     .dropdown-menu {
         .disabled {
             padding: 3px 15px;
             color: #999;
             font-style: italic;
         }
-        .active-label a {
+        .active-item a {
             background: url('../img/checkmark-black.png') no-repeat 140px 6px;
         }
-        .active-label a:hover {
+        .active-item a:hover {
             background: url('../img/checkmark-black.png') #08C no-repeat 140px 6px;
             color: #fff;
         }
     }
 
-    .changed_label_indicator {
+    .changed_indicator {
         color: #C43C35;
         padding-left: 5px;
         display: none;
@@ -229,6 +238,11 @@ a.short_desc .icon-expandable {
 }
 a.short_desc:hover .icon-expandable {
     visibility: visible;
+}
+
+a.expectationform .icon-expandable {
+    float: right;
+    .icon-plus;
 }
 
 // this is the table cell that contains long_desc

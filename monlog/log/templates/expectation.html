@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load verbatim %}
+{% block navbar %}
+<ul class="nav">
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">Labels <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+            {% if labels %}
+                {% for label in labels %}
+                    <li><a href="/label/{{ label.label_name }}">{{ label.label_name }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li class="disabled">No labels</li>
+            {% endif %}
+        </ul>
+    </li>
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle expectation_menu" data-toggle="dropdown">
+        {% if active_expectation %}
+            {{ active_expectation }}<span class="changed_indicator">*</span> <b class="caret"></b>
+        {% else %}
+            Expectations <b class="caret"></b>
+        {% endif %}
+        </a>
+        <ul class="dropdown-menu">
+            <li><a href="/expectation/add/">Create new...</a></li>
+            {% if active_expectation %}
+            <li class="divider"></li>
+            <li><a href="#" class="expectation-save">Save<span class="changed_indicator">*</span></a></li>
+                <li><a href="/expectation/delete/{{ active_expectation }}">Remove</a></li>
+            {% endif %}
+            <li class="divider"></li>
+            {% if expectations %}
+                {% for exp in expectations %}
+                    {% if active_expectation == exp.expectation_name %}
+                        <li class="active-item"><a href="/">{{ exp.expectation_name }}</a></li>
+                    {% else %}
+                        <li><a href="/expectation/{{ exp.expectation_name }}">{{ exp.expectation_name }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <li class="disabled">No expectations</li>
+            {% endif %}
+        </ul>
+    </li>
+</ul>
+{% endblock %}
+{% block content %}
+{% verbatim %}
+    <script id="log_messages" type="text/html">
+    {{#objects}}
+    <tr class="sev-{{ severity }}{{#old}} old-data{{/old}}" id="msg-{{ id }}">
+        <td><span class="label">{{ severity }}</span></td>
+        <td><span class="">{{ datetime }}</span></td>
+        <td><span class="">{{ application.username }}</span></td>
+        <td><span class="">{{ server_ip }}</span></td>
+        <td><a href="#" class="short_desc" onclick="event.preventDefault();" data-toggle="collapse" data-target="#details-msg-{{ id }}">{{ short_desc }}<i class="icon-expandable"></i></a></td>
+    </tr>
+    <tr>
+        <td colspan="5" class="details">
+            <div id="details-msg-{{ id }}" class="collapse long_desc"><pre>{{ long_desc }}</pre></div>
+        </td>
+    </tr>
+    {{/objects}}
+    </script>
+{% endverbatim %}
+<form class="well form-search">
+    <div id="form-wrapper">
+        <div id="expectation_name">
+            Expectation Name:
+        </div>
+        <div id="deadline">
+            Deadline:
+            <a class="expectationform" href="#" data-toggle="collapse" data-target="#deadline_collapse"><i class="icon-expandable"></i></a>
+            <div class="collapse" id="deadline_collapse">
+                Deadline details
+            </div>
+        </div>
+        <div id="tolerance">
+            Tolerance:
+            <a class="expectationform" href="#" data-toggle="collapse" data-target="#tolerance_collapse"><i class="icon-expandable"></i></a>
+            <div class="collapse" id="tolerance_collapse">
+                Tolerance details
+            </div>
+        </div>
+        <div id="repeat">
+            Repeat:
+            <a class="expectationform" href="#" data-toggle="collapse" data-target="#repeat_collapse"><i class="icon-expandable"></i></a>
+            <div class="collapse" id="repeat_collapse">
+                Repeat details
+            </div>
+        </div>
+        <div id="filter">
+            Filter:
+            <a class="expectationform" href="#" data-toggle="collapse" data-target="#filter_collapse"><i class="icon-expandable"></i></a>
+            <div class="collapse" id="filter_collapse">
+                Filter details
+            </div>
+        </div>
+    </div>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th id="severity" class="sortable sorted-desc">Severity</th>
+            <th id="datetime" class="sortable sorted-desc sorted-active">Time</th>
+            <th id="application__username" class="sortable sorted-desc">Application</th>
+            <th id="server_ip" class="sortable sorted-desc">Server</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- no log messages loaded -->
+    </tbody>
+</table>
+<script type="text/javascript">
+    $('.filters input, .filters select').change(function() {
+        $(".changed_indicator").show();
+    });
+    $(document).ready(function() {
+    $("th.sortable").append('<i class="icon-sortable"></i>');
+    $("th.sortable").bind('click', function(event){
+        if ($(this).hasClass('sorted-active')) {
+            // already sorted on this column, so user wants to switch direction of sort
+            $(this).toggleClass('sorted-desc').toggleClass('sorted-asc');
+        } else {
+            $("th.sortable").removeClass('sorted-active');
+            $(this).toggleClass('sorted-active');
+        }
+
+        var ordering_param = ($(this).hasClass('sorted-desc') ? '-' : '') + this.id;
+        $('form.filters input[name="order_by"]').attr('value', ordering_param);
+        $('form.filters input[name="order_by"]').change();
+    });
+    });
+</script>
+{% endblock %}
