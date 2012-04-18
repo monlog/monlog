@@ -91,7 +91,7 @@ class LogQueryForm(forms.Form):
 class RelativedeltaWidget(forms.MultiWidget):
     def __init__(self, widgets=None, *args, **kwargs):
         if widgets is None:
-            widgets = [forms.TextInput() for x in range(5)]
+            widgets = [forms.TextInput(attrs={'style':'width:20px;'}) for x in range(5)]
         super(RelativedeltaWidget, self).__init__(widgets, *args, **kwargs)
 
     def decompress(self, values):
@@ -108,22 +108,29 @@ class RelativedeltaWidget(forms.MultiWidget):
         return initial == data
 
     def format_output(self, rendered_widgets):
-        labels = [  "Month(s)",
-                    "Day(s)",
-                    "Hour(s)",
-                    "Minute(s)",
-                    "Second(s)"]
+        labels = [  "Mon",
+                    "Day",
+                    "Hou",
+                    "Min",
+                    "Sec"]
         output = []
-        output.append("<table class='relativedelta_widget'>")
-        output.append( "<tr>" )
-        for label in labels:
-            output.append( "<td><label>%s</label></td>" % label )
-        output.append( "</tr>" )
-        output.append( "<tr>" )
+        output.append("<table>")
+#        output.append("<tr>")
+#        for label in labels:
+#            output.append("<td>")
+#            output.append(label)
+#            output.append("</td>")
+#        output.append("</tr>")
         for widget in rendered_widgets:
-            output.append( "<td>%s</td>" % widget )
-        output.append( "</tr>" )
+            output.append("<td>")
+            output.append("%s" %\
+                                widget)
+            output.append("</td>")
+        output.append("</tr>")
         output.append("</table>")
+        output.append("<span style='font-size:10px;'>")
+        output.append("(Months / Days / Hours / Minutes / Seconds)")
+        output.append("</span>")
         return u'\n'.join(output)
 
 class RelativedeltaField(forms.Field):
@@ -153,7 +160,12 @@ class RelativedeltaField(forms.Field):
             return None
 
     def clean(self, values):
-        (months, days, hours, minutes, seconds) = [int(v) or 0
+        def to_int(v):
+            try:
+                return int(v)
+            except:
+                return 0
+        (months, days, hours, minutes, seconds) = [to_int(v)
                                                    for v
                                                    in values]
         return relativedelta(months  = months,
@@ -190,7 +202,9 @@ class ExpectationForm(forms.ModelForm):
                 widget=forms.TextInput(attrs={'class':'search-query',
                                               'placeholder':'Search...'}))
     severity__in = forms.MultipleChoiceField(required=False,
-                                             widget=SelectMultiple,
+                                             widget=SelectMultiple(attrs={
+                                                 'size':'8',
+                                                 }),
                                              choices=SEVERITY_CHOICES)
     application__in = forms.MultipleChoiceField(required=False,
                                                 widget=SelectMultiple,

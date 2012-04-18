@@ -64,55 +64,57 @@
     {{/objects}}
     </script>
 {% endverbatim %}
-<form class="well form-search">
-    <div id="form-wrapper">
-        <div id="expectation_name">
-            Expectation Name:
-        </div>
-        <div id="deadline">
-            Deadline:
-            <a class="expectationform" href="#" data-toggle="collapse" data-target="#deadline_collapse"><i class="icon-expandable"></i></a>
-            <div class="collapse" id="deadline_collapse">
-                Deadline details
-            </div>
-        </div>
-        <div id="tolerance">
-            Tolerance:
-            <a class="expectationform" href="#" data-toggle="collapse" data-target="#tolerance_collapse"><i class="icon-expandable"></i></a>
-            <div class="collapse" id="tolerance_collapse">
-                Tolerance details
-            </div>
-        </div>
-        <div id="repeat">
-            Repeat:
-            <a class="expectationform" href="#" data-toggle="collapse" data-target="#repeat_collapse"><i class="icon-expandable"></i></a>
-            <div class="collapse" id="repeat_collapse">
-                Repeat details
-            </div>
-        </div>
-        <div id="filter">
-            Filter:
-            <a class="expectationform" href="#" data-toggle="collapse" data-target="#filter_collapse"><i class="icon-expandable"></i></a>
-            <div class="collapse" id="filter_collapse">
-                Filter details
+<form class="form-search">
+    <div id="row">
+        <a class="btn" href="#" data-toggle="collapse" data-target="#expectation_form">Edit</a>
+        <div class="collapse" id="expectation_form">
+            <div class="row">
+                <div class="span4">
+                    <div class="well">
+                        <h3>Expectation Name:</h3>
+                        {{ eqf.expectation_name }}<hr />
+                        <h3>Deadline:</h3>
+                        {{ eqf.deadline }}<hr />
+                        <h3>Tolerance:</h3>
+                        {{ eqf.tolerance }}<hr />
+                        <h3>Repeat:</h3>
+                        {{ eqf.repeat }}
+                    </div>
+                </div>
+                <div class="span4">
+                    <div class="well">
+                        <h2>Filter</h2>
+                        <hr />
+                        <h3>Severities:</h3>
+                        {{ eqf.severity__in }}<hr />
+                        <h3>Applications</h3>
+                        {{ eqf.application__in }}<hr />
+                        <h3>Servers</h3>
+                        {{ eqf.server_ip__in }}<hr />
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </form>
-<table class="table">
-    <thead>
-        <tr>
-            <th id="severity" class="sortable sorted-desc">Severity</th>
-            <th id="datetime" class="sortable sorted-desc sorted-active">Time</th>
-            <th id="application__username" class="sortable sorted-desc">Application</th>
-            <th id="server_ip" class="sortable sorted-desc">Server</th>
-            <th>Message</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- no log messages loaded -->
-    </tbody>
-</table>
+<div class="row-fluid">
+    <div class="span12">
+    <table class="table">
+        <thead>
+            <tr>
+                <th id="severity" class="sortable sorted-desc">Severity</th>
+                <th id="datetime" class="sortable sorted-desc sorted-active">Time</th>
+                <th id="application__username" class="sortable sorted-desc">Application</th>
+                <th id="server_ip" class="sortable sorted-desc">Server</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- no log messages loaded -->
+        </tbody>
+    </table>
+</div>
+</div>
 <script type="text/javascript">
     $('.filters input, .filters select').change(function() {
         $(".changed_indicator").show();

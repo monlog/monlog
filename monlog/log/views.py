@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
 from models import LogMessage, Label, Expectation, SEVERITY_CHOICES
 from django.contrib.auth.models import User
-from monlog.log.forms import LogQueryForm, LabelForm
+from monlog.log.forms import LogQueryForm, LabelForm, ExpectationForm
 import logging
 
 @login_required
@@ -15,12 +15,12 @@ def expectation(request, exp_name):
     if exp_name:
         try:
             exp = Expectation.objects.get(expectation_name=exp_name, user=request.user)
-            #eqf = ExpectationForm(exp.get_dict())
+            eqf = ExpectationForm(instance=exp)
         except Expectation.DoesNotExist:
             exp_name = None
 
     context = RequestContext(request)
-    #context['eqf'] = eqf
+    context['eqf'] = eqf
     context['labels'] = Label.objects.filter(user=request.user)
     context['active_expectation'] = exp_name
     context['expectations'] = Expectation.objects.filter(user=request.user)
