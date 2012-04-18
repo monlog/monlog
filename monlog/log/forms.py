@@ -138,7 +138,6 @@ class RelativedeltaField(forms.Field):
     example: 10 minutes would be "0_0_0_10_0"
     example: 2 months would be "2_0_0_0_0"
     """
-
     widget = RelativedeltaWidget
 
     def prepare_value(self, value):
@@ -161,7 +160,6 @@ class RelativedeltaField(forms.Field):
                              minutes = minutes,
                              seconds = seconds)
 
-
 class ExpectationForm(forms.ModelForm):
     """
     This is the form for expectations
@@ -169,6 +167,7 @@ class ExpectationForm(forms.ModelForm):
     expectation_name = forms.CharField(
                                  widget=forms.TextInput(attrs={
                             'placeholder':'Enter an expectation name...'}))
+
     # timestamp for next deadline
     deadline = forms.DateTimeField(widget=DateTimeInput)
 
@@ -238,10 +237,9 @@ class ExpectationForm(forms.ModelForm):
                   "severity__in",
                   "search"]
         for param in params:
-            qd.setlist(param, self.cleaned_data[param])
+            qd.setlist(param, cleaned_data[param])
         self.cleaned_data["query_string"] = qd.urlencode()
-        return self.cleaned_data
+        return cleaned_data
 
     class Meta:
         model = Expectation
-
