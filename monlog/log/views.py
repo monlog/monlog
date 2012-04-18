@@ -2,13 +2,45 @@ from django.http import HttpResponse, HttpResponseBadRequest, QueryDict, HttpRes
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
-from models import LogMessage, Label, SEVERITY_CHOICES
+from models import LogMessage, Label, Expectation, SEVERITY_CHOICES
 from django.contrib.auth.models import User
 from monlog.log.forms import LogQueryForm, LabelForm
 import logging
 
 @login_required
-def list(request):
+def expectation(request, exp_name):
+    """
+    A view for editing expectations.
+    """
+    if exp_name:
+        try:
+            exp = Expectation.objects.get(expectation_name=exp_name, user=request.user)
+            #eqf = ExpectationForm(exp.get_dict())
+        except Expectation.DoesNotExist:
+            exp_name = None
+
+    context = RequestContext(request)
+    #context['eqf'] = eqf
+    context['labels'] = Label.objects.filter(user=request.user)
+    context['active_expectation'] = exp_name
+    context['expectations'] = Expectation.objects.filter(user=request.user)
+    return render_to_response('expectation.html', context)
+
+def delete_expectation(request, exp_name):
+    """
+    Used when a user deletes an expectation
+    """
+
+    try:
+        expectation = Expectation.objects.get(expectation_name=exp_name, user=request.user)
+        expectation.delete()
+    except Expectation.DoesNotExist:
+        pass
+
+    return HttpResponseRedirect('/')
+
+@login_required
+def list(request, label_name):
     """
     View for listing all log messages. Labels are used to filter which messages
     are displayed.
@@ -22,7 +54,6 @@ def list(request):
     lqf = LogQueryForm(qd)
 
     # Get label if user specified one.
-    label_name = request.GET.get('label')
     label_id = None
     if label_name:
         try:
@@ -39,6 +70,7 @@ def list(request):
     context['label_field'] = LabelForm(label_name)
     context['active_label'] = label_name
     context['label_id'] = label_id
+    context['expectations'] = Expectation.objects.filter(user=request.user)
     return render_to_response('list.html', context)
 
 @login_required
@@ -67,7 +99,7 @@ def save_label(request):
                       label_name=name,
                       query_string=query_string)
     label.save()
-    return HttpResponse('/?label='+name)
+    return HttpResponse('/label/'+name)
 
 @login_required
 def delete_label(request, label_id):
