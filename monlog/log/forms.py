@@ -112,15 +112,9 @@ class RelativedeltaWidget(forms.MultiWidget):
                     "Day",
                     "Hou",
                     "Min",
-                    "Sec"]
+                    "Sec",]
         output = []
         output.append("<table>")
-#        output.append("<tr>")
-#        for label in labels:
-#            output.append("<td>")
-#            output.append(label)
-#            output.append("</td>")
-#        output.append("</tr>")
         for widget in rendered_widgets:
             output.append("<td>")
             output.append("%s" %\

@@ -120,20 +120,22 @@
         $(".changed_indicator").show();
     });
     $(document).ready(function() {
-    $("th.sortable").append('<i class="icon-sortable"></i>');
-    $("th.sortable").bind('click', function(event){
-        if ($(this).hasClass('sorted-active')) {
-            // already sorted on this column, so user wants to switch direction of sort
-            $(this).toggleClass('sorted-desc').toggleClass('sorted-asc');
-        } else {
-            $("th.sortable").removeClass('sorted-active');
-            $(this).toggleClass('sorted-active');
-        }
+        var datetimepickerFormat = {timeFormat: 'hh:mm:ss', dateFormat: 'yy-mm-dd', separator :'T'};
+        $("#id_deadline").datetimepicker(datetimepickerFormat);
+        $("th.sortable").append('<i class="icon-sortable"></i>');
+        $("th.sortable").bind('click', function(event){
+            if ($(this).hasClass('sorted-active')) {
+                // already sorted on this column, so user wants to switch direction of sort
+                $(this).toggleClass('sorted-desc').toggleClass('sorted-asc');
+            } else {
+                $("th.sortable").removeClass('sorted-active');
+                $(this).toggleClass('sorted-active');
+            }
 
-        var ordering_param = ($(this).hasClass('sorted-desc') ? '-' : '') + this.id;
-        $('form.filters input[name="order_by"]').attr('value', ordering_param);
-        $('form.filters input[name="order_by"]').change();
-    });
+            var ordering_param = ($(this).hasClass('sorted-desc') ? '-' : '') + this.id;
+            $('form.filters input[name="order_by"]').attr('value', ordering_param);
+            $('form.filters input[name="order_by"]').change();
+        });
     });
 </script>
 {% endblock %}
