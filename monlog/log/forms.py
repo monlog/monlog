@@ -153,7 +153,9 @@ class RelativedeltaField(forms.Field):
             return None
 
     def clean(self, values):
-        (months, days, hours, minutes, seconds) = [int(v) for v in values]
+        (months, days, hours, minutes, seconds) = [int(v) or 0
+                                                   for v
+                                                   in values]
         return relativedelta(months  = months,
                              days    = days,
                              hours   = hours,
