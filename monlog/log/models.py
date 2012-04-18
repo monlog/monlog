@@ -106,7 +106,6 @@ class RelativedeltaField(models.Field):
         elif isinstance(value, relativedelta):
             return value
         else:
-            return "wat"
             return None
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
