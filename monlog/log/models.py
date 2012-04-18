@@ -95,15 +95,18 @@ class RelativedeltaField(models.Field):
             return None
         if isinstance(value, (str, unicode)):
             #raises ValueError if split not possible.
-            months, days, hours, minutes, seconds = value.split("_")
-            return relativedelta(months=int(months),
-                                 days=int(days),
-                                 hours=int(hours),
-                                 minutes=int(minutes),
-                                 seconds=int(seconds))
+            months, days, hours, minutes, seconds = [int(v) 
+                                                    for v 
+                                                    in value.split("_")]
+            return relativedelta(months  = months,
+                                 days    = days,
+                                 hours   = hours,
+                                 minutes = minutes,
+                                 seconds = seconds)
         elif isinstance(value, relativedelta):
             return value
         else:
+            return "wat"
             return None
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
@@ -120,8 +123,8 @@ class RelativedeltaField(models.Field):
         """
         Using a RelativedeltaField to represent this field in a form.
         """
-        from monlog.log import forms # why can't I import this at the top?
-        defaults = { 'form_class' : forms.RelativedeltaField }
+        from monlog.log.forms import RelativedeltaField as RelativedeltaFormField
+        defaults = { 'form_class' : RelativedeltaFormField }
         defaults.update(kwargs)
         return super(RelativedeltaField, self).formfield(**defaults)
 
@@ -140,6 +143,7 @@ class Expectation(Filter):
     # timestamp for original deadline
     deadline          = models.DateTimeField()
     original_deadline = models.DateTimeField()
+
 
     # +- tolerance in relative delta
     # example: '+- 10 minute'
