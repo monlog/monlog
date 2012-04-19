@@ -65,6 +65,7 @@
     </script>
 {% endverbatim %}
 <div class="well">
+    <a class="btn pull-right" href="javascript:toggleExpectationEditMode();">Edit</a>
     <form class="monlog-control-form">
         <div class="control-group-wrapper">
             <div class="control-group">
@@ -170,6 +171,7 @@
         </table>
     </div>
 </div>
+<script src="{{ STATIC_URL }}js/expectation.js" type="text/javascript"></script>
 <script type="text/javascript">
     $('.filters input, .filters select').change(function() {
         $(".changed_indicator").show();
