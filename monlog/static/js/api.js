@@ -14,7 +14,6 @@
 */
 
 var pendingData;
-var streamingMode = true;
 var timeoutTime = 5000;
 var lastDisplayedDatetime;
 
@@ -91,29 +90,6 @@ var lazyloadAppend = function(data) {
     // Append data to already populated table
     $(".content .table tbody").append(ich.log_messages(data));
     nextOffset += messagesPerPage;
-};
-
-var toggleStreamingMode = function(enable) {
-    console.log("toggleStreamingMode:", enable);
-    if (typeof enable == "undefined") {
-        // we want to end up with the inverse of the current streaming mode
-        enable = ! streamingMode;
-    }
-    if (enable != streamingMode) {
-        // actually toggle streaming mode
-        if (enable) {
-            $("#collapse-form").addClass("non-expanded");
-            $("#streaming").removeClass("streaming-deactivated");
-            $("#streaming").html("Streaming");
-            // collapse all expanded detail rows
-            $("table tbody .details .in").collapse('hide');
-        } else {
-            $("#collapse-form").removeClass("non-expanded");
-            $("#streaming").addClass("streaming-deactivated");
-            $("#streaming").html("Streaming paused");
-        }
-        streamingMode = enable;
-    }
 };
 
 var requestLogMessages = function(formData,callback) {
@@ -196,5 +172,5 @@ $(document).ready(function() {
     window.setTimeout(handleTimeout,timeoutTime);
     // resize pre content
     longdescSize();
-    $(window).resize(longdescSize);    
+    $(window).resize(longdescSize);
 });
