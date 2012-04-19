@@ -251,6 +251,20 @@ a.expectationform .icon-expandable {
 
 // this is the table cell that contains long_desc
 td.details {
+    .long_desc {
+        overflow-x: scroll;
+	background-color: #f5f5f5;
+        pre {
+	    border: 0;
+            white-space: pre;
+	    margin: 10px;
+        }
+        &.in {
+	    border: 1px solid #ccc; // fallback for IE7-8
+  	    border: 1px solid rgba(0,0,0,.15);
+  	    .border-radius(4px);
+        }
+    }
     padding: 0;
     border: 0;
 }

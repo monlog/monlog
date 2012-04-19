@@ -14,7 +14,6 @@
 */
 
 var pendingData;
-var streamingMode = true;
 var timeoutTime = 5000;
 var lastDisplayedDatetime;
 
@@ -57,6 +56,8 @@ var displayLogMessages = function(data) {
     // Save data needed for lazyloading
     nextOffset = messagesPerPage;
     messagesTotal = data['meta']['total_count'];
+    // updates width of pre content
+    longdescSize();
 };
 
 
@@ -89,29 +90,6 @@ var lazyloadAppend = function(data) {
     // Append data to already populated table
     $(".content .table tbody").append(ich.log_messages(data));
     nextOffset += messagesPerPage;
-};
-
-var toggleStreamingMode = function(enable) {
-    console.log("toggleStreamingMode:", enable);
-    if (typeof enable == "undefined") {
-        // we want to end up with the inverse of the current streaming mode
-        enable = ! streamingMode;
-    }
-    if (enable != streamingMode) {
-        // actually toggle streaming mode
-        if (enable) {
-            $("#collapse-form").addClass("non-expanded");
-            $("#streaming").removeClass("streaming-deactivated");
-            $("#streaming").html("Streaming");
-            // collapse all expanded detail rows
-            $("table tbody .details .in").collapse('hide');
-        } else {
-            $("#collapse-form").removeClass("non-expanded");
-            $("#streaming").addClass("streaming-deactivated");
-            $("#streaming").html("Streaming paused");
-        }
-        streamingMode = enable;
-    }
 };
 
 var requestLogMessages = function(formData,callback) {
@@ -170,6 +148,11 @@ var delay = (function() {
     };
 })();
 
+var longdescSize = function() {
+    var content_width = $("#form-wrapper").outerWidth(true);
+    $(".long_desc").css("width", content_width);
+};
+
 $(document).ready(function() {
     var updateHandler = function() { requestLogMessages(getFormData(),updateLogTable); };
     $('.filters input, .filters select').change(updateHandler);
@@ -187,4 +170,7 @@ $(document).ready(function() {
 
     requestLogMessages(getFormData(),updateLogTable);
     window.setTimeout(handleTimeout,timeoutTime);
+    // resize pre content
+    longdescSize();
+    $(window).resize(longdescSize);
 });
