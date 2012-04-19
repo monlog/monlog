@@ -103,6 +103,7 @@ class RelativedeltaField(models.Field):
                                  hours   = hours,
                                  minutes = minutes,
                                  seconds = seconds)
+
         elif isinstance(value, relativedelta):
             return value
         else:

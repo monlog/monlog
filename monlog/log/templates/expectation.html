@@ -64,9 +64,32 @@
     {{/objects}}
     </script>
 {% endverbatim %}
-<form class="form-search">
-    <div id="row">
-        <a class="btn" href="#" data-toggle="collapse" data-target="#expectation_form">Edit</a>
+<div class="well">
+    <div class="row-fluid">
+        <div class="span12">
+            <a class="btn pull-right" href="#" data-toggle="collapse" data-target="#expectation_form">Edit</a>
+            <h1>Name: {{ exp.expectation_name }}</h1>
+            <hr />
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span4"><h4>Next deadline:</h4><h3>{{ exp.deadline }}</h3></div>
+        <div class="span4"><h4>Tolerance:</h4><h3>{{ exp_tolerance }}</h3></div>
+        <div class="span4"><h4>Repeat every:</h4><h3>{{ repeat }}</h3></div>
+    </div>
+    <div class="row-fluid"><div class="span12"><hr/></div></div>
+    <div class="row-fluid">
+        <div class="span12"><h2>Filter</h2></div>
+    </div>
+    <div class="row-fluid">
+        <div class="span3"><h3>Severities</h3></div>
+        <div class="span3"><h3>Applications</h3></div>
+        <div class="span3"><h3>Servers</h3></div>
+        <div class="span3"><h3>Amount of results</h3></div>
+    </div>
+</div>
+
+    <form class="form-search">
         <div class="collapse" id="expectation_form">
             <div class="row">
                 <div class="span4">
@@ -95,8 +118,7 @@
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
 <div class="row-fluid">
     <div class="span12">
     <table class="table">
