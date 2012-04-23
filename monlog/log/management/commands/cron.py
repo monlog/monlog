@@ -1,9 +1,17 @@
+import pytz
 from monlog.log.models import Expectation, ExpectationMessage
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 
 class Command(BaseCommand):
+    mock = False
+
+    def utcnow(self):
+        if self.mock:
+            return self.mock_datetime
+        return datetime.utcnow().replace(tzinfo=pytz.UTC)
+
     def handle(self, *args, **kwargs):
         """
         Script that retrieves all expectation that has a deadline earlier
@@ -15,12 +23,16 @@ class Command(BaseCommand):
 
         if debug: print "Retrieving expectations to check..."
 
+        if 'mock_datetime' in kwargs:
+            self.mock_datetime = kwargs['mock_datetime']
+            self.mock = True
+
         expectations = Expectation.objects \
-                                  .filter(deadline__lte=datetime.utcnow().isoformat())
+                                  .filter(deadline__lte=self.utcnow().isoformat())
         if debug: print "Number of expectations found: %s " % len(expectations)
 
         for expect in expectations:
-            while expect.deadline < datetime.utcnow():
+            while expect.deadline < self.utcnow():
                 if debug:
                     print ("  Checking expectation \"%s\"" +
                            " with deadline \"%s\".") \
@@ -59,7 +71,7 @@ class Command(BaseCommand):
                     # errors found, log severity level ``error``
                     if debug:
                         print "    Expectation FAILED!"
-                        print "\n".join(errors[key] for key 
+                        print "\n".join(errors[key] for key
                                                     in errors.keys()) + "\n"
                     message.severity = 4
                     message.long_desc += "\n".join(errors[key] for key
@@ -68,5 +80,8 @@ class Command(BaseCommand):
 
                 message.long_desc += "\nQuerySet: " % qs
                 message.save()
+
+
                 expect.repeat_count += 1
+                expect.deadline = expect.next_deadline
                 expect.save()
