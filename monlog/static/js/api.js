@@ -95,7 +95,13 @@ var lazyloadAppend = function(data) {
 var requestLogMessages = function(formData,callback) {
     $("#loading_indicator").fadeIn(300);
 
-    var url = "/api/logmessages/?limit=" + messagesPerPage + "&" + $.param(formData);
+    if (typeof expectationMode !== 'undefined') {
+        if (expId < 0) return;
+        var url = "/api/expectationmessages/?limit=" + messagesPerPage + "&expectation=" + expId;
+    } else {
+        var url = "/api/logmessages/?limit=" + messagesPerPage + "&" + $.param(formData);
+    }
+
     $.getJSON(url, function(data,textStatus,jqXHR) {
         callback(data);
         $("#loading_indicator").fadeOut(300);
