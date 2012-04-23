@@ -39,22 +39,29 @@ def save_expectation(request):
     to the expectation view afterwards.
     """
 
-    id                      = request.POST.get('id')
-    name                    = request.POST.get('expectation_name')
-    _deadline               = request.POST.get('deadline')
-    deadline = datetime(_deadline)
+    form_data = request.POST.get('form_data')
+    dict = {}
+    for fd in form_data:
+        dict[fd['name']] = fd['value']
 
-    tolerance_month         = request.POST.get('tolerance_0')
-    tolerance_day           = request.POST.get('tolerance_1')
-    tolerance_hour          = request.POST.get('tolerance_2')
-    tolerance_minute        = request.POST.get('tolerance_3')
-    tolerance_second        = request.POST.get('tolerance_4')
+    query_string = request.POST.get('query_string')
 
-    repeat_month            = request.POST.get('repeat_0')
-    repeat_day              = request.POST.get('repeat_1')
-    repeat_hour             = request.POST.get('repeat_2')
-    repeat_minute           = request.POST.get('repeat_3')
-    repeat_second           = request.POST.get('repeat_4')
+    id                      = dict['id']
+    name                    = dict['expectation_name']
+    _deadline               = dict['deadline']
+    deadline = datetime[_deadline]
+
+    tolerance_month         = dict['tolerance_0']
+    tolerance_day           = dict['tolerance_1']
+    tolerance_hour          = dict['tolerance_2']
+    tolerance_minute        = dict['tolerance_3']
+    tolerance_second        = dict['tolerance_4']
+
+    repeat_month            = dict['repeat_0']
+    repeat_day              = dict['repeat_1']
+    repeat_hour             = dict['repeat_2']
+    repeat_minute           = dict['repeat_3']
+    repeat_second           = dict['repeat_4']
 
     tolerance = relativedelta(months  = tolerance_month,
                               days    = tolerance_day,
@@ -67,9 +74,7 @@ def save_expectation(request):
                               minutes = repeat_minute,
                               seconds = repeat_seconds)
 
-    least_amount_of_results = request.POST.get('least_amount_of_results')
-    search                  = request.POST.get('search')
-    query_string            = request.POST.get('query_string')
+    least_amount_of_results = dict['least_amount_of_results']
 
     try:
         expectation = Expectation.objects.get(id=id)
