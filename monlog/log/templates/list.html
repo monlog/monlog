@@ -7,10 +7,10 @@
 </ul>
 {% endblock %}
 {% block label_actions %}
-    {% if active_label and label_id %}
+    {% if active_label %}
         <li><a href="#" class="label-save">Save<span class="changed_indicator">*</span></a></li>
         <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
-        <li><a href="/label/delete/{{ label_id }}">Remove</a></li>
+        <li><a href="/label/delete/{{ active_label }}">Remove</a></li>
     {% else %}
         <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
     {% endif %}
