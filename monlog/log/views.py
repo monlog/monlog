@@ -37,6 +37,7 @@ def save_expectation(request):
     to the expectation view afterwards.
     """
 
+    id                      = request.POST.get('id')
     name                    = request.POST.get('expectation_name')
     deadline                = request.POST.get('deadline')
     tolerance               = request.POST.get('tolerance')
@@ -45,7 +46,10 @@ def save_expectation(request):
     search                  = request.POST.get('search')
     query_string            = request.POST.get('query_string')
 
-    expectation = Expectation(
+    try:
+        expectation = Expectation.objects.get(id=id)
+    except Expectation.DoesNotExist:
+        expectation = Expectation(
             user                    = request.user,
             expectation_name        = name,
             deadline                = deadline,
