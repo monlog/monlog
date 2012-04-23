@@ -27,7 +27,7 @@
     </script>
 {% endverbatim %}
 <div class="well">
-    <form class="monlog-control-form">
+    <form class="monlog-control-form expectation-form">
         <div class="control-group-wrapper">
             <div class="control-group">
                 <label class="control-label">Expectation Name</label>
@@ -120,8 +120,25 @@
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/api.js"></script>
 <script type="text/javascript">
-    $('.filters input, .filters select').change(function() {
-        $(".changed_indicator").show();
+    var saveExpectation = function(event) {
+        event.preventDefault();
+        var query = $(".expectation-form").serialize();
+        $.post("/expectation/save/", {
+            csrfmiddlewaretoken : "{{ csrf_token }}",
+            query_string : query,
+            id: expId,
+        },
+               function(data) {
+                   window.location=data;
+               }
+        );
+    } 
+
+    $(".expectation-save").click(saveExpectation);
+    $("#save-expectation").submit(saveExpectation);
+
+    $('.expectation-form input, .expectation-form select').change(function() {
+        $(".expectation_menu .changed_indicator").show();
     });
     $(document).ready(function() {
         var datetimepickerFormat = {timeFormat: 'hh:mm:ss', dateFormat: 'yy-mm-dd', separator :'T'};
