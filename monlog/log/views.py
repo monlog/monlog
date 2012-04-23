@@ -61,6 +61,7 @@ def expectation(request, exp_name):
 
     return render_to_response('expectation.html', context)
 
+@login_required
 def delete_expectation(request, exp_name):
     """
     Used when a user deletes an expectation
