@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from models import LogMessage, Label, Expectation, SEVERITY_CHOICES
 from django.contrib.auth.models import User
 from monlog.log.forms import LogQueryForm, LabelForm, ExpectationForm
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 import logging
 
 @login_required
@@ -39,9 +41,32 @@ def save_expectation(request):
 
     id                      = request.POST.get('id')
     name                    = request.POST.get('expectation_name')
-    deadline                = request.POST.get('deadline')
-    tolerance               = request.POST.get('tolerance')
-    repeat                  = request.POST.get('repeat')
+    _deadline               = request.POST.get('deadline')
+    deadline = datetime(_deadline)
+
+    tolerance_month         = request.POST.get('tolerance_0')
+    tolerance_day           = request.POST.get('tolerance_1')
+    tolerance_hour          = request.POST.get('tolerance_2')
+    tolerance_minute        = request.POST.get('tolerance_3')
+    tolerance_second        = request.POST.get('tolerance_4')
+
+    repeat_month            = request.POST.get('repeat_0')
+    repeat_day              = request.POST.get('repeat_1')
+    repeat_hour             = request.POST.get('repeat_2')
+    repeat_minute           = request.POST.get('repeat_3')
+    repeat_second           = request.POST.get('repeat_4')
+
+    tolerance = relativedelta(months  = tolerance_month,
+                              days    = tolerance_day,
+                              hours   = tolerance_hour,
+                              minutes = tolerance_minute,
+                              seconds = tolerance_seconds)
+    repeat    = relativedelta(months  = repeat_month,
+                              days    = repeat_day,
+                              hours   = repeat_hour,
+                              minutes = repeat_minute,
+                              seconds = repeat_seconds)
+
     least_amount_of_results = request.POST.get('least_amount_of_results')
     search                  = request.POST.get('search')
     query_string            = request.POST.get('query_string')
