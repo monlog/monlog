@@ -1,7 +1,7 @@
 from django.db import models
 from django import forms
 from django.forms.widgets import CheckboxSelectMultiple, SelectMultiple, DateTimeInput
-from monlog.log.models import SEVERITY_CHOICES, LogMessage, Expectation
+from monlog.log.models import SEVERITY_CHOICES, LogMessage, Expectation, ExpectationMessage
 from django.contrib.auth.models import User
 from django.http import QueryDict
 from dateutil.relativedelta import relativedelta
@@ -228,6 +228,7 @@ class ExpectationForm(forms.ModelForm):
         # This is needed when displaying the buttons as active or not.
         self.severity_choices = [(choice[0], choice[1], choice[0] in data)
                                  for choice in SEVERITY_CHOICES]
+
 
         self.fields['application__in'] = forms.MultipleChoiceField(
                                             required=False,

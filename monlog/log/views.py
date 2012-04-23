@@ -39,42 +39,38 @@ def save_expectation(request):
     to the expectation view afterwards.
     """
 
-    form_data = request.POST.get('form_data')
-    dict = {}
-    for fd in form_data:
-        dict[fd['name']] = fd['value']
+    dict = QueryDict(request.POST.get('query'),mutable=True)
 
-    query_string = request.POST.get('query_string')
+    id                      = request.POST.get('id')
+    name                    = dict.pop('expectation_name')[0]
+    deadline                = dict.pop('deadline')[0]
 
-    id                      = dict['id']
-    name                    = dict['expectation_name']
-    _deadline               = dict['deadline']
-    deadline = datetime[_deadline]
+    tolerance_month         = int(dict.pop('tolerance_0')[0])
+    tolerance_day           = int(dict.pop('tolerance_1')[0])
+    tolerance_hour          = int(dict.pop('tolerance_2')[0])
+    tolerance_minute        = int(dict.pop('tolerance_3')[0])
+    tolerance_second        = int(dict.pop('tolerance_4')[0])
 
-    tolerance_month         = dict['tolerance_0']
-    tolerance_day           = dict['tolerance_1']
-    tolerance_hour          = dict['tolerance_2']
-    tolerance_minute        = dict['tolerance_3']
-    tolerance_second        = dict['tolerance_4']
-
-    repeat_month            = dict['repeat_0']
-    repeat_day              = dict['repeat_1']
-    repeat_hour             = dict['repeat_2']
-    repeat_minute           = dict['repeat_3']
-    repeat_second           = dict['repeat_4']
+    repeat_month            = int(dict.pop('repeat_0')[0])
+    repeat_day              = int(dict.pop('repeat_1')[0])
+    repeat_hour             = int(dict.pop('repeat_2')[0])
+    repeat_minute           = int(dict.pop('repeat_3')[0])
+    repeat_second           = int(dict.pop('repeat_4')[0])
 
     tolerance = relativedelta(months  = tolerance_month,
                               days    = tolerance_day,
                               hours   = tolerance_hour,
                               minutes = tolerance_minute,
-                              seconds = tolerance_seconds)
+                              seconds = tolerance_second)
     repeat    = relativedelta(months  = repeat_month,
                               days    = repeat_day,
                               hours   = repeat_hour,
                               minutes = repeat_minute,
-                              seconds = repeat_seconds)
+                              seconds = repeat_second)
 
-    least_amount_of_results = dict['least_amount_of_results']
+    least_amount_of_results = dict.pop('least_amount_of_results')[0]
+
+    query_string = dict.urlencode()
 
     try:
         expectation = Expectation.objects.get(id=id)
@@ -85,6 +81,7 @@ def save_expectation(request):
         expectation.repeat                  = repeat
         expectation.repeat_count            = 0
         expectation.least_amount_of_results = least_amount_of_results
+        expectation.query_string            = query_string
     except Expectation.DoesNotExist:
         expectation = Expectation(
             user                    = request.user,
@@ -94,7 +91,8 @@ def save_expectation(request):
             tolerance               = tolerance,
             repeat                  = repeat,
             repeat_count            = 0,
-            least_amount_of_results = least_amount_of_results)
+            least_amount_of_results = least_amount_of_results,
+            query_string            = query_string)
 
     expectation.save()
     return HttpResponse('/expectation/'+name)
