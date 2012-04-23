@@ -62,6 +62,35 @@ def expectation(request, exp_name):
     return render_to_response('expectation.html', context)
 
 @login_required
+def save_expectation(request):
+    """
+    Recieves a expectation form and creates an expectation from it. Redirects 
+    to the expectation view afterwards.
+    """
+
+    name                    = request.POST.get('expectation_name')
+    deadline                = request.POST.get('deadline')
+    tolerance               = request.POST.get('tolerance')
+    repeat                  = request.POST.get('repeat')
+    least_amount_of_results = request.POST.get('least_amount_of_results')
+    search                  = request.POST.get('search')
+    query_string            = request.POST.get('query_string')
+
+    expectation = Expectation(
+            user=request.user,
+            expectation_name        = name,
+            user                    = request.user,
+            deadline                = deadline,
+            original_deadline       = deadline,
+            tolerance               = tolerance,
+            repeat                  = repeat,
+            repeat_count            = 1,
+            least_amount_of_results = least_amount_of_results)
+
+    expectation.save()
+    return HttpResponse('/expectation/'+name)
+
+@login_required
 def delete_expectation(request, exp_name):
     """
     Used when a user deletes an expectation
