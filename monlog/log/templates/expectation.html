@@ -65,51 +65,30 @@
     </script>
 {% endverbatim %}
 <div class="well">
-    <a class="btn pull-right" href="javascript:toggleExpectationEditMode();">Edit</a>
     <form class="monlog-control-form">
         <div class="control-group-wrapper">
             <div class="control-group">
                 <label class="control-label">Expectation Name</label>
                 <div class="control">
-                    <div class="edit-mode">
-                        {{ eqf.expectation_name }}
-                    </div>
-                    <div class="view-mode">
-                        {{ exp.expectation_name }}
-                    </div>
+                    {{ eqf.expectation_name }}
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label">Deadline</label>
                 <div class="control">
-                    <div class="edit-mode">
-                        {{ eqf.deadline }}
-                    </div>
-                    <div class="view-mode">
-                        {{ exp.deadline }}
-                    </div>
+                    {{ eqf.deadline }}
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label">Tolerance</label>
                 <div class="control">
-                    <div class="edit-mode">
-                        {{ eqf.tolerance }}
-                    </div>
-                    <div class="view-mode">
-                        {{ exp_tolerance }}
-                    </div>
+                    {{ eqf.tolerance }}
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label">Repeat</label>
                 <div class="control">
-                    <div class="edit-mode">
-                        {{ eqf.repeat }}
-                    </div>
-                    <div class="view-mode">
-                        {{ repeat }}
-                    </div>
+                    {{ eqf.repeat }}
                 </div>
             </div>
             <div style="clear:both;"></div>
@@ -142,12 +121,7 @@
             <div class="control-group">
                 <label class="control-label">Amount of results</label>
                 <div class="control">
-                    <div class="edit-mode">
-                        {{ eqf.least_amount_of_results }}
-                    </div>
-                    <div class="view-mode">
-                        {{ exp.least_amount_of_results }}
-                    </div>
+                    {{ eqf.least_amount_of_results }}
                 </div>
             </div>
             <div style="clear:both;"></div>
@@ -171,7 +145,6 @@
         </table>
     </div>
 </div>
-<script src="{{ STATIC_URL }}js/expectation.js" type="text/javascript"></script>
 <script type="text/javascript">
     $('.filters input, .filters select').change(function() {
         $(".changed_indicator").show();

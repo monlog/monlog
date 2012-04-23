@@ -10,54 +10,23 @@ from monlog.log.forms import LogQueryForm, LabelForm, ExpectationForm
 import logging
 
 @login_required
-def expectation(request, exp_name):
+def expectation(request, exp_name=None):
     """
     A view for editing expectations.
     """
     exp = None
-    if exp_name:
-        try:
-            exp = Expectation.objects.get(expectation_name=exp_name, user=request.user)
-            eqf = ExpectationForm(instance=exp)
-        except Expectation.DoesNotExist:
-            exp_name = None
+    try:
+        exp = Expectation.objects.get(expectation_name=exp_name, user=request.user)
+    except Expectation.DoesNotExist:
+        pass
 
     context = RequestContext(request)
-    context['eqf'] = eqf
+    context['eqf'] = ExpectationForm(instance=exp)
     context['labels'] = Label.objects.filter(user=request.user)
     context['exp'] = exp
 
-    tolerance = u"± "
-    # create ``tolerance`` string
-    if exp.tolerance.months > 0:
-        tolerance += "%s month(s)" % exp.tolerance.months
-    if exp.tolerance.days > 0:
-        tolerance += "%s day(s)" % exp.tolerance.days
-    if exp.tolerance.hours > 0:
-        tolerance += "%s hour(s)" % exp.tolerance.hours
-    if exp.tolerance.minutes > 0:
-        tolerance += "%s minute(s)" % exp.tolerance.minutes
-    if exp.tolerance.seconds > 0:
-        tolerance += "%s second(s)" % exp.tolerance.seconds
-    context['exp_tolerance'] = tolerance
-
-    # create ``repeat every``
-    repeat = ""
-    if exp.repeat.months > 0:
-        repeat += "%s month(s)" % exp.repeat.months
-    if exp.repeat.days > 0:
-        repeat += "%s day(s)" % exp.repeat.days
-    if exp.repeat.hours > 0:
-        repeat += "%s hour(s)" % exp.repeat.hours
-    if exp.repeat.minutes > 0:
-        repeat += "%s minute(s)" % exp.repeat.minutes
-    if exp.repeat.seconds > 0:
-        repeat += "%s second(s)" % exp.repeat.seconds
-    context['repeat'] = repeat
-
     context['active_expectation'] = exp_name
     context['expectations'] = Expectation.objects.filter(user=request.user)
-
 
     return render_to_response('expectation.html', context)
 
@@ -90,7 +59,6 @@ def save_expectation(request):
     expectation.save()
     return HttpResponse('/expectation/'+name)
 
-@login_required
 def delete_expectation(request, exp_name):
     """
     Used when a user deletes an expectation
