@@ -214,4 +214,6 @@ class ExpectationMessage(LogMessage):
     """
     A message that monlog creates to log expectations.
     """
-    expectation = models.ForeignKey(Expectation)
+
+    expectation = models.ForeignKey(Expectation, on_delete=models.SET_NULL,
+                                    blank=True, null=True)

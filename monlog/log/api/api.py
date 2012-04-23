@@ -91,7 +91,6 @@ class ExpectationResource(ModelResource):
 
 class ExpectationCollectionResource(LogCollectionResource):
 
-
     expectation = fields.ForeignKey(ExpectationResource,
                                     'expectation',
                                     full=True)
@@ -101,7 +100,7 @@ class ExpectationCollectionResource(LogCollectionResource):
         queryset = ExpectationMessage.objects.all()
         resource_name = "expectationmessages"
         filtering = {
-                "expectation" : ALL,
+                "expectation" : ALL
                 }
 
 class LogResource(ModelResource):
