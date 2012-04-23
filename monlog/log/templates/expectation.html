@@ -122,11 +122,8 @@
 <script type="text/javascript">
     var saveExpectation = function(event) {
         event.preventDefault();
-        var formData = $(".expectation-form").serializeArray();
-        var query = $(".expectation-form select").serialize();
-        console.log(query);
+        var query = $(".expectation-form").serialize();
         $.post("/expectation/save/", {
-            "form_data":formData, 
             csrfmiddlewaretoken : "{{ csrf_token }}",
             id: expId,
             query: query,
