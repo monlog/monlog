@@ -88,7 +88,7 @@ class RestTest(MonlogTestCase):
         """
         Tests if we can post without api key and user.
         """
-        data = {"severity": 0 , "datetime" : "2012-10-10T10:10:10" } #wellformed data
+        data = {"severity": 0 , "timestamp" : "1335169880" } #wellformed data
         resp = self.client.post("/api/log/", data)
         self.assertEqual(resp.status_code, 401) #Unauthorized
             
@@ -98,33 +98,21 @@ class RestTest(MonlogTestCase):
         """
         testapp = User.objects.get(username=self.username)
 
-        # Missing datetime
+        # Missing timestamp
         data = {"severity": 0}
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
         self.assertEqual(resp.status_code, 400)
         
         # Datetime malformed, missing lots of stuff
         data = {"severity": 0,
-                "datetime" : "2"}
-        resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
-        self.assertEqual(resp.status_code, 400)
-
-        # Datetime malformed, month > 12
-        data = {"severity": 0,
-                "datetime" : "2000-13-01 10:10:10"}
-        resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
-        self.assertEqual(resp.status_code, 400)
-
-        # Datetime malformed, day > 31
-        data = {"severity": 0,
-                "datetime" : "2000-01-56 10:10:10"}
+                "timestamp" : "2001-02-22T12:12:12Z"}
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
         self.assertEqual(resp.status_code, 400)
 
 
         # Severity out of scope
         data = {"severity": 15,
-                "datetime" : "2012-02-05T10:10:10",
+                "timestamp" : "1335169880",
                 "long_desc" : "data",
                 "short_desc" : "This is a short description"}
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
@@ -132,13 +120,13 @@ class RestTest(MonlogTestCase):
 
         # long_desc or short_desc is possible to be without
         data = {"severity": 0,
-                "datetime" : "2012-02-05T10:10:10"} 
+                "timestamp" : "1335169660"} 
         resp = self.client.post(self.api_uri + testapp.api_key.key, json.dumps(data), content_type='application/json')
         self.assertEqual(resp.status_code, 201) # CREATED
 
         # Successful post and wellformed post
         data = {"severity": 0,
-                "datetime" : "2012-02-05T10:10:10",
+                "timestamp" : "1335169880",
                 "long_desc" : "This is a long description",
                 "short_desc" : "This is a short description"}
 
