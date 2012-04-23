@@ -122,17 +122,19 @@
 <script type="text/javascript">
     var saveExpectation = function(event) {
         event.preventDefault();
-        var query = $(".expectation-form").serialize();
+        var formData = $(".expectation-form").serializeArray();
+        var query = $(".expectation-form select").serialize();
+        console.log(query);
         $.post("/expectation/save/", {
+            "form_data":formData, 
             csrfmiddlewaretoken : "{{ csrf_token }}",
-            query_string : query,
             id: expId,
-        },
-               function(data) {
-                   window.location=data;
-               }
+            query: query,
+            }, function(data) {
+                window.location=data;
+            }
         );
-    } 
+    };
 
     $(".expectation-save").click(saveExpectation);
     $("#save-expectation").submit(saveExpectation);
