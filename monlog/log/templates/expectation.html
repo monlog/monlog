@@ -126,7 +126,13 @@
             </div>
             <div style="clear:both;"></div>
         </div>
+    </form>
+</div>
+<div class="row-fluid">
+    <div class="span12">
+        <h3>Latest deadlines for {{ exp.expectation_name }}</h3><br />
     </div>
+</div>
 <div class="row-fluid">
     <div class="span12">
         <table class="table">
@@ -148,7 +154,7 @@
 <script type="text/javascript">
     var expId = {{ exp.id|default:-1 }};
 </script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/expectation.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/api.js"></script>
 <script type="text/javascript">
     $('.filters input, .filters select').change(function() {
         $(".changed_indicator").show();
