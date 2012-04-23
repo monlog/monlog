@@ -20,6 +20,58 @@ from django.http import HttpRequest,HttpResponse,HttpResponseBadRequest
 from tastypie.authentication import Authentication
 from monlog.log.views import save_label
 import logging
+from monlog.log.management.commands.cron import Command as CronCommand
+from monlog.log.models import Expectation, RelativedeltaField
+from dateutil.relativedelta import relativedelta 
+from datetime import timedelta, datetime
+import datetime
+
+
+class MonlogCronTest(TestCase):
+
+    fixtures = ['auth.json']   
+
+    def setUp(self):
+        exp = Expectation()
+        exp.expectation_name = "Testing expectation"
+        
+        exp.user = User.objects.get(pk=1)
+        
+        exp.deadline = datetime.utcnow() - timedelta(hours=1)
+        exp.original_deadline = datetime.utcnow() - timedelta(hours=3)
+        exp.tolerance = relativedelta(minutes=10)
+        exp.repeat = relativedelta(minutes=2)
+        exp.repeat_count = 5
+        
+        exp.least_amount_of_results = 1
+        exp.query_string = ''
+        
+        exp.save()
+        self.expectation = exp
+    
+
+    def test_cron(self):
+        self.assertIsNotNone(self.expectation)
+    
+
+    def test_29(self):
+        exp = Expectation()
+        exp.expectation_name = "Testing expectation 29"
+        
+        exp.user = User.objects.get(pk=1)
+        
+        exp.deadline = datetime.utcnow() - timedelta(hours=1)
+        exp.original_deadline = datetime.utcnow() - timedelta(hours=3)
+        exp.tolerance = relativedelta(minutes=10)
+        exp.repeat = relativedelta(minutes=2)
+        exp.repeat_count = 5
+        
+        exp.least_amount_of_results = 1
+        exp.query_string = ''
+    
+        exp.save()
+        self.expectation = exp
+        
 
 class MonlogTestCase(TestCase):
     fixtures = ['auth.json']
