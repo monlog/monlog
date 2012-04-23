@@ -1,52 +1,6 @@
 {% extends "base.html" %}
 {% load verbatim %}
 {% block navbar %}
-<ul class="nav">
-    <li class="dropdown">
-        <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">
-        {% if active_label %}
-            {{ active_label }}<span class="changed_indicator">*</span> <b class="caret"></b>
-        {% else %}
-            Labels <b class="caret"></b>
-        {% endif %}
-        </a>
-        <ul class="dropdown-menu">
-            {% if active_label and label_id %}
-            <li><a href="#" class="label-save">Save<span class="changed_indicator">*</span></a></li>
-                <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
-                <li><a href="/label/delete/{{ label_id }}">Remove</a></li>
-            {% else %}
-                <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
-            {% endif %}
-            <li class="divider"></li>
-            {% if labels %}
-                {% for label in labels %}
-                    {% if active_label == label.label_name %}
-                        <li class="active-item"><a href="/">{{ label.label_name }}</a></li>
-                    {% else %}
-                        <li><a href="/label/{{ label.label_name }}">{{ label.label_name }}</a></li>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                <li class="disabled">No labels</li>
-            {% endif %}
-        </ul>
-    </li>
-    <li class="dropdown">
-        <a href="#" class="dropdown-toggle expectation_menu" data-toggle="dropdown">Expectations <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-            <li><a href="/expectation/add/">Create new...</a></li>
-            <li class="divider"></li>
-            {% if expectations %}
-                {% for exp in expectations %}
-                    <li><a href="/expectation/{{ exp.expectation_name }}">{{ exp.expectation_name }}</a></li>
-                {% endfor %}
-            {% else %}
-                <li class="disabled">No expectations</li>
-            {% endif %}
-        </ul>
-    </li>
-</ul>
 <ul class="nav pull-right">
     <li class="divider-vertical"></li>
     <li class="streaming"><a href="#" onclick="event.preventDefault()" data-toggle="collapse" data-target="#collapse-form" class="" id="streaming">Streaming</a></li>
