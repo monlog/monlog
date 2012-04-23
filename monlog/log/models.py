@@ -44,11 +44,7 @@ class LogMessage(models.Model):
     class Meta:
         ordering = ('-datetime',)
 
-class ExpectationMessage(LogMessage):
-    """
-    A message that monlog creates to log expectations.
-    """
-    pass
+
 
 class Filter(models.Model):
     """
@@ -213,3 +209,9 @@ class Expectation(Filter):
         return self.original_deadline + \
                self.repeat * self.repeat_count
 
+
+class ExpectationMessage(LogMessage):
+    """
+    A message that monlog creates to log expectations.
+    """
+    expectation = models.ForeignKey(Expectation)

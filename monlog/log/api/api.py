@@ -7,7 +7,7 @@ from tastypie.resources import ModelResource, ALL
 from tastypie.authorization import DjangoAuthorization
 from monlog.log.api.authentication import MonlogAuthentication
 from monlog.log.api.authentication import CookieAuthentication
-from monlog.log.models import LogMessage, SEVERITY_CHOICES
+from monlog.log.models import LogMessage, ExpectationMessage, SEVERITY_CHOICES, Expectation
 from monlog.log.api.validation import LogValidation
 from datetime import datetime 
 
@@ -17,6 +17,7 @@ class ApplicationResource(ModelResource):
     This resource is not available in the REST Api.
     """
     class Meta:
+        include_resource_uri = False
         allowed_methods=[]
         queryset = User.objects.all()
         fields= ['id','username']
@@ -61,6 +62,7 @@ class LogCollectionResource(ModelResource):
         return orm
 
     class Meta:
+        include_resource_uri = False
         allowed_methods = ['get']
         queryset = LogMessage.objects.all()
         resource_name = "logmessages"
@@ -79,11 +81,35 @@ class LogCollectionResource(ModelResource):
                     "server_ip",
                     "application"]
 
+class ExpectationResource(ModelResource):
+    class Meta:
+        include_resource_uri = False
+        allowed_methods = []
+        fields = ['id']
+        queryset = Expectation.objects.all()
+        resource_name = "expectation"
+
+class ExpectationCollectionResource(LogCollectionResource):
+
+
+    expectation = fields.ForeignKey(ExpectationResource,
+                                    'expectation',
+                                    full=True)
+
+    class Meta(LogCollectionResource.Meta):
+        include_resource_uri = False
+        queryset = ExpectationMessage.objects.all()
+        resource_name = "expectationmessages"
+        filtering = {
+                "expectation" : ALL,
+                }
+
 class LogResource(ModelResource):
     """
     This is the API resource for inserting new log messages into the database.
     """
     class Meta:
+        include_resource_uri = False
         allowed_methods = ['post']
         queryset = LogMessage.objects.all()
         resource_name = "log"

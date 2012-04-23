@@ -57,6 +57,8 @@ def expectation(request, exp_name):
 
     context['active_expectation'] = exp_name
     context['expectations'] = Expectation.objects.filter(user=request.user)
+
+
     return render_to_response('expectation.html', context)
 
 def delete_expectation(request, exp_name):
