@@ -1,5 +1,4 @@
-from monlog.log.models import Expectation
-from monlog.log.models import LogMessage
+from monlog.log.models import Expectation, ExpectationMessage
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
@@ -39,11 +38,11 @@ class Command(BaseCommand):
                     if debug: print "User 'monlog' does not exist. Cannot log!"
                     return
 
-                message = LogMessage(server_ip='127.0.0.1',
-                                     application=monlog_user,
-                                     datetime=expect.deadline,
-                                     long_desc="",
-                                     short_desc="")
+                message = ExpectationMessage(server_ip='127.0.0.1',
+                                             application=monlog_user,
+                                             datetime=expect.deadline,
+                                             long_desc="",
+                                             short_desc="")
 
                 message.long_desc += "Results: %s of %s" % \
                                         (len(qs),

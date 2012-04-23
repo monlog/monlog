@@ -44,6 +44,11 @@ class LogMessage(models.Model):
     class Meta:
         ordering = ('-datetime',)
 
+class ExpectationMessage(LogMessage):
+    """
+    A message that monlog creates to log expectations.
+    """
+    pass
 
 class Filter(models.Model):
     """
