@@ -46,9 +46,8 @@ def save_expectation(request):
     query_string            = request.POST.get('query_string')
 
     expectation = Expectation(
-            user=request.user,
-            expectation_name        = name,
             user                    = request.user,
+            expectation_name        = name,
             deadline                = deadline,
             original_deadline       = deadline,
             tolerance               = tolerance,
