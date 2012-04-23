@@ -6,6 +6,16 @@
     <li class="streaming"><a href="#" onclick="event.preventDefault()" data-toggle="collapse" data-target="#collapse-form" class="" id="streaming">Streaming</a></li>
 </ul>
 {% endblock %}
+{% block label_actions %}
+    {% if active_label and label_id %}
+        <li><a href="#" class="label-save">Save<span class="changed_indicator">*</span></a></li>
+        <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
+        <li><a href="/label/delete/{{ label_id }}">Remove</a></li>
+    {% else %}
+        <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
+    {% endif %}
+    <li class="divider"></li>
+{% endblock %}
 {% block content %}
 {% verbatim %}
     <script id="log_messages" type="text/html">
