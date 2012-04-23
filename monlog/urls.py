@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^label/delete/(?P<label_id>\d+)', 'monlog.log.views.delete_label'),
     url(r'^label/(?P<label_name>.+)', 'monlog.log.views.list'),
 
+    url(r'^expectation/add/', 'monlog.log.views.expectation'),
     url(r'^expectation/delete/(?P<exp_name>.+)', 'monlog.log.views.delete_expectation'),
     url(r'^expectation/(?P<exp_name>.+)', 'monlog.log.views.expectation'),
 
