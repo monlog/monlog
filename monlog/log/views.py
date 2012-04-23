@@ -73,6 +73,13 @@ def save_expectation(request):
 
     try:
         expectation = Expectation.objects.get(id=id)
+        expectation.expectation_name        = name
+        expectation.original_deadline       = deadline
+        expectation.deadline                = deadline
+        expectation.tolerance               = tolerance
+        expectation.repeat                  = repeat
+        expectation.repeat_count            = 0
+        expectation.least_amount_of_results = least_amount_of_results
     except Expectation.DoesNotExist:
         expectation = Expectation(
             user                    = request.user,
@@ -81,7 +88,7 @@ def save_expectation(request):
             original_deadline       = deadline,
             tolerance               = tolerance,
             repeat                  = repeat,
-            repeat_count            = 1,
+            repeat_count            = 0,
             least_amount_of_results = least_amount_of_results)
 
     expectation.save()
