@@ -143,7 +143,6 @@ def list(request, label_name):
     context['labels'] = Label.objects.filter(user=request.user)
     context['label_field'] = LabelForm(label_name)
     context['active_label'] = label_name
-    context['label_id'] = label_id
     context['expectations'] = Expectation.objects.filter(user=request.user)
     return render_to_response('list.html', context)
 
@@ -176,13 +175,13 @@ def save_label(request):
     return HttpResponse('/label/'+name)
 
 @login_required
-def delete_label(request, label_id):
+def delete_label(request, label_name):
     """
     Used when a user deletes a label
     """
 
     try:
-        label = Label.objects.get(pk=label_id, user=request.user)
+        label = Label.objects.get(label_name=label_name, user=request.user)
         label.delete()
     except Label.DoesNotExist:
         pass
