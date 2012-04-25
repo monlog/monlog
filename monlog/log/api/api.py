@@ -123,5 +123,3 @@ class LogResource(ModelResource):
         _datetime = datetime.utcfromtimestamp(float(timestamp))
         bundle.obj.datetime = _datetime
         return bundle
-
-

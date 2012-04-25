@@ -172,9 +172,9 @@ class ExpectationForm(forms.ModelForm):
     """
     This is the form for expectations
     """
-    expectation_name = forms.CharField(
-                                 widget=forms.TextInput(attrs={
-                            'placeholder':'Enter an expectation name...'}))
+    name = forms.CharField(
+                     widget=forms.TextInput(attrs={
+                'placeholder':'Enter an expectation name...'}))
 
     # timestamp for next deadline
     deadline = forms.DateTimeField(widget=DateTimeInput)

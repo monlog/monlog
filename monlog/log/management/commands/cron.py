@@ -54,7 +54,8 @@ class Command(BaseCommand):
                                              application=monlog_user,
                                              datetime=expect.deadline,
                                              long_desc="",
-                                             short_desc="")
+                                             short_desc="",
+                                             expectation=expect)
 
                 message.long_desc += "Results: %s of %s" % \
                                         (len(qs),
@@ -65,7 +66,7 @@ class Command(BaseCommand):
                     if debug: print "    Expectation OK!"
                     message.severity = 1
                     message.short_desc = '%s reported OK' % \
-                                            expect.expectation_name
+                                            expect.name
 
                 else:
                     # errors found, log severity level ``error``
@@ -76,9 +77,9 @@ class Command(BaseCommand):
                     message.severity = 4
                     message.long_desc += "\n".join(errors[key] for key
                                                                 in errors.keys())
-                    message.short_desc = '%s FAILED' % expect.expectation_name
+                    message.short_desc = '%s FAILED' % expect.name
 
-                message.long_desc += "\nQuerySet: " % qs
+                message.long_desc += "\nQuerySet: %s" % qs
                 message.save()
 
 

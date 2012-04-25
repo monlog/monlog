@@ -31,7 +31,7 @@ class MonlogCronTest(TestCase):
         exp.query_string = ''
         exp.least_amount_of_results = 1
         exp.user = User.objects.get(pk=1)
-        exp.expectation_name = "Expectation-%s" % self.expectation_counter
+        exp.name = "Expectation-%s" % self.expectation_counter
         self.expectation_counter += 1
 
         exp.deadline = exp.original_deadline = deadline
@@ -39,19 +39,6 @@ class MonlogCronTest(TestCase):
         exp.repeat = repeat
 
         return exp
-
-#    def setUp(self):
-#        exp = self.createExpectation(
-#            deadline = datetime.utcnow() - timedelta(hours=1),
-#            tolerance = relativedelta(minutes = 10),
-#            repeat = relativedelta(minutes = 2)
-#        )
-#        exp.save()
-#
-#        self.expectation = exp
-#
-#    def test_cron(self):
-#        self.assertIsNotNone(self.expectation)
 
     def test_leap_year(self):
         deadline = datetime(year = 2012, month = 2, day = 29,
@@ -100,12 +87,11 @@ class MonlogCronTest(TestCase):
 
         exp = Expectation.objects.get(pk=exp.id)
 
-        print exp
-
         self.assertEqual(exp.deadline.year, 2013)
         self.assertEqual(exp.deadline.month, 2)
         self.assertEqual(exp.deadline.day, 28)
 
+        
 class MonlogTestCase(TestCase):
     fixtures = ['auth.json']
 
