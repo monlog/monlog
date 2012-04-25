@@ -44,7 +44,6 @@ def save_expectation(request):
 
     dict = QueryDict(request.POST.get('query'),mutable=True)
 
-    id                      = request.POST.get('id')
     name                    = dict.pop('expectation_name')[0]
     deadline                = dict.pop('deadline')[0]
 
@@ -76,8 +75,7 @@ def save_expectation(request):
     query_string = dict.urlencode()
 
     try:
-        expectation = Expectation.objects.get(id=id)
-        expectation.expectation_name        = name
+        expectation = Expectation.objects.get(expectation_name=name, user=request.user)
         expectation.original_deadline       = deadline
         expectation.deadline                = deadline
         expectation.tolerance               = tolerance

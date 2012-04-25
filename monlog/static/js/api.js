@@ -95,8 +95,8 @@ var lazyloadAppend = function(data) {
 var requestLogMessages = function(formData,callback) {
 
     if (typeof expectationMode !== 'undefined') {
-        if (expId < 0) return;
-        var url = "/api/expectationmessages/?limit=" + messagesPerPage + "&expectation=" + expId;
+        if (expectationName == null) return;
+        var url = "/api/expectationmessages/?limit=" + messagesPerPage + "&expectation_name=" + expectationName;
     } else {
         var url = "/api/logmessages/?limit=" + messagesPerPage + "&" + $.param(formData);
     }

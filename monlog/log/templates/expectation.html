@@ -116,7 +116,7 @@
 <script type="text/javascript">
     var streamingMode = false;
     var expectationMode = true;
-    var expId = {{ exp.id|default:-1 }};
+    var expectationName = {% if exp.expectation_name %}"{{ exp.expectation_name }}"{% else %}null{% endif %};
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/api.js"></script>
 <script type="text/javascript">
@@ -125,7 +125,6 @@
         var query = $(".expectation-form").serialize();
         $.post("/expectation/save/", {
             csrfmiddlewaretoken : "{{ csrf_token }}",
-            id: expId,
             query: query,
             }, function(data) {
                 window.location=data;
