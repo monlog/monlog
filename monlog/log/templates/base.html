@@ -96,10 +96,10 @@
                               {% block expectation_actions %}{% endblock %}
                               {% if expectations %}
                                   {% for exp in expectations %}
-                                      {% if active_expectation == exp.expectation_name %}
-                                          <li class="active-item"><a href="/">{{ exp.expectation_name }}</a></li>
+                                      {% if active_expectation == exp.name %}
+                                          <li class="active-item"><a href="/">{{ exp.name }}</a></li>
                                       {% else %}
-                                          <li><a href="/expectation/{{ exp.expectation_name }}">{{ exp.expectation_name }}</a></li>
+                                          <li><a href="/expectation/{{ exp.name }}">{{ exp.name }}</a></li>
                                       {% endif %}
                                   {% endfor %}
                               {% else %}
