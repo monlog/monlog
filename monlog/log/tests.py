@@ -71,7 +71,7 @@ class MonlogCronTest(TestCase):
 
         # Script is run the 28th of March
         command = CronCommand()
-        command.handle('debug', mock_datetime = mock_time)
+        command.handle(mock_datetime = mock_time)
 
         exp = Expectation.objects.get(pk=exp.id)
 
@@ -96,7 +96,7 @@ class MonlogCronTest(TestCase):
 
         # Script is run the 28th of March
         command = CronCommand()
-        command.handle('debug', mock_datetime = mock_time)
+        command.handle(mock_datetime = mock_time)
 
         exp = Expectation.objects.get(pk=exp.id)
 
