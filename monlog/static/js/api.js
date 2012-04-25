@@ -90,6 +90,8 @@ var lazyloadAppend = function(data) {
     // Append data to already populated table
     $(".content .table tbody").append(ich.log_messages(data));
     nextOffset += messagesPerPage;
+    // updates width of pre content
+    longdescSize();
 };
 
 var requestLogMessages = function(formData,callback) {
