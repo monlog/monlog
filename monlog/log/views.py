@@ -20,7 +20,7 @@ def expectation(request, exp_name=None):
     try:
         exp = Expectation.objects.get(name=exp_name, user=request.user)
     except Expectation.DoesNotExist:
-        pass
+        exp_name = None
 
     context = RequestContext(request)
     if exp is not None:
