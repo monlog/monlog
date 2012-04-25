@@ -119,11 +119,8 @@ def list(request, label_name):
     """
 
     # Create a default LogQueryForm which is used if no label is specified.
-    # Default is all severities checked, and order by datetime.
     qd = QueryDict('', mutable=True)
-    qd.setlist('severity__in', [x[0] for x in SEVERITY_CHOICES])
-    qd.setlist('order_by', ['-datetime'])
-    lqf = LogQueryForm(qd)
+    lqf = None
 
     # Get label if user specified one.
     label_id = None
@@ -134,6 +131,18 @@ def list(request, label_name):
             label_id = label.id
         except Label.DoesNotExist:
             label_name = None
+    else:
+        # Default is all severities checked, and order by datetime.
+        qd.setlist('severity__in',
+                   request.GET.getlist('severity__in',
+                   [ x[0] for x in SEVERITY_CHOICES ]))
+        qd.setlist('order_by',
+                   request.GET.getlist('order_by', ['-datetime']))
+
+        qd.update(request.GET)
+
+    if lqf is None:
+        lqf = LogQueryForm(qd)
 
     # Set context variables
     context = RequestContext(request)
