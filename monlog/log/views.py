@@ -23,7 +23,7 @@ def expectation(request, exp_name=None):
         pass
 
     context = RequestContext(request)
-    context['eqf'] = ExpectationForm(instance=exp)
+    context['eqf'] = ExpectationForm(exp.get_dict(), instance=exp)
     context['labels'] = Label.objects.filter(user=request.user)
     context['exp'] = exp
 
