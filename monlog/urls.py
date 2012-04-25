@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     url(r'^$', 'monlog.log.views.list', {'label_name' : None}),
     url(r'^api/', include('monlog.log.api.urls')),
     url(r'^label/save/', 'monlog.log.views.save_label'),
-    url(r'^label/delete/(?P<label_id>\d+)', 'monlog.log.views.delete_label'),
+    url(r'^label/delete/(?P<label_name>.+)', 'monlog.log.views.delete_label'),
     url(r'^label/(?P<label_name>.+)', 'monlog.log.views.list'),
 
     url(r'^expectation/add/', 'monlog.log.views.expectation'),
