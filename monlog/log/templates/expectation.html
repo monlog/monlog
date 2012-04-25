@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% load verbatim %}
 {% block expectation_actions %}
-  <li><a href="#" class="expectation-save">Save<span class="changed_indicator">*</span></a></li>
-  {% if active_expectation %}
     <li><a href="#save-new-expectation" data-toggle="modal">Save as...</a></li>
-      <li><a href="/expectation/delete/{{ active_expectation }}">Remove</a></li>
-  {% endif %}
+    {% if active_expectation %}
+        <li><a href="#" class="expectation-save">Save<span class="changed_indicator">*</span></a></li>
+        <li><a href="/expectation/delete/{{ active_expectation }}">Remove</a></li>
+    {% endif %}
   <li class="divider"></li>
 {% endblock %}
 {% block content %}
@@ -135,19 +135,15 @@
 <script type="text/javascript">
     var saveExpectation = function(event) {
         event.preventDefault();
-        if ($("#id_name").val() == "") {
-            $("#save-new-expectation").modal('show');
-        } else {
-            var query = $(".expectation-form").serialize();
-            $.post("/expectation/save/", {
-                csrfmiddlewaretoken : "{{ csrf_token }}",
-                query: query,
-                name: $("#id_name").val(),
-                }, function(data) {
-                    window.location=data;
-                }
-                );
-        }
+        var query = $(".expectation-form").serialize();
+        $.post("/expectation/save/", {
+            csrfmiddlewaretoken : "{{ csrf_token }}",
+            query: query,
+            name: $("#id_name").val(),
+            }, function(data) {
+                window.location=data;
+            }
+            );
     };
 
     $(".expectation-save").click(saveExpectation);
