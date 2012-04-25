@@ -201,13 +201,17 @@ class ExpectationForm(forms.ModelForm):
                                                  }),
                                              choices=SEVERITY_CHOICES)
     application__in = forms.MultipleChoiceField(required=False,
-                                                widget=SelectMultiple,
+                                              widget=SelectMultiple(attrs={
+                                                 'size':'8',
+                                                 }),
                                                 choices=())
     server_ip__in = forms.MultipleChoiceField(required=False,
-                                              widget=SelectMultiple,
+                                              widget=SelectMultiple(attrs={
+                                                 'size':'8',
+                                                 }),
                                               choices=())
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, data=None, *args, **kwargs):
         super(ExpectationForm, self).__init__(*args, **kwargs)
         self.user_values = [(x['id'],x['username']) 
                             for x in User.objects.all().values()]
@@ -218,26 +222,28 @@ class ExpectationForm(forms.ModelForm):
         self.server_values = [(x['server_ip'],x['server_ip']) 
                               for x in self.servers]
 
-        data = []
-        if isinstance(self.data, QueryDict):
-            # get a list of all severity choices
-            data = [int(x) for x in self.data.getlist('severity__in')]
-
-        # Severity choices is a tuple of three elements where the third is
-        # whether the severity is checked or not.
-        # This is needed when displaying the buttons as active or not.
-        self.severity_choices = [(choice[0], choice[1], choice[0] in data)
-                                 for choice in SEVERITY_CHOICES]
-
-
-        self.fields['application__in'] = forms.MultipleChoiceField(
-                                            required=False,
-                                            widget=SelectMultiple,
-                                            choices=self.user_values)
-        self.fields['server_ip__in'] = forms.MultipleChoiceField(
-                                            required=False,
-                                            widget=SelectMultiple,
-                                            choices=self.server_values)
+        if data is not None:
+            self.fields['severity__in'] = forms.MultipleChoiceField(
+                                required=False,
+                                widget=SelectMultiple(attrs={
+                                     'size':'8',
+                                     }),
+                                choices=SEVERITY_CHOICES,
+                                initial=data.getlist('severity__in'))
+            self.fields['application__in'] = forms.MultipleChoiceField(
+                                required=False,
+                                widget=SelectMultiple(attrs={
+                                     'size':'8',
+                                     }),
+                                choices=self.user_values,
+                                initial=data.getlist('application__in'))
+            self.fields['server_ip__in'] = forms.MultipleChoiceField(
+                                required=False,
+                                widget=SelectMultiple(attrs={
+                                     'size':'8',
+                                     }),
+                                choices=self.server_values,
+                                initial=data.getlist('server_ip__in'))
 
     def clean(self):
         """Creates the query_string from Filter parameters in the form"""
