@@ -70,10 +70,13 @@ class Label(Filter):
     Model for labels.
     """
     user = models.ForeignKey(User)
-    label_name = models.CharField(max_length=20,unique=True)
+    label_name = models.CharField(max_length=20)
 
     def __unicode__(self):
         return self.label_name
+
+    class Meta:
+        unique_together = ('user','label_name')
 
 
 class RelativedeltaField(models.Field):
@@ -141,7 +144,7 @@ class Expectation(Filter):
     Model for expectations.
     """
 
-    expectation_name = models.CharField(max_length=20, unique=True)
+    expectation_name = models.CharField(max_length=20)
     user             = models.ForeignKey(User)
 
     # timestamp for original deadline
@@ -159,6 +162,9 @@ class Expectation(Filter):
     repeat_count = models.IntegerField()
 
     least_amount_of_results = models.IntegerField()
+
+    class Meta:
+        unique_together = ('expectation_name', 'user')
 
     def __unicode__(self):
         return self.expectation_name
