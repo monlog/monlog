@@ -18,7 +18,7 @@ def expectation(request, exp_name=None):
     """
     exp = None
     try:
-        exp = Expectation.objects.get(expectation_name=exp_name, user=request.user)
+        exp = Expectation.objects.get(name=exp_name, user=request.user)
     except Expectation.DoesNotExist:
         pass
 
@@ -45,7 +45,7 @@ def save_expectation(request):
     dict = QueryDict(request.POST.get('query'),mutable=True)
 
     id                      = request.POST.get('id')
-    name                    = dict.pop('expectation_name')[0]
+    name                    = dict.pop('name')[0]
     deadline                = dict.pop('deadline')[0]
 
     tolerance_month         = int(dict.pop('tolerance_0')[0])
@@ -77,7 +77,7 @@ def save_expectation(request):
 
     try:
         expectation = Expectation.objects.get(id=id)
-        expectation.expectation_name        = name
+        expectation.name        = name
         expectation.original_deadline       = deadline
         expectation.deadline                = deadline
         expectation.tolerance               = tolerance
@@ -88,7 +88,7 @@ def save_expectation(request):
     except Expectation.DoesNotExist:
         expectation = Expectation(
             user                    = request.user,
-            expectation_name        = name,
+            name        = name,
             deadline                = deadline,
             original_deadline       = deadline,
             tolerance               = tolerance,
@@ -106,7 +106,7 @@ def delete_expectation(request, exp_name):
     """
 
     try:
-        expectation = Expectation.objects.get(expectation_name=exp_name, user=request.user)
+        expectation = Expectation.objects.get(name=exp_name, user=request.user)
         expectation.delete()
     except Expectation.DoesNotExist:
         pass

@@ -144,7 +144,7 @@ class Expectation(Filter):
     Model for expectations.
     """
 
-    expectation_name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20)
     user             = models.ForeignKey(User)
 
     # timestamp for original deadline
@@ -164,10 +164,10 @@ class Expectation(Filter):
     least_amount_of_results = models.IntegerField()
 
     class Meta:
-        unique_together = ('expectation_name', 'user')
+        unique_together = ('name', 'user')
 
     def __unicode__(self):
-        return self.expectation_name
+        return self.name
 
     def apply_tolerance(self, querydict):
         """

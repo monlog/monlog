@@ -31,7 +31,7 @@ class MonlogCronTest(TestCase):
         exp.query_string = ''
         exp.least_amount_of_results = 1
         exp.user = User.objects.get(pk=1)
-        exp.expectation_name = "Expectation-%s" % self.expectation_counter
+        exp.name = "Expectation-%s" % self.expectation_counter
         self.expectation_counter += 1
 
         exp.deadline = exp.original_deadline = deadline
