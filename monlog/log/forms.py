@@ -145,7 +145,7 @@ class RelativedeltaField(forms.Field):
         if value is not None:
             if not isinstance(value, relativedelta):
                 value = self.clean(value)
-            return (value.months,
+            return (value.months + value.years*12,
                     value.days,
                     value.hours,
                     value.minutes,
