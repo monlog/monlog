@@ -43,8 +43,8 @@ def save_expectation(request):
     """
 
     dict = QueryDict(request.POST.get('query'),mutable=True)
+    name                    = request.POST.get('name', None)
 
-    name                    = dict.pop('name')[0]
     deadline                = dict.pop('deadline')[0]
 
     tolerance_month         = int(dict.pop('tolerance_0')[0])

@@ -3,6 +3,7 @@
 {% block expectation_actions %}
   <li><a href="#" class="expectation-save">Save<span class="changed_indicator">*</span></a></li>
   {% if active_expectation %}
+    <li><a href="#save-new-expectation" data-toggle="modal">Save as...</a></li>
       <li><a href="/expectation/delete/{{ active_expectation }}">Remove</a></li>
   {% endif %}
   <li class="divider"></li>
@@ -30,12 +31,6 @@
     <form class="monlog-control-form expectation-form">
         <div class="control-group-wrapper">
             <div class="control-group">
-                <label class="control-label">Expectation Name</label>
-                <div class="control">
-                    {{ eqf.name }}
-                </div>
-            </div>
-            <div class="control-group">
                 <label class="control-label">Deadline</label>
                 <div class="control">
                     {{ eqf.deadline }}
@@ -51,6 +46,12 @@
                 <label class="control-label">Repeat</label>
                 <div class="control">
                     {{ eqf.repeat }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Amount of results</label>
+                <div class="control">
+                    {{ eqf.least_amount_of_results }}
                 </div>
             </div>
             <div style="clear:both;"></div>
@@ -80,12 +81,6 @@
                     </div>
                 </div>
             </div>
-            <div class="control-group">
-                <label class="control-label">Amount of results</label>
-                <div class="control">
-                    {{ eqf.least_amount_of_results }}
-                </div>
-            </div>
             <div style="clear:both;"></div>
         </div>
     </form>
@@ -113,6 +108,24 @@
         </table>
     </div>
 </div>
+<div class="modal fade" id="save-new-expectation">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3>Save new expectation</h3>
+    </div>
+    <div class="modal-body">
+        <form id="save-expectation">
+            <label class="control-expectation">Save as an expectation</label>
+            <div class="controls">
+                {{ eqf.name }}
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn btn-primary expectation-save">Save</a>
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+    </div>
+</div>
 <script type="text/javascript">
     var streamingMode = true;
     var expectationMode = true;
@@ -122,14 +135,19 @@
 <script type="text/javascript">
     var saveExpectation = function(event) {
         event.preventDefault();
-        var query = $(".expectation-form").serialize();
-        $.post("/expectation/save/", {
-            csrfmiddlewaretoken : "{{ csrf_token }}",
-            query: query,
-            }, function(data) {
-                window.location=data;
-            }
-        );
+        if ($("#id_name").val() == "") {
+            $("#save-new-expectation").modal('show');
+        } else {
+            var query = $(".expectation-form").serialize();
+            $.post("/expectation/save/", {
+                csrfmiddlewaretoken : "{{ csrf_token }}",
+                query: query,
+                name: $("#id_name").val(),
+                }, function(data) {
+                    window.location=data;
+                }
+                );
+        }
     };
 
     $(".expectation-save").click(saveExpectation);
