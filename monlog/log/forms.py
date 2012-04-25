@@ -5,6 +5,7 @@ from monlog.log.models import SEVERITY_CHOICES, LogMessage, Expectation, Expecta
 from django.contrib.auth.models import User
 from django.http import QueryDict
 from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 class LabelForm(forms.Form):
     """
@@ -177,7 +178,7 @@ class ExpectationForm(forms.ModelForm):
                 'placeholder':'Enter an expectation name...'}))
 
     # timestamp for next deadline
-    deadline = forms.DateTimeField(widget=DateTimeInput)
+    deadline = forms.DateTimeField(widget=DateTimeInput, initial=datetime.utcnow())
 
     # +- tolerance in relative delta
     # example: '+- 10 minute'
@@ -187,7 +188,7 @@ class ExpectationForm(forms.ModelForm):
     # example: 'every 2 month'
     repeat = RelativedeltaField()
 
-    least_amount_of_results = models.IntegerField()
+    least_amount_of_results = forms.IntegerField(initial=1)
 
     query_string = forms.CharField(widget=forms.HiddenInput)
 
