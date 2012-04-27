@@ -29,6 +29,11 @@ Decide where you want to place Monlog. It needs to be accessible by the user run
 Clone Monlog into your home directory:
 
     git clone https://github.com/monlog/monlog
+    
+Add submodules to the repo:
+
+    git submodule init
+    git submodule update
 
 Allow Apache access to the monlog directory (this assumes you are in the www-data group):
 
