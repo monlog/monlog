@@ -67,6 +67,7 @@ var updateLogTable = function(data) {
 };
 
 var displayRefreshNotice = function(data) {
+    if (typeof expectationMode !== 'undefined') return;
     // Called every timeoutTime ms when streaming mode is disabled
     var count = data['objects'].length;
     var maxObjects = 20;
@@ -98,7 +99,7 @@ var requestLogMessages = function(formData,callback) {
 
     if (typeof expectationMode !== 'undefined') {
         if (expectationName == null) return;
-        var url = "/api/expectationmessages/?limit=" + messagesPerPage + "&expectation_name=" + expectationName;
+        var url = "/api/expectationmessages/?limit=" + messagesPerPage + "&expectation=" + expectationID;
     } else {
         var url = "/api/logmessages/?limit=" + messagesPerPage + "&" + $.param(formData);
     }
@@ -177,7 +178,8 @@ $(document).ready(function() {
     $('#refresh_notice').bind('click', manualUpdate);
 
     requestLogMessages(getFormData(),updateLogTable);
-    window.setTimeout(handleTimeout,timeoutTime);
+    if (typeof expectationMode == 'undefined')
+        window.setTimeout(handleTimeout,timeoutTime);
     // resize pre content
     longdescSize();
     $(window).resize(longdescSize);

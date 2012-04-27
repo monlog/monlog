@@ -132,6 +132,7 @@
     var streamingMode = false;
     var expectationMode = true;
     var expectationName = {% if exp.name %}"{{ exp.name }}"{% else %}null{% endif %};
+    var expectationID   = {% if exp.id   %} {{ exp.id }}   {% else %}-1  {% endif %};
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/api.js"></script>
 <script type="text/javascript">
