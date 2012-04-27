@@ -223,28 +223,30 @@ class ExpectationForm(forms.ModelForm):
         self.server_values = [(x['server_ip'],x['server_ip']) 
                               for x in self.servers]
 
-        if data is not None:
-            self.fields['severity__in'] = forms.MultipleChoiceField(
-                                required=False,
-                                widget=SelectMultiple(attrs={
-                                     'size':'8',
-                                     }),
-                                choices=SEVERITY_CHOICES,
-                                initial=data.getlist('severity__in'))
-            self.fields['application__in'] = forms.MultipleChoiceField(
-                                required=False,
-                                widget=SelectMultiple(attrs={
-                                     'size':'8',
-                                     }),
-                                choices=self.user_values,
-                                initial=data.getlist('application__in'))
-            self.fields['server_ip__in'] = forms.MultipleChoiceField(
-                                required=False,
-                                widget=SelectMultiple(attrs={
-                                     'size':'8',
-                                     }),
-                                choices=self.server_values,
-                                initial=data.getlist('server_ip__in'))
+        if data is None:
+            data = QueryDict('')
+
+        self.fields['severity__in'] = forms.MultipleChoiceField(
+                            required=False,
+                            widget=SelectMultiple(attrs={
+                                 'size':'8',
+                                 }),
+                            choices=SEVERITY_CHOICES,
+                            initial=data.getlist('severity__in'))
+        self.fields['application__in'] = forms.MultipleChoiceField(
+                            required=False,
+                            widget=SelectMultiple(attrs={
+                                 'size':'8',
+                                 }),
+                            choices=self.user_values,
+                            initial=data.getlist('application__in'))
+        self.fields['server_ip__in'] = forms.MultipleChoiceField(
+                            required=False,
+                            widget=SelectMultiple(attrs={
+                                 'size':'8',
+                                 }),
+                            choices=self.server_values,
+                            initial=data.getlist('server_ip__in'))
 
     def clean(self):
         """Creates the query_string from Filter parameters in the form"""
