@@ -1,4 +1,14 @@
 {% extends "base.html" %}
+{% block navbar %}
+<ul class="nav pull-right">
+    <li class="divider-vertical"></li>
+    <li class="expectation-refresh">
+        <a href="#" onclick="event.preventDefault()" id="expectation-streaming-button">
+            Refresh
+        </a>
+    </li>
+</ul>
+{% endblock %}
 {% load verbatim %}
 {% block expectation_actions %}
     {% if active_expectation %}
@@ -171,6 +181,9 @@
             var ordering_param = ($(this).hasClass('sorted-desc') ? '-' : '') + this.id;
             $('form.filters input[name="order_by"]').attr('value', ordering_param);
             $('form.filters input[name="order_by"]').change();
+        });
+        $("#expectation-streaming-button").click(function() {
+            requestLogMessages(getFormData(),updateLogTable);
         });
     });
 </script>
