@@ -1,9 +1,9 @@
+[submodule "monlog/static/lib/bootstrap"]
+	path = monlog/static/lib/bootstrap
+	url = https://github.com/twitter/bootstrap.git
 [submodule "monlog/static/lib/less"]
 	path = monlog/static/lib/less
 	url = https://github.com/cloudhead/less.js.git
 [submodule "monlog/static/lib/icanhaz"]
 	path = monlog/static/lib/icanhaz
 	url = https://github.com/andyet/ICanHaz.js.git
-[submodule "monlog/static/lib/bootstrap"]
-	path = monlog/static/lib/bootstrap
-	url = https://github.com/twitter/bootstrap.git
