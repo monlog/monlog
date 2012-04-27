@@ -29,6 +29,11 @@ Decide where you want to place Monlog. It needs to be accessible by the user run
 Clone Monlog into your home directory:
 
     git clone https://github.com/monlog/monlog
+    
+Add submodules to the repo:
+
+    git submodule init
+    git submodule update
 
 Allow Apache access to the monlog directory (this assumes you are in the www-data group):
 
@@ -45,9 +50,11 @@ Enter the virtual environment and install Monlog's Python dependencies:
 
 Open ~/monlog/monlog/settings.py and add your database information at the top of the file
 
-(Re-)enter the virtual environment and have Monlog create its database tables:
+(Re-)enter the virtual environment and create a logging directory in ~/monlog/logging
+then have Monlog create its database tables:
 
     . ~/monlog/venv/bin/activate
+    mkdir ~/monlog/logging/
     python ~/monlog/monlog/manage.py syncdb
 
 You'll be asked to create a superuser account, make sure you remember it!
