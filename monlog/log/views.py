@@ -47,15 +47,15 @@ def save_expectation(request):
 
     deadline                = dict.pop('deadline')[0]
 
-    tolerance_month         = int(dict.pop('tolerance_0')[0] or 0)
-    tolerance_day           = int(dict.pop('tolerance_1')[0] or 0)
-    tolerance_hour          = int(dict.pop('tolerance_2')[0] or 0)
-    tolerance_minute        = int(dict.pop('tolerance_3')[0] or 0)
+    tolerance_month         = int(dict.pop('tolerance_0')[0] or 0) or 0
+    tolerance_day           = int(dict.pop('tolerance_1')[0] or 0) or 0
+    tolerance_hour          = int(dict.pop('tolerance_2')[0] or 0) or 0
+    tolerance_minute        = int(dict.pop('tolerance_3')[0] or 0) or 0
 
-    repeat_month            = int(dict.pop('repeat_0')[0] or 0)
-    repeat_day              = int(dict.pop('repeat_1')[0] or 0)
-    repeat_hour             = int(dict.pop('repeat_2')[0] or 0)
-    repeat_minute           = int(dict.pop('repeat_3')[0] or 0)
+    repeat_month            = int(dict.pop('repeat_0')[0] or 0) or 0
+    repeat_day              = int(dict.pop('repeat_1')[0] or 0) or 0
+    repeat_hour             = int(dict.pop('repeat_2')[0] or 0) or 0
+    repeat_minute           = int(dict.pop('repeat_3')[0] or 0) or 0
 
     tolerance = relativedelta(months  = tolerance_month,
                               days    = tolerance_day,
