@@ -64,6 +64,10 @@ Add a symlink to the Django admin static files (change python2.x to your Python 
     cd ~/monlog
     ln -s ~/monlog/monlog/venv/lib/python2.x/site-packages/django/contrib/admin/static/admin ~/monlog/monlog/static/admin
 
+Add this line to your crontab (this is for expected messages):
+
+    * * * * * ~/monlog/venv/monlog/bin/python ~/monlog/manage.py cron
+
 Add an Apache site for Monlog by putting the below in /etc/apache2/sites-available/monlog
 
     <VirtualHost *:80>
