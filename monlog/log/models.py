@@ -99,15 +99,14 @@ class RelativedeltaField(models.Field):
             return None
         if isinstance(value, (str, unicode)):
             #raises ValueError if split not possible.
-            years, months, days, hours, minutes, seconds = [int(v)
-                                                            for v
-                                                            in value.split("_")]
+            years, months, days, hours, minutes = [int(v)
+                                                   for v
+                                                   in value.split("_")]
             return relativedelta(years   = years,
                                  months  = months,
                                  days    = days,
                                  hours   = hours,
-                                 minutes = minutes,
-                                 seconds = seconds)
+                                 minutes = minutes)
 
         elif isinstance(value, relativedelta):
             return value
@@ -118,12 +117,11 @@ class RelativedeltaField(models.Field):
         """
         Concatenate unit and timedelta into a string.
         """
-        return "%i_%i_%i_%i_%i_%i" % (value.years,
+        return "%i_%i_%i_%i_%i" % (value.years,
                                    value.months,
                                    value.days,
                                    value.hours,
-                                   value.minutes,
-                                   value.seconds)
+                                   value.minutes)
 
     def formfield(self, **kwargs):
         """

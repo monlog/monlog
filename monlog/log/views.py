@@ -51,24 +51,20 @@ def save_expectation(request):
     tolerance_day           = int(dict.pop('tolerance_1')[0] or 0)
     tolerance_hour          = int(dict.pop('tolerance_2')[0] or 0)
     tolerance_minute        = int(dict.pop('tolerance_3')[0] or 0)
-    tolerance_second        = int(dict.pop('tolerance_4')[0] or 0)
 
     repeat_month            = int(dict.pop('repeat_0')[0] or 0)
     repeat_day              = int(dict.pop('repeat_1')[0] or 0)
     repeat_hour             = int(dict.pop('repeat_2')[0] or 0)
     repeat_minute           = int(dict.pop('repeat_3')[0] or 0)
-    repeat_second           = int(dict.pop('repeat_4')[0] or 0)
 
     tolerance = relativedelta(months  = tolerance_month,
                               days    = tolerance_day,
                               hours   = tolerance_hour,
-                              minutes = tolerance_minute,
-                              seconds = tolerance_second)
+                              minutes = tolerance_minute)
     repeat    = relativedelta(months  = repeat_month,
                               days    = repeat_day,
                               hours   = repeat_hour,
-                              minutes = repeat_minute,
-                              seconds = repeat_second)
+                              minutes = repeat_minute)
 
     if tolerance == relativedelta():
         return HttpResponseBadRequest('Need a tolerance')

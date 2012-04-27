@@ -92,7 +92,9 @@ class LogQueryForm(forms.Form):
 class RelativedeltaWidget(forms.MultiWidget):
     def __init__(self, widgets=None, *args, **kwargs):
         if widgets is None:
-            widgets = [forms.TextInput(attrs={'style':'width:20px;'}) for x in range(5)]
+            widgets = [forms.TextInput(attrs={'style':'width:20px;'})
+                       for x
+                       in range(4)]
         super(RelativedeltaWidget, self).__init__(widgets, *args, **kwargs)
 
     def decompress(self, values):
@@ -104,16 +106,14 @@ class RelativedeltaWidget(forms.MultiWidget):
         initial = (initial.months,
                    initial.days,
                    initial.hours,
-                   initial.minutes,
-                   initial.seconds)
+                   initial.minutes)
         return initial == data
 
     def format_output(self, rendered_widgets):
         labels = [  "Mon",
                     "Day",
                     "Hou",
-                    "Min",
-                    "Sec",]
+                    "Min",]
         output = []
         output.append("<table>")
         for widget in rendered_widgets:
@@ -124,7 +124,7 @@ class RelativedeltaWidget(forms.MultiWidget):
         output.append("</tr>")
         output.append("</table>")
         output.append("<span style='font-size:10px;'>")
-        output.append("(Months / Days / Hours / Minutes / Seconds)")
+        output.append("(Months / Days / Hours / Minutes)")
         output.append("</span>")
         return u'\n'.join(output)
 
@@ -149,8 +149,7 @@ class RelativedeltaField(forms.Field):
             return (value.months + value.years*12,
                     value.days,
                     value.hours,
-                    value.minutes,
-                    value.seconds)
+                    value.minutes)
         else:
             return None
 
@@ -160,14 +159,13 @@ class RelativedeltaField(forms.Field):
                 return int(v)
             except:
                 return 0
-        (months, days, hours, minutes, seconds) = [to_int(v)
-                                                   for v
-                                                   in values]
+        (months, days, hours, minutes) = [to_int(v)
+                                          for v
+                                          in values]
         return relativedelta(months  = months,
                              days    = days,
                              hours   = hours,
-                             minutes = minutes,
-                             seconds = seconds)
+                             minutes = minutes)
 
 class ExpectationForm(forms.ModelForm):
     """
