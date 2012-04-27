@@ -45,6 +45,7 @@ class LogMessage(models.Model):
         ordering = ('-datetime',)
 
 
+
 class Filter(models.Model):
     """
     Model of a search filter. This is used in expectations and labels.
@@ -69,10 +70,13 @@ class Label(Filter):
     Model for labels.
     """
     user = models.ForeignKey(User)
-    label_name = models.CharField(max_length=20,unique=True)
+    label_name = models.CharField(max_length=20)
 
     def __unicode__(self):
         return self.label_name
+
+    class Meta:
+        unique_together = ('user','label_name')
 
 
 class RelativedeltaField(models.Field):
@@ -95,12 +99,16 @@ class RelativedeltaField(models.Field):
             return None
         if isinstance(value, (str, unicode)):
             #raises ValueError if split not possible.
-            months, days, hours, minutes, seconds = value.split("_")
-            return relativedelta(months=int(months),
-                                 days=int(days),
-                                 hours=int(hours),
-                                 minutes=int(minutes),
-                                 seconds=int(seconds))
+            years, months, days, hours, minutes, seconds = [int(v)
+                                                            for v
+                                                            in value.split("_")]
+            return relativedelta(years   = years,
+                                 months  = months,
+                                 days    = days,
+                                 hours   = hours,
+                                 minutes = minutes,
+                                 seconds = seconds)
+
         elif isinstance(value, relativedelta):
             return value
         else:
@@ -110,7 +118,8 @@ class RelativedeltaField(models.Field):
         """
         Concatenate unit and timedelta into a string.
         """
-        return "%i_%i_%i_%i_%i" % (value.months,
+        return "%i_%i_%i_%i_%i_%i" % (value.years,
+                                   value.months,
                                    value.days,
                                    value.hours,
                                    value.minutes,
@@ -120,8 +129,8 @@ class RelativedeltaField(models.Field):
         """
         Using a RelativedeltaField to represent this field in a form.
         """
-        from monlog.log import forms # why can't I import this at the top?
-        defaults = { 'form_class' : forms.RelativedeltaField }
+        from monlog.log.forms import RelativedeltaField as RelativedeltaFormField
+        defaults = { 'form_class' : RelativedeltaFormField }
         defaults.update(kwargs)
         return super(RelativedeltaField, self).formfield(**defaults)
 
@@ -129,17 +138,19 @@ class RelativedeltaField(models.Field):
         value = self._get_val_from_obj(obj)
         return self.get_db_prep_value(value)
 
+
 class Expectation(Filter):
     """
     Model for expectations.
     """
 
-    expectation_name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=20)
     user             = models.ForeignKey(User)
 
     # timestamp for original deadline
     deadline          = models.DateTimeField()
     original_deadline = models.DateTimeField()
+
 
     # +- tolerance in relative delta
     # example: '+- 10 minute'
@@ -152,8 +163,11 @@ class Expectation(Filter):
 
     least_amount_of_results = models.IntegerField()
 
+    class Meta:
+        unique_together = ('name', 'user')
+
     def __unicode__(self):
-        return self.expectation_name
+        return self.name
 
     def apply_tolerance(self, querydict):
         """
@@ -203,3 +217,11 @@ class Expectation(Filter):
         return self.original_deadline + \
                self.repeat * self.repeat_count
 
+
+class ExpectationMessage(LogMessage):
+    """
+    A message that monlog creates to log expectations.
+    """
+
+    expectation = models.ForeignKey(Expectation, on_delete=models.SET_NULL,
+                                    blank=True, null=True)

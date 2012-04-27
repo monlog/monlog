@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% block navbar %}
+<ul class="nav pull-right">
+    <li class="divider-vertical"></li>
+    <li class="expectation-refresh">
+        <a href="#" onclick="event.preventDefault()" id="expectation-streaming-button">
+            Refresh
+        </a>
+    </li>
+</ul>
+{% endblock %}
+{% load verbatim %}
+{% block expectation_actions %}
+    {% if active_expectation %}
+        <li><a href="#" class="expectation-save">Save<span class="changed_indicator">*</span></a></li>
+        <li><a href="#save-new-expectation" data-toggle="modal">Save as...</a></li>
+        <li><a href="/expectation/delete/{{ active_expectation }}">Remove</a></li>
+    {% else %}
+        <li><a href="#save-new-expectation" data-toggle="modal">Save as...</a></li>
+    {% endif %}
+  <li class="divider"></li>
+{% endblock %}
+{% block content %}
+{% verbatim %}
+    <script id="log_messages" type="text/html">
+    {{#objects}}
+    <tr class="sev-{{ severity }}{{#old}} old-data{{/old}}" id="msg-{{ id }}">
+        <td><span class="label">{{ severity }}</span></td>
+        <td><span class="">{{ datetime }}</span></td>
+        <td><span class="">{{ application.username }}</span></td>
+        <td><span class="">{{ server_ip }}</span></td>
+        <td><a href="#" class="short_desc" onclick="event.preventDefault();" data-toggle="collapse" data-target="#details-msg-{{ id }}">{{ short_desc }}<i class="icon-expandable"></i></a></td>
+    </tr>
+    <tr>
+        <td colspan="5" class="details">
+            <div id="details-msg-{{ id }}" class="collapse long_desc"><pre>{{ long_desc }}</pre></div>
+        </td>
+    </tr>
+    {{/objects}}
+    </script>
+{% endverbatim %}
+<div class="well">
+    <form class="monlog-control-form expectation-form" id="form-wrapper">
+        <div class="control-group-wrapper">
+            <div class="control-group">
+                <label class="control-label">Deadline</label>
+                <div class="control">
+                    {{ eqf.deadline }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Tolerance</label>
+                <div class="control">
+                    {{ eqf.tolerance }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Repeat</label>
+                <div class="control">
+                    {{ eqf.repeat }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Amount of results</label>
+                <div class="control">
+                    {{ eqf.least_amount_of_results }}
+                </div>
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+        <div class="control-group-wrapper">
+            <div class="control-group">
+                <label class="control-label">Severities</label>
+                <div class="control">
+                    <div class="multiple_select">
+                        {{ eqf.severity__in }}
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Applications</label>
+                <div class="control">
+                    <div class="multiple_select">
+                        {{ eqf.application__in }}
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Servers</label>
+                <div class="control">
+                    <div class="multiple_select">
+                        {{ eqf.server_ip__in }}
+                    </div>
+                </div>
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+    </form>
+</div>
+<div class="row-fluid">
+    <div class="span12">
+        <h3>Latest deadlines for {{ exp.name }}</h3><br />
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th id="severity" class="sortable sorted-desc">Severity</th>
+                    <th id="datetime" class="sortable sorted-desc sorted-active">Time</th>
+                    <th id="application__username" class="sortable sorted-desc">Application</th>
+                    <th id="server_ip" class="sortable sorted-desc">Server</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- no log messages loaded -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="save-new-expectation">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3>Save new expectation</h3>
+    </div>
+    <div class="modal-body">
+        <form id="save-expectation">
+            <label class="control-expectation">Save as an expectation</label>
+            <div class="controls">
+                {{ eqf.name }}
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn btn-primary expectation-save">Save</a>
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+    </div>
+</div>
+<script type="text/javascript">
+    var streamingMode = false;
+    var expectationMode = true;
+    var expectationName = {% if exp.name %}"{{ exp.name }}"{% else %}null{% endif %};
+    var expectationID   = {% if exp.id   %} {{ exp.id }}   {% else %}-1  {% endif %};
+</script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/api.js"></script>
+<script type="text/javascript">
+    var saveExpectation = function(event) {
+        event.preventDefault();
+        var query = $(".expectation-form").serialize();
+        $.post("/expectation/save/", {
+            csrfmiddlewaretoken : "{{ csrf_token }}",
+            query: query,
+            name: $("#id_name").val(),
+            }, function(data) {
+                window.location=data;
+            }
+            );
+    };
+
+    $(".expectation-save").click(saveExpectation);
+    $("#save-expectation").submit(saveExpectation);
+
+    $('.expectation-form input, .expectation-form select').change(function() {
+        $(".expectation_menu .changed_indicator").show();
+    });
+    $(document).ready(function() {
+        var datetimepickerFormat = {timeFormat: 'hh:mm:ss', dateFormat: 'yy-mm-dd', separator :'T'};
+        $("#id_deadline").datetimepicker(datetimepickerFormat);
+        $("th.sortable").append('<i class="icon-sortable"></i>');
+        $("th.sortable").bind('click', function(event){
+            if ($(this).hasClass('sorted-active')) {
+                // already sorted on this column, so user wants to switch direction of sort
+                $(this).toggleClass('sorted-desc').toggleClass('sorted-asc');
+            } else {
+                $("th.sortable").removeClass('sorted-active');
+                $(this).toggleClass('sorted-active');
+            }
+
+            var ordering_param = ($(this).hasClass('sorted-desc') ? '-' : '') + this.id;
+            $('form.filters input[name="order_by"]').attr('value', ordering_param);
+            $('form.filters input[name="order_by"]').change();
+        });
+        $("#expectation-streaming-button").click(function() {
+            requestLogMessages(getFormData(),updateLogTable);
+        });
+    });
+</script>
+{% endblock %}

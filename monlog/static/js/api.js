@@ -56,6 +56,8 @@ var displayLogMessages = function(data) {
     // Save data needed for lazyloading
     nextOffset = messagesPerPage;
     messagesTotal = data['meta']['total_count'];
+    // updates width of pre content
+    longdescSize();
 };
 
 
@@ -65,6 +67,7 @@ var updateLogTable = function(data) {
 };
 
 var displayRefreshNotice = function(data) {
+    if (typeof expectationMode !== 'undefined') return;
     // Called every timeoutTime ms when streaming mode is disabled
     var count = data['objects'].length;
     var maxObjects = 20;
@@ -88,12 +91,20 @@ var lazyloadAppend = function(data) {
     // Append data to already populated table
     $(".content .table tbody").append(ich.log_messages(data));
     nextOffset += messagesPerPage;
+    // updates width of pre content
+    longdescSize();
 };
 
 var requestLogMessages = function(formData,callback) {
-    $("#loading_indicator").fadeIn(300);
 
-    var url = "/api/logmessages/?limit=" + messagesPerPage + "&" + $.param(formData);
+    if (typeof expectationMode !== 'undefined') {
+        if (expectationName == null) return;
+        var url = "/api/expectationmessages/?limit=" + messagesPerPage + "&expectation=" + expectationID;
+    } else {
+        var url = "/api/logmessages/?limit=" + messagesPerPage + "&" + $.param(formData);
+    }
+
+    $("#loading_indicator").fadeIn(300);
     $.getJSON(url, function(data,textStatus,jqXHR) {
         callback(data);
         $("#loading_indicator").fadeOut(300);
@@ -146,6 +157,11 @@ var delay = (function() {
     };
 })();
 
+var longdescSize = function() {
+    var content_width = $("#form-wrapper").outerWidth(true);
+    $(".long_desc").css("width", content_width);
+};
+
 $(document).ready(function() {
     var updateHandler = function() { requestLogMessages(getFormData(),updateLogTable); };
     $('.filters input, .filters select').change(updateHandler);
@@ -162,5 +178,9 @@ $(document).ready(function() {
     $('#refresh_notice').bind('click', manualUpdate);
 
     requestLogMessages(getFormData(),updateLogTable);
-    window.setTimeout(handleTimeout,timeoutTime);
+    if (typeof expectationMode == 'undefined')
+        window.setTimeout(handleTimeout,timeoutTime);
+    // resize pre content
+    longdescSize();
+    $(window).resize(longdescSize);
 });
