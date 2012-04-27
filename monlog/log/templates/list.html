@@ -1,42 +1,20 @@
 {% extends "base.html" %}
 {% load verbatim %}
 {% block navbar %}
-<ul class="nav">
-    <li class="dropdown">
-        <a href="#" class="dropdown-toggle label_menu" data-toggle="dropdown">
-        {% if active_label %}
-            {{ active_label }}<span class="changed_label_indicator">*</span> <b class="caret"></b>
-        {% else %}
-            Label <b class="caret"></b>
-        {% endif %}
-        </a>
-        <ul class="dropdown-menu">
-            {% if active_label and label_id %}
-            <li><a href="#" class="label-save">Save<span class="changed_label_indicator">*</span></a></li>
-                <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
-                <li><a href="/label/delete/{{ label_id }}">Remove</a></li>
-            {% else %}
-                <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
-            {% endif %}
-            <li class="divider"></li>
-            {% if labels %}
-                {% for label in labels %}
-                    {% if active_label == label.label_name %}
-                        <li class="active-label"><a href="/">{{ label.label_name }}</a></li>
-                    {% else %}
-                        <li><a href="/?label={{ label.label_name }}">{{ label.label_name }}</a></li>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                <li class="disabled">No saved labels</li>
-            {% endif %}
-        </ul>
-    </li>
-</ul>
 <ul class="nav pull-right">
     <li class="divider-vertical"></li>
     <li class="streaming"><a href="#" onclick="event.preventDefault()" data-toggle="collapse" data-target="#collapse-form" class="" id="streaming">Streaming</a></li>
 </ul>
+{% endblock %}
+{% block label_actions %}
+    {% if active_label %}
+        <li><a href="#" class="label-save">Save<span class="changed_indicator">*</span></a></li>
+        <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
+        <li><a href="/label/delete/{{ active_label }}">Remove</a></li>
+    {% else %}
+        <li><a href="#save-new-label" data-toggle="modal">Save as...</a></li>
+    {% endif %}
+    <li class="divider"></li>
 {% endblock %}
 {% block content %}
 {% verbatim %}
@@ -60,7 +38,7 @@
         <a href="#">Click here to display {{ count }} new message(s).</a>
     </script>
 {% endverbatim %}
-<form class="well filters form-search collapse non-expanded" id="collapse-form">
+<form class="well filters monlog-control-form collapse non-expanded" id="collapse-form">
     <div id="form-wrapper">
         <input type="hidden" name="order_by" value="-datetime">
         <div id="severity-checkboxes">
@@ -105,7 +83,7 @@
         <h3>Save new label</h3>
     </div>
     <div class="modal-body">
-        <form>
+        <form id="save-label">
             <label class="control-label">Save this search as a label</label>
             <div class="controls">
                 {{ label_field }}
@@ -137,23 +115,27 @@
 <script src="{{ STATIC_URL }}js/streamingToggler.js" type="text/javascript"></script>
 <script src="{{ STATIC_URL }}js/api.js" type="text/javascript"></script>
 <script type="text/javascript">
-    $('.filters input, .filters select').change(function() {
-        $(".changed_label_indicator").show();
-    });
-    $('#lazyload-trigger').appear(lazyloadTrigger, { 'one': false });
-    $(".label-save").click(function(){
+    var saveLabel = function(event) {
+        event.preventDefault();
         var query = $(".filters").serialize();
-        $.post("/label/save", {
+        $.post("/label/save/", {
             csrfmiddlewaretoken : "{{ csrf_token }}",
             query_string : query,
             name: $("#id_label").val()
-            }, 
-            function(data) {
-                console.log(data);
-                window.location=data;
-            }
+        },
+               function(data) {
+                   window.location=data;
+               }
         );
+    } 
+
+    $(".label-save").click(saveLabel);
+    $("#save-label").submit(saveLabel);
+
+    $('.filters input, .filters select').change(function() {
+        $(".label_menu .changed_indicator").show();
     });
+    $('#lazyload-trigger').appear(lazyloadTrigger, { 'one': false });
     $(document).ready(function() {
         var datetimepickerFormat = {timeFormat: 'hh:mm:ss', dateFormat: 'yy-mm-dd', separator :'T'};
         $("#id_datetime__gte").datetimepicker(datetimepickerFormat);

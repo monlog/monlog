@@ -1,26 +1,97 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
-from django.conf import settings
-from tastypie.api import Api
-from django.contrib.auth.models import User, Permission
-from tastypie.authorization import DjangoAuthorization
-from monlog.log.api.authentication import MonlogAuthentication
-from tastypie.models import create_api_key, ApiKey
-from monlog.log.models import LogMessage,Label
-from monlog.log.api.validation import LogValidation
-import simplejson as json
-from django.test import TestCase
-from django.test.client import RequestFactory
-from django.http import HttpRequest,HttpResponse,HttpResponseBadRequest
-from tastypie.authentication import Authentication
-from monlog.log.views import save_label
+import pytz
 import logging
+import datetime
+from pytz import timezone
+import simplejson as json
+from tastypie.api import Api
+from django.conf import settings
+from django.test import TestCase
+from monlog.log.views import save_label
+from datetime import timedelta, datetime
+from monlog.log.models import LogMessage,Label
+from dateutil.relativedelta import relativedelta
+from tastypie.models import create_api_key, ApiKey
+from tastypie.authentication import Authentication
+from monlog.log.api.validation import LogValidation
+from tastypie.authorization import DjangoAuthorization
+from django.contrib.auth.models import User, Permission
+from monlog.log.models import Expectation, RelativedeltaField
+from monlog.log.api.authentication import MonlogAuthentication
+from monlog.log.management.commands.cron import Command as CronCommand
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 
+class MonlogCronTest(TestCase):
+    fixtures = ['auth.json']
+    expectation_counter = 0
+
+    @classmethod
+    def createExpectation(self, deadline=None, tolerance=None, repeat=None):
+        exp = Expectation()
+        exp.repeat_count = 0
+        exp.query_string = ''
+        exp.least_amount_of_results = 1
+        exp.user = User.objects.get(pk=1)
+        exp.name = "Expectation-%s" % self.expectation_counter
+        self.expectation_counter += 1
+
+        exp.deadline = exp.original_deadline = deadline
+        exp.tolerance = tolerance
+        exp.repeat = repeat
+
+        return exp
+
+    def test_leap_year(self):
+        deadline = datetime(year = 2012, month = 2, day = 29,
+                            hour = 12, minute = 0, second = 0,
+                            tzinfo = pytz.UTC)
+
+        exp = MonlogCronTest.createExpectation(
+            deadline = deadline,
+            tolerance = relativedelta(minutes = 10),
+            repeat = relativedelta(months = 1)
+        )
+        exp.save()
+
+        mock_time = datetime(year = 2012, month = 3, day = 28,
+                             hour = 12, minute = 0, second = 0,
+                             tzinfo = pytz.UTC)
+
+        # Script is run the 28th of March
+        command = CronCommand()
+        command.handle(mock_datetime = mock_time)
+
+        exp = Expectation.objects.get(pk=exp.id)
+
+        self.assertEqual(exp.deadline.month, 3)
+        self.assertEqual(exp.deadline.day, 29)
+
+    def test_non_leap_year(self):
+        deadline = datetime(year = 2012, month = 2, day = 29,
+                            hour = 12, minute = 0, second = 0,
+                            tzinfo = pytz.UTC)
+
+        exp = MonlogCronTest.createExpectation(
+            deadline = deadline,
+            tolerance = relativedelta(minutes = 10),
+            repeat = relativedelta(months = 12)
+        )
+        exp.save()
+
+        mock_time = datetime(year = 2013, month = 2, day = 28,
+                             hour = 12, minute = 0, second = 0,
+                             tzinfo = pytz.UTC)
+
+        # Script is run the 28th of March
+        command = CronCommand()
+        command.handle(mock_datetime = mock_time)
+
+        exp = Expectation.objects.get(pk=exp.id)
+
+        self.assertEqual(exp.deadline.year, 2013)
+        self.assertEqual(exp.deadline.month, 2)
+        self.assertEqual(exp.deadline.day, 28)
+
+        
 class MonlogTestCase(TestCase):
     fixtures = ['auth.json']
 
@@ -39,13 +110,13 @@ class ModelTest(MonlogTestCase):
 
         # Check for HttpResponseBadRequest if `name` or `query_string` not provided.
         data = {}
-        response = self.client.post("/label/save", data)
+        response = self.client.post("/label/save/", data)
         self.assertEqual(response.status_code, 400)
 
         # Valid post should work correctly.
         data['name']="validname"
         data['query_string']="severity__in=0" # also valid
-        response = self.client.post("/label/save", data)
+        response = self.client.post("/label/save/", data)
         self.assertEqual(response.status_code, 200)
 
 class RestTest(MonlogTestCase):
