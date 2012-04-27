@@ -59,6 +59,10 @@ then have Monlog create its database tables:
 
 You'll be asked to create a superuser account, make sure you remember it!
 
+Add this line to your crontab (this is for expected messages):
+    
+    * * * * * ~/monlog/venv/monlog/bin/python ~/monlog/manage.py cron
+
 Add an Apache site for Monlog by putting the below in /etc/apache2/sites-available/monlog
 
     <VirtualHost *:80>
