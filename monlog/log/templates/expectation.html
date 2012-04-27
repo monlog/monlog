@@ -131,7 +131,7 @@
 <script type="text/javascript">
     var streamingMode = true;
     var expectationMode = true;
-    var expectationName = {% if exp.expectation_name %}"{{ exp.expectation_name }}"{% else %}null{% endif %};
+    var expectationName = {% if exp.name %}"{{ exp.name }}"{% else %}null{% endif %};
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/api.js"></script>
 <script type="text/javascript">
