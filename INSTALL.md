@@ -55,7 +55,7 @@ then have Monlog create its database tables:
 
     . ~/monlog/venv/bin/activate
     mkdir ~/monlog/logging/
-    python ~/monlog/monlog/manage.py syncdb
+    python ~/monlog/manage.py syncdb
 
 You'll be asked to create a superuser account, make sure you remember it!
 
