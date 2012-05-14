@@ -1,5 +1,5 @@
 *.pyc
-local_settings.py
+settings.py
 *~
 example-data.sh
 vagrant
