@@ -10,6 +10,9 @@ from monlog.log.api.authentication import CookieAuthentication
 from monlog.log.models import LogMessage, ExpectationMessage, SEVERITY_CHOICES, Expectation
 from monlog.log.api.validation import LogValidation
 from datetime import datetime 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ApplicationResource(ModelResource):
     """
@@ -122,4 +125,10 @@ class LogResource(ModelResource):
         timestamp = bundle.data["timestamp"]
         _datetime = datetime.utcfromtimestamp(float(timestamp))
         bundle.obj.datetime = _datetime
+        # truncate short_desc if it's too long.
+        if len(bundle.data["short_desc"]) > 100:
+            logger.info("short_desc truncated. Full message: %s" %
+                                bundle.data["short_desc"])
+            bundle.data["short_desc"] = "%s%s" % (bundle.data["short_desc"][:86],
+                                                  "...<truncated>")
         return bundle
