@@ -5,3 +5,5 @@ example-data.sh
 vagrant
 logging/*
 *.swp
+admin
+venv
